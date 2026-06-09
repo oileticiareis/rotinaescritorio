@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotina Diária — Advocacia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fff0f5;color:#1a1a1a}
+.container{max-width:1100px;margin:0 auto;padding:28px 32px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.topbar h1{font-size:18px;font-weight:700;color:#c2185b}
+.day-selector{display:flex;gap:5px;flex-wrap:wrap}
+.day-btn{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b;transition:all .15s}
+.day-btn.active{background:#e91e8c;color:#fff;border-color:#e91e8c}
+.reset-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c}
+.reset-btn:hover{background:#fce4ec}
+
+.cat-section{background:#fff;border:1.5px solid #f8bbd0;border-radius:16px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:16px}
+.cat-progress-info{flex:1}
+.cat-progress-label{font-size:12px;color:#e991b8;margin-bottom:4px}
+.cat-bar-bg{background:#fce4ec;border-radius:20px;height:9px;overflow:hidden;margin-bottom:5px}
+.cat-bar{background:linear-gradient(90deg,#f48fb1,#e91e8c);height:9px;border-radius:20px;transition:width .5s}
+.cat-msg{font-size:13px;font-weight:700;color:#c2185b}
+.cat-count{font-size:12px;color:#f48fb1;margin-top:2px}
+
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.cartela-tab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid #f8bbd0;background:#fff;color:#c2185b;transition:all .15s}
+.cartela-tab.active{background:#e91e8c;color:#fff;border-color:#e91e8c}
+.cartela-tab:hover{background:#fce4ec}
+.tab{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.tab.active{background:#e91e8c;color:#fff;border-color:#e91e8c}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:#fff;border:1.5px solid #f8bbd0;border-radius:12px;padding:10px}
+.stat-label{font-size:11px;color:#e991b8;margin-bottom:1px}
+.stat-value{font-size:18px;font-weight:700;color:#c2185b}
+.stat-sub{font-size:11px;color:#f48fb1;margin-top:1px}
+
+.block{border:1.5px solid #f8bbd0;border-radius:14px;background:#fff;margin-bottom:8px;overflow:hidden;transition:border-color .3s}
+.block.done{border-color:#e91e8c;background:#fff8fb}
+.block-header{display:flex;align-items:center;gap:8px;padding:11px 13px}
+.chk{width:22px;height:22px;border-radius:50%;border:2px solid #f8bbd0;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;flex-shrink:0;background:#fff;transition:all .2s;color:#fff}
+.chk:hover{border-color:#e91e8c}
+.chk.checked{background:#e91e8c;border-color:#e91e8c}
+.blk-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:#fce4ec}
+.blk-meta{flex:1;min-width:0;cursor:pointer}
+.blk-time{font-size:10px;color:#e991b8}
+.blk-title{font-size:13px;font-weight:700;color:#1a1a1a}
+.block.done .blk-title{color:#c2185b}
+.blk-dur{font-size:11px;color:#f48fb1;white-space:nowrap;flex-shrink:0}
+.chev{font-size:11px;color:#f48fb1;margin-left:3px;transition:transform .2s;cursor:pointer;flex-shrink:0}
+.chev.open{transform:rotate(180deg)}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:5px}
+.badge-green{background:#fce4ec;color:#c2185b}
+.badge-pink{background:#fce4ec;color:#880e4f}
+
+.blk-body{display:none;padding:0 13px 11px 13px;border-top:1px solid #fce4ec}
+.blk-body.open{display:block}
+.blk-body ul{margin-top:8px;list-style:none;display:flex;flex-direction:column;gap:5px}
+.blk-body li{font-size:12px;color:#555;line-height:1.5;display:flex;gap:6px}
+.blk-body li::before{content:"→";color:#f48fb1;flex-shrink:0}
+.note{background:#fce4ec;border-radius:8px;padding:7px 10px;margin-top:8px;font-size:12px;color:#880e4f;line-height:1.6}
+.highlight{background:#e91e8c;color:#fff;border-radius:8px;padding:7px 11px;margin-top:8px;font-size:12px;font-weight:700;text-align:center}
+.sub-section{margin-top:8px}
+.sub-title{font-size:11px;font-weight:700;color:#e991b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+
+.timer-wrap{margin-top:9px;background:#fff0f5;border:1.5px solid #f8bbd0;border-radius:11px;padding:10px 12px}
+.tdisp{font-size:24px;font-weight:700;color:#c2185b;text-align:center;letter-spacing:2px;margin-bottom:6px;font-family:monospace}
+.tdisp.over{color:#e53935}
+.tbar-bg{background:#fce4ec;border-radius:20px;height:6px;overflow:hidden;margin-bottom:8px}
+.tbar{background:linear-gradient(90deg,#f48fb1,#e91e8c);height:6px;border-radius:20px;transition:width .5s;max-width:100%}
+.tbar.over{background:linear-gradient(90deg,#ef9a9a,#e53935)}
+.tbtns{display:flex;gap:6px;justify-content:center}
+.tbtn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.tbtn:hover{background:#fce4ec}
+.tbtn.primary{background:#e91e8c;color:#fff;border-color:#e91e8c}
+.tover{text-align:center;margin-top:6px;font-size:12px;color:#e53935;font-weight:700;display:none}
+.tover.show{display:block}
+
+/* WEEK */
+.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.day-card{background:#fff;border:1.5px solid #f8bbd0;border-radius:12px;padding:9px 10px}
+.day-name{font-size:11px;font-weight:700;color:#e991b8;text-transform:uppercase;margin-bottom:5px}
+.day-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-block;margin-bottom:4px;background:#fce4ec;color:#880e4f}
+.day-item{font-size:11px;color:#666;margin:2px 0}
+
+/* ADMIN */
+.admin-note{background:#fff0f5;border:1.5px solid #f8bbd0;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12px;color:#880e4f;line-height:1.6}
+.flow-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:13px}
+.step-num{width:24px;height:24px;border-radius:50%;background:#e91e8c;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-num.alt{background:#880e4f}
+.step-body h3{font-size:13px;font-weight:700;margin-bottom:3px;color:#c2185b}
+.step-body p{font-size:12px;color:#555;line-height:1.5}
+.step-trigger{background:#fce4ec;border-radius:6px;display:inline-block;padding:2px 8px;font-size:11px;font-weight:700;color:#880e4f;margin-top:3px}
+
+/* INSIGHTS */
+.insight-section{margin-bottom:18px}
+.insight-section h3{font-size:14px;font-weight:700;color:#c2185b;margin-bottom:10px}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:14px}
+.mood-day{background:#fff;border:1.5px solid #f8bbd0;border-radius:11px;padding:9px 7px;text-align:center}
+.mood-day-name{font-size:11px;font-weight:700;color:#e991b8;margin-bottom:5px;text-transform:uppercase}
+.mood-select{width:100%;border:1.5px solid #f8bbd0;border-radius:7px;padding:3px;font-size:11px;color:#c2185b;background:#fff0f5;cursor:pointer}
+.mood-emoji{font-size:18px;margin:3px 0}
+.chart-wrap{background:#fff;border:1.5px solid #f8bbd0;border-radius:14px;padding:16px 14px}
+.chart-canvas-wrap{width:100%;height:180px;position:relative}
+.week-tabs{display:flex;gap:5px;margin-bottom:11px;flex-wrap:wrap}
+.week-tab{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.week-tab.active{background:#e91e8c;color:#fff;border-color:#e91e8c}
+.insight-note{background:#fce4ec;border-radius:10px;padding:9px 13px;font-size:12px;color:#880e4f;line-height:1.6;margin-top:10px}
+.ins-reset-btn{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c;margin-bottom:12px}
+.ins-reset-btn:hover{background:#fce4ec}
+
+/* LOTES */
+.lotes-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.lotes-toolbar input,.lotes-toolbar select{padding:8px 14px;border-radius:20px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff;outline:none}
+.lotes-toolbar input:focus,.lotes-toolbar select:focus{border-color:#e91e8c}
+.add-btn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+.add-btn:hover{background:#c2185b}
+.lotes-table-wrap{border-radius:14px;border:1.5px solid #f8bbd0;background:#fff;overflow:hidden;max-height:600px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+table thead{position:sticky;top:0;z-index:10}
+table thead th{position:sticky;top:0}
+thead tr{background:#e91e8c}
+thead th{color:#fff;font-size:12px;font-weight:700;padding:11px 10px;text-align:center}
+tbody tr{border-bottom:1px solid #fce4ec;transition:background .15s}
+tbody tr:not([style*="background:#e91e8c"]):hover{background:#fff0f5}
+tbody tr:hover{background:#fff0f5}
+tbody tr.checked-row{background:#fff8fb}
+tbody td{font-size:13px;padding:12px 10px;text-align:center;color:#333;vertical-align:middle}
+tbody td:nth-child(3){text-align:left;font-weight:600}
+.lote-num{display:inline-block;background:#e91e8c;color:#fff;border-radius:20px;padding:3px 11px;font-size:12px;font-weight:700;min-width:30px}
+.trt-badge{background:#fce4ec;color:#880e4f;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+.row-chk{width:20px;height:20px;border-radius:50%;border:2px solid #f8bbd0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;font-size:11px;color:#fff;transition:all .2s;flex-shrink:0}
+.row-chk:hover{border-color:#e91e8c}
+.row-chk.checked{background:#e91e8c;border-color:#e91e8c}
+.date-cell{font-size:11px;color:#888}
+.next-contact{font-size:11px;font-weight:700}
+.next-contact.soon{color:#e53935}
+.next-contact.ok{color:#43a047}
+.next-contact.pending{color:#f48fb1}
+.del-btn{background:none;border:none;cursor:pointer;color:#f48fb1;font-size:13px;padding:2px 4px}
+.del-btn:hover{color:#e91e8c}
+.edit-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;opacity:.7}
+.edit-btn:hover{opacity:1}
+.lotes-count{font-size:13px;color:#e991b8;margin-bottom:10px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:20px 22px 18px;width:100%;max-width:500px;border:1.5px solid #f8bbd0}
+.modal h3{font-size:15px;font-weight:700;color:#c2185b;margin-bottom:14px}
+.modal label{font-size:11px;color:#e991b8;font-weight:700;display:block;margin-bottom:4px;margin-top:12px}
+.modal input,.modal select{width:100%;padding:8px 11px;border-radius:9px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff0f5;outline:none;box-sizing:border-box}
+.modal input:focus,.modal select:focus{border-color:#e91e8c}
+.modal-2col{display:grid;grid-template-columns:1fr 90px;gap:12px;align-items:end}
+.modal-2col>div:first-child>label,.modal>label:first-of-type{margin-top:0}
+.modal-2col-equal{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end}
+.modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.modal-cancel{padding:9px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.modal-save{padding:9px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+
+.aud-toolbar{display:flex;gap:7px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.aud-toolbar input,.aud-toolbar select{padding:7px 12px;border-radius:20px;border:1.5px solid #f8bbd0;font-size:12px;color:#1a1a1a;background:#fff;outline:none}
+.aud-table-wrap{border-radius:14px;border:1.5px solid #f8bbd0;background:#fff;overflow:hidden;max-height:600px;overflow-y:auto}
+.aud-table{width:100%;border-collapse:collapse;table-layout:fixed}
+table thead{position:sticky;top:0;z-index:10}
+table thead th{position:sticky;top:0}
+.aud-table thead{position:sticky;top:0;z-index:10}
+.aud-table thead th{background:#e91e8c;color:#fff;font-size:11px;font-weight:700;padding:9px 7px;text-align:center;white-space:nowrap}
+.aud-table tbody tr{border-bottom:1px solid #fce4ec;transition:background .15s}
+.aud-table tbody tr:hover{background:#fff0f5}
+.aud-table tbody td{font-size:11px;padding:7px 6px;text-align:center;color:#333;vertical-align:middle}
+.aud-date-header td{background:#fce4ec;color:#c2185b;font-size:11px;font-weight:700;padding:5px 10px;text-align:center}
+.status-select{width:100%;border:1.5px solid #f8bbd0;border-radius:8px;padding:2px 2px;font-size:10px;font-weight:600;outline:none;cursor:pointer;-webkit-appearance:auto;min-width:0}
+.status-select.s-confirmada{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
+.status-select.s-pendente{background:#fff3e0;color:#e65100;border-color:#ffcc80}
+.status-select.s-sem{background:#ffebee;color:#c62828;border-color:#ef9a9a;font-size:9px}
+.status-select.s-vazio{background:#f5f5f5;color:#999;border-color:#ddd}
+.obs-cell{font-size:11px;color:#666;text-align:left}
+.obs-input{width:100%;border:1px solid #f8bbd0;border-radius:6px;padding:3px 6px;font-size:11px;background:#fff0f5;outline:none;color:#1a1a1a}
+.obs-input:focus{border-color:#e91e8c}
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none}
+.confirm-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:#fff;border-radius:16px;padding:24px 22px;width:88%;max-width:340px;border:1.5px solid #f8bbd0;text-align:center}
+.confirm-box p{font-size:14px;color:#1a1a1a;margin-bottom:18px;line-height:1.5}
+.confirm-box-btns{display:flex;gap:10px;justify-content:center}
+.confirm-no{padding:8px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.confirm-yes{padding:8px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+.view{display:none}
+.view.active{display:block}
+@media(max-width:500px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .week-grid{grid-template-columns:1fr 1fr}
+  .mood-grid{grid-template-columns:repeat(3,1fr)}
+  .cat-section{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <p id="confirm-msg"></p>
+    <div class="confirm-box-btns">
+      <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
+      <button class="confirm-yes" id="confirm-yes-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>➕ Adicionar cliente ao lote</h3>
+    <div class="modal-2col">
+      <div>
+        <label>Nome da cliente</label>
+        <input type="text" id="m-nome" placeholder="Nome completo"/>
+      </div>
+      <div>
+        <label>TRT</label>
+        <select id="m-trt">
+          <option value="">—</option>
+          <option>TRT 01</option><option>TRT 02</option><option>TRT 03</option>
+          <option>TRT 04</option><option>TRT 05</option><option>TRT 06</option>
+          <option>TRT 07</option><option>TRT 08</option><option>TRT 09</option>
+          <option>TRT 10</option><option>TRT 11</option><option>TRT 12</option>
+          <option>TRT 13</option><option>TRT 14</option><option>TRT 15</option>
+          <option>TRT 16</option><option>TRT 17</option><option>TRT 18</option>
+          <option>TRT 19</option><option>TRT 20</option><option>TRT 21</option>
+          <option>TRT 22</option><option>TRT 23</option><option>TRT 24</option>
+        </select>
+      </div>
+    </div>
+    <label>Nº do processo</label>
+    <input type="text" id="m-proc" placeholder="Ex: 0100307-97.2026.5.01.0227"/>
+    <div class="modal-2col-equal">
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="m-id" placeholder="Ex: 441143889"/>
+      </div>
+      <div>
+        <label>Lote</label>
+        <input type="number" id="m-lote" min="1" placeholder="Ex: 1"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveModal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>✏️ Editar cliente</h3>
+    <input type="hidden" id="e-idx"/>
+    <div class="modal-2col">
+      <div>
+        <label>Nome da cliente</label>
+        <input type="text" id="e-nome" placeholder="Nome completo"/>
+      </div>
+      <div>
+        <label>TRT</label>
+        <select id="e-trt">
+          <option value="">—</option>
+          <option>TRT 01</option><option>TRT 02</option><option>TRT 03</option>
+          <option>TRT 04</option><option>TRT 05</option><option>TRT 06</option>
+          <option>TRT 07</option><option>TRT 08</option><option>TRT 09</option>
+          <option>TRT 10</option><option>TRT 11</option><option>TRT 12</option>
+          <option>TRT 13</option><option>TRT 14</option><option>TRT 15</option>
+          <option>TRT 16</option><option>TRT 17</option><option>TRT 18</option>
+          <option>TRT 19</option><option>TRT 20</option><option>TRT 21</option>
+          <option>TRT 22</option><option>TRT 23</option><option>TRT 24</option>
+        </select>
+      </div>
+    </div>
+    <label>Nº do processo</label>
+    <input type="text" id="e-proc" placeholder="Ex: 0100307-97.2026.5.01.0227"/>
+    <div class="modal-2col-equal">
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="e-id" placeholder="Ex: 441143889"/>
+      </div>
+      <div>
+        <label>Data do contato</label>
+        <input type="date" id="e-date"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveEdit()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="topbar">
+    <h1>🌸 Minha Rotina</h1>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+      <div class="day-selector" id="day-selector"></div>
+      <button class="reset-btn" onclick="resetDay()">↺ Novo dia</button>
+    </div>
+  </div>
+
+  <!-- CAT -->
+  <div class="cat-section">
+    <div style="flex-shrink:0">
+      <svg width="72" height="72" viewBox="0 0 80 80">
+        <polygon points="14,32 8,8 28,22" fill="#ffb6c1"/>
+        <polygon points="16,30 11,12 26,22" fill="#ff8fab"/>
+        <polygon points="66,32 72,8 52,22" fill="#ffb6c1"/>
+        <polygon points="64,30 69,12 54,22" fill="#ff8fab"/>
+        <circle cx="40" cy="36" r="24" fill="#ffb6c1"/>
+        <ellipse cx="40" cy="66" rx="18" ry="13" fill="#ffb6c1"/>
+        <ellipse cx="40" cy="68" rx="11" ry="8" fill="#ffd6e0"/>
+        <ellipse cx="28" cy="76" rx="7" ry="4" fill="#ffb6c1"/>
+        <ellipse cx="52" cy="76" rx="7" ry="4" fill="#ffb6c1"/>
+        <path d="M58 70 Q74 58 68 44 Q64 36 58 42" stroke="#ffb6c1" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <g id="f-sleep">
+          <path d="M29 33 Q33 31 37 33" stroke="#c2185b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M43 33 Q47 31 51 33" stroke="#c2185b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M34 42 Q40 44 46 42" stroke="#c2185b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <circle cx="33" cy="37" r="2" fill="#ffb6c1" opacity=".6"/>
+          <circle cx="47" cy="37" r="2" fill="#ffb6c1" opacity=".6"/>
+        </g>
+        <g id="f-happy" style="display:none">
+          <circle cx="33" cy="33" r="5" fill="#c2185b"/>
+          <circle cx="47" cy="33" r="5" fill="#c2185b"/>
+          <circle cx="35" cy="31" r="2" fill="#fff"/>
+          <circle cx="49" cy="31" r="2" fill="#fff"/>
+          <path d="M33 42 Q40 47 47 42" stroke="#c2185b" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="33" cy="37" r="3" fill="#ff8fab"/>
+          <circle cx="47" cy="37" r="3" fill="#ff8fab"/>
+        </g>
+        <g id="f-love" style="display:none">
+          <text x="27" y="37" font-size="12" fill="#e91e8c" font-family="Arial">♥</text>
+          <text x="42" y="37" font-size="12" fill="#e91e8c" font-family="Arial">♥</text>
+          <path d="M32 43 Q40 49 48 43" stroke="#c2185b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="33" cy="38" r="3.5" fill="#ff8fab"/>
+          <circle cx="47" cy="38" r="3.5" fill="#ff8fab"/>
+          <text x="3" y="18" font-size="11" font-family="Arial">✨</text>
+          <text x="62" y="14" font-size="11" font-family="Arial">✨</text>
+        </g>
+      </svg>
+    </div>
+    <div class="cat-progress-info">
+      <div class="cat-progress-label">Progresso do dia</div>
+      <div class="cat-bar-bg"><div class="cat-bar" id="cat-bar" style="width:0%"></div></div>
+      <div class="cat-msg" id="cat-msg">Vamos começar! 🌸</div>
+      <div class="cat-count" id="cat-count">0 de 11 tarefas concluídas</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="show('dia',this)">Meu dia</button>
+    <button class="tab" onclick="show('semana',this)">Visão semanal</button>
+    <button class="tab" onclick="show('admin',this)">Administrativo</button>
+    <button class="tab" onclick="show('insights',this)">Insights 📊</button>
+    <button class="tab" onclick="show('lotes',this)">Lotes 📋</button>
+    <button class="tab" onclick="show('audiencias',this)">Audiências ⚖️</button>
+  </div>
+
+  <!-- DIA -->
+  <div class="view active" id="view-dia">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Andamentos</div><div class="stat-value">10+10</div><div class="stat-sub">clientes/dia</div></div>
+      <div class="stat"><div class="stat-label">Audiências</div><div class="stat-value">~4</div><div class="stat-sub">7 dias + 1 mês</div></div>
+      <div class="stat"><div class="stat-label">Réplicas</div><div class="stat-value">~3</div><div class="stat-sub">máx 2 por tarde</div></div>
+      <div class="stat"><div class="stat-label">Carga</div><div class="stat-value">7–8h</div><div class="stat-sub">dia padrão</div></div>
+    </div>
+    <div id="timeline"></div>
+  </div>
+
+  <!-- SEMANA -->
+  <div class="view" id="view-semana">
+    <p style="font-size:12px;color:#e991b8;margin-bottom:12px">Distribuição de cartelas, réplicas e tarefas ao longo da semana</p>
+    <div class="week-grid" id="week-grid"></div>
+    <div class="note" style="margin-top:12px"><strong>Cartelas:</strong> meta diária é 10+10. Dias com menos réplicas → avance para 20+20.<br><br><strong>Cobrança de ultrassom:</strong> segunda, quarta e sexta apenas.</div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="view" id="view-admin">
+    <div class="admin-note">⚠️ Cobrança de ultrassom: segunda, quarta e sexta. Registre sempre quantas cobranças já foram feitas por mãe.</div>
+    <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h3>Verificação da lista</h3><p>Abrir lista de mães com ultrassom pendente. Checar quem ainda não enviou e quantas cobranças já recebeu.</p></div></div>
+    <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h3>1ª e 2ª cobrança</h3><p>Enviar mensagem no WhatsApp cobrando o ultrassom. Registrar na lista: data + nº da cobrança. Aguardar retorno.</p><span class="step-trigger">~5 min por mãe</span></div></div>
+    <div class="flow-step"><div class="step-num alt">3</div><div class="step-body"><h3>3ª cobrança sem retorno → cancelamento</h3><p>Elaborar confissão de dívida. Enviar para assinar. Encaminhar para cancelamento. Registrar saída.</p><span class="step-trigger">~20 min por mãe</span></div></div>
+    <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h3>Montagem de pasta</h3><p>Fazer pela manhã. ~15 minutos por pasta. Não acumular mais de 3.</p><span class="step-trigger">todo dia — manhã</span></div></div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="view" id="view-insights">
+    <div class="insight-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="margin-bottom:0">Como foi o dia? 💭</h3>
+        <button class="ins-reset-btn" onclick="resetInsights()">↺ Zerar semana</button>
+      </div>
+      <div class="week-tabs" id="week-tabs"></div>
+      <div class="mood-grid" id="mood-grid"></div>
+    </div>
+    <div class="insight-section">
+      <h3>Comparativo semanal 📈</h3>
+      <div class="chart-wrap">
+        <div class="chart-canvas-wrap"><canvas id="line-chart"></canvas></div>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px" id="chart-legend"></div>
+      </div>
+      <div class="insight-note" id="insight-note">Registre os dias da semana para ver o gráfico aparecer aqui! 🌸</div>
+    </div>
+  </div>
+
+  <!-- LOTES -->
+  <div class="view" id="view-lotes">
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center">
+      <span style="font-size:13px;font-weight:700;color:#c2185b">Cartela:</span>
+      <button class="cartela-tab active" id="ctab-A" onclick="switchCartela('A')">🌸 Dra. Janaína</button>
+      <button class="cartela-tab" id="ctab-B" onclick="switchCartela('B')">💜 Dra. Vitória</button>
+    </div>
+    <div class="lotes-toolbar">
+      <input type="text" id="search-lote" placeholder="🔍 Buscar cliente..." oninput="renderLotes()" style="min-width:180px">
+      <select id="filter-trt" onchange="renderLotes()">
+        <option value="">Todos os TRTs</option>
+      </select>
+      <select id="filter-lote" onchange="renderLotes()">
+        <option value="">Todos os lotes</option>
+      </select>
+      <select id="sort-col" onchange="renderLotes()">
+        <option value="lote">Ordenar: Lote</option>
+        <option value="trt">Ordenar: TRT</option>
+        <option value="next">Ordenar: Próx. contato</option>
+        <option value="seq">Ordenar: Nº cadastro</option>
+      </select>
+      <select id="view-mode" onchange="renderLotes()">
+        <option value="20">20 por dia</option>
+        <option value="10">10 por dia</option>
+      </select>
+      <button class="add-btn" onclick="openModal()">+ Adicionar</button>
+    </div>
+    <div class="lotes-count" id="lotes-count"></div>
+    <div class="lotes-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:6%">Nº</th>
+            <th style="text-align:left;width:30%">CLIENTE</th>
+            <th style="width:24%">PROCESSO</th>
+            <th style="width:12%">ID</th>
+            <th style="width:9%">CONTATO</th>
+            <th style="width:5%">✓</th>
+            <th style="width:9%">PRÓX.</th>
+            <th style="width:5%"></th>
+          </tr>
+        </thead>
+        <tbody id="lotes-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- AUDIENCIAS -->
+  <div class="view" id="view-audiencias">
+    <div class="aud-toolbar">
+      <select id="aud-mes" onchange="renderAud()">
+        <option value="">Todos os meses</option>
+        <option value="2026-06">Junho 2026</option>
+        <option value="2026-07">Julho 2026</option>
+        <option value="2026-08">Agosto 2026</option>
+        <option value="2026-09">Setembro 2026</option>
+        <option value="2026-10">Outubro 2026</option>
+        <option value="2026-11">Novembro 2026</option>
+        <option value="2026-12">Dezembro 2026</option>
+      </select>
+      <input type="date" id="aud-data-filter" onchange="renderAud()" title="Filtrar por data específica">
+      <select id="aud-adv" onchange="renderAud()">
+        <option value="">Todas as advogadas</option>
+        <option value="DRA. JANAINA">Dra. Janaína</option>
+        <option value="DRA. VITÓRIA">Dra. Vitória</option>
+      </select>
+      <select id="aud-status" onchange="renderAud()">
+        <option value="">Todos os status</option>
+        <option value="confirmada">Confirmada</option>
+        <option value="pendente de resposta">Pendente</option>
+        <option value="sem confirmação">Sem confirmação</option>
+      </select>
+      <input type="text" id="aud-search" placeholder="🔍 Buscar..." oninput="renderAud()" style="min-width:130px">
+      <button class="add-btn" onclick="openAudModal()">+ Adicionar</button>
+    </div>
+    <div class="lotes-count" id="aud-count"></div>
+    <div class="aud-table-wrap">
+      <table class="aud-table">
+        <thead>
+          <tr>
+            <th style="width:7%">DATA</th>
+            <th style="width:8%">ADV.</th>
+            <th style="text-align:left;width:16%">CLIENTE</th>
+            <th style="width:10%">TELEFONE</th>
+            <th style="width:7%">ID</th>
+            <th style="width:15%">PROCESSO</th>
+            <th style="width:11%">STATUS</th>
+            <th style="width:6%">SEMANA</th>
+            <th style="text-align:left;width:16%">OBSERVAÇÃO</th>
+            <th style="width:4%"></th>
+          </tr>
+        </thead>
+        <tbody id="aud-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="aud-modal">
+  <div class="modal">
+    <h3>⚖️ Audiência</h3>
+    <input type="hidden" id="am-idx"/>
+    <div class="modal-2col">
+      <div>
+        <label>Cliente</label>
+        <input type="text" id="am-cliente" placeholder="Nome completo"/>
+      </div>
+      <div>
+        <label>Advogada</label>
+        <select id="am-adv">
+          <option value="DRA. JANAINA">Dra. Janaína</option>
+          <option value="DRA. VITÓRIA">Dra. Vitória</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-2col-equal">
+      <div>
+        <label>Data da audiência</label>
+        <input type="date" id="am-data"/>
+      </div>
+      <div>
+        <label>Semana</label>
+        <select id="am-semana">
+          <option>SEMANA 01</option><option>SEMANA 02</option><option>SEMANA 03</option>
+          <option>SEMANA 04</option><option>SEMANA 05</option>
+        </select>
+      </div>
+    </div>
+    <label>Nº do processo</label>
+    <input type="text" id="am-proc" placeholder="Ex: 0012096-19.2025.5.15.0005"/>
+    <div class="modal-2col-equal">
+      <div>
+        <label>Telefone</label>
+        <input type="text" id="am-tel" placeholder="Ex: 55 19 99405-3911"/>
+      </div>
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="am-id" placeholder="Ex: 431723395"/>
+      </div>
+    </div>
+    <label>Status</label>
+    <select id="am-status">
+      <option value="">— sem status —</option>
+      <option value="confirmada">Confirmada</option>
+      <option value="pendente de resposta">Pendente de resposta</option>
+      <option value="sem confirmação">Sem confirmação</option>
+    </select>
+    <label>Observação</label>
+    <input type="text" id="am-obs" placeholder="Ex: telegrama enviado"/>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAudModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveAud()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="obs-modal">
+  <div class="modal" style="max-width:420px">
+    <h3>📝 Observação</h3>
+    <input type="hidden" id="obs-aud-idx"/>
+    <textarea id="obs-text" rows="5" style="width:100%;padding:10px 13px;border-radius:10px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff0f5;outline:none;resize:vertical;font-family:Arial,sans-serif;margin-top:10px"></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeObsModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveObsModal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ─── HELPERS ───────────────────────────────────────────────
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function ld(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}}
+function pad(n){return String(n).padStart(2,"0")}
+function fmtDate(d){
+  if(!d)return"";
+  const parts=d.split("-");
+  return pad(parseInt(parts[2]))+"/"+pad(parseInt(parts[1]))+"/"+parts[0];
+}
+function addBusinessDays(dateStr,days){
+  const d=new Date(dateStr);
+  let added=0;
+  while(added<days){d.setDate(d.getDate()+1);const dw=d.getDay();if(dw!==0&&dw!==6)added++;}
+  return d.toISOString().split("T")[0];
+}
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+}
+function daysUntil(dateStr){
+  if(!dateStr)return null;
+  const today=new Date(todayStr());
+  const target=new Date(dateStr);
+  return Math.round((target-today)/(1000*60*60*24));
+}
+
+// ─── STATE ─────────────────────────────────────────────────
+const DAYS=["Seg","Ter","Qua","Qui","Sex"];
+const MOODS=[
+  {val:"tranquilo",label:"Tranquilo",emoji:"😊",score:1,color:"#a5d6a7"},
+  {val:"normal",label:"Normal",emoji:"🙂",score:2,color:"#f48fb1"},
+  {val:"corrido",label:"Corrido",emoji:"😅",score:3,color:"#ffe082"},
+  {val:"cheio",label:"Cheio demais",emoji:"😰",score:4,color:"#ef9a9a"},
+  {val:"parado",label:"Parado",emoji:"😴",score:1.5,color:"#b39ddb"}
+];
+let currentDay=ld("currentDay",DAYS[Math.max(0,new Date().getDay()-1)]);
+let checked=ld("checked_"+currentDay,{});
+let timers={};
+let weekInsights=ld("weekInsights",{w0:{},w1:{},w2:{},w3:{}});
+let currentWeek="w0";
+const JANAINA_DEFAULT=[{"id":1,"lote":1,"nome":"Maria Patrícia de Lima","trt":"TRT 01","processo":"0100307-97.2026.5.01.0227","idHuggy":"441143889","checked":false,"contactDate":null,"nextContact":null},{"id":2,"lote":1,"nome":"Ana Clara Braga Gonçalves","trt":"TRT 01","processo":"0100737-16.2026.5.01.0432","idHuggy":"432597060","checked":false,"contactDate":null,"nextContact":null},{"id":3,"lote":1,"nome":"Maria Eduarda Lima Teles","trt":"TRT 01","processo":"0100879-67.2026.5.01.0481","idHuggy":"458794513","checked":false,"contactDate":null,"nextContact":null},{"id":4,"lote":1,"nome":"Dayane Gonçalves de Lima","trt":"TRT 01","processo":"0100987-67.2025.5.01.0017","idHuggy":"431697863","checked":false,"contactDate":null,"nextContact":null},{"id":5,"lote":1,"nome":"Victoria Ribeiro da Costa","trt":"TRT 01","processo":"0100654-78.2025.5.01.0482","idHuggy":"464551081","checked":false,"contactDate":null,"nextContact":null},{"id":6,"lote":1,"nome":"Sabrina Monteiro Ramos da Silva","trt":"TRT 01","processo":"0100599-14.2025.5.01.0067","idHuggy":"433496976","checked":false,"contactDate":null,"nextContact":null},{"id":7,"lote":1,"nome":"Maria Aline da Conceição","trt":"TRT 01","processo":"0100674-97.2025.5.01.0020","idHuggy":"437128813","checked":false,"contactDate":null,"nextContact":null},{"id":8,"lote":1,"nome":"MARIANA JOSE DE SOUZA","trt":"TRT 01","processo":"0101047-75.2025.5.01.0264","idHuggy":"437131876","checked":false,"contactDate":null,"nextContact":null},{"id":9,"lote":1,"nome":"Thais Cristina dos Santos","trt":"TRT 01","processo":"0100637-43.2025.5.01.0223","idHuggy":"431697300","checked":false,"contactDate":null,"nextContact":null},{"id":10,"lote":1,"nome":"Esthefani Goncalves De Freitas","trt":"TRT 01","processo":"0100544-03.2026.5.01.0302","idHuggy":"453898843","checked":false,"contactDate":null,"nextContact":null},{"id":11,"lote":1,"nome":"MARCELLY FERNANDES CHIATTI","trt":"TRT 02","processo":"1000520-39.2026.5.02.0037","idHuggy":"447315606","checked":false,"contactDate":null,"nextContact":null},{"id":12,"lote":1,"nome":"Gisele Pereira dos Santos","trt":"TRT 02","processo":"1000655-62.2025.5.02.0077","idHuggy":"434314796","checked":false,"contactDate":null,"nextContact":null},{"id":13,"lote":1,"nome":"Nicoly Kelly da Silva do Nascimento","trt":"TRT 15","processo":"0011317-45.2026.5.15.0097","idHuggy":"458457617","checked":false,"contactDate":null,"nextContact":null},{"id":14,"lote":1,"nome":"Bianca Larissa Araújo","trt":"TRT 02","processo":"1001191-89.2025.5.02.0201","idHuggy":"437028191","checked":false,"contactDate":null,"nextContact":null},{"id":15,"lote":1,"nome":"Maria Eduarda Martin Laranjeiras","trt":"TRT 02","processo":"1000631-34.2026.5.02.0292","idHuggy":"458182758","checked":false,"contactDate":null,"nextContact":null},{"id":16,"lote":1,"nome":"Jaiane Gomes da Silva","trt":"TRT 02","processo":"1001791-50.2025.5.02.0221","idHuggy":"431244536","checked":false,"contactDate":null,"nextContact":null},{"id":17,"lote":1,"nome":"Mayara Matos Eugênio","trt":"TRT 02","processo":"1000695-97.2025.5.02.0027","idHuggy":"431653389","checked":false,"contactDate":null,"nextContact":null},{"id":18,"lote":1,"nome":"Thayná Ribeiro da Costa Silva","trt":"TRT 02","processo":"1000601-91.2025.5.02.0014","idHuggy":"434807840","checked":false,"contactDate":null,"nextContact":null},{"id":19,"lote":1,"nome":"STEFANY RITIELY RODRIGUES DE SOUSA","trt":"TRT 02","processo":"1001212-28.2026.5.02.0202","idHuggy":"455181878","checked":false,"contactDate":null,"nextContact":null},{"id":20,"lote":1,"nome":"Vitoria Pereira Santos de Jesus","trt":"TRT 02","processo":"1001299-61.2026.5.02.0241","idHuggy":"437047255","checked":false,"contactDate":null,"nextContact":null},{"id":21,"lote":2,"nome":"Meyre Evelyn da Lomba Evangelista","trt":"TRT 02","processo":"1001467-65.2025.5.02.0381","idHuggy":"450476712","checked":false,"contactDate":null,"nextContact":null},{"id":22,"lote":2,"nome":"Monica Rita Martins","trt":"TRT 02","processo":"1001814-79.2025.5.02.0064","idHuggy":"437897121","checked":false,"contactDate":null,"nextContact":null},{"id":23,"lote":2,"nome":"Ana Claudia dos Santos Silva","trt":"TRT 02","processo":"1000259-30.2026.5.02.0472","idHuggy":"435411727","checked":false,"contactDate":null,"nextContact":null},{"id":24,"lote":2,"nome":"Ana Beatriz Aparecido do Nascimento","trt":"TRT 02","processo":"1000736-93.2026.5.02.0491","idHuggy":"450335877","checked":false,"contactDate":null,"nextContact":null},{"id":25,"lote":2,"nome":"Agatha da Silva Lopes","trt":"TRT 02","processo":"1001263-30.2025.5.02.0281","idHuggy":"434913811","checked":false,"contactDate":null,"nextContact":null},{"id":26,"lote":2,"nome":"Nathalia Santos Dias","trt":"TRT 02","processo":"1000463-84.2025.5.02.0383","idHuggy":"436570733","checked":false,"contactDate":null,"nextContact":null},{"id":27,"lote":2,"nome":"Anna Beatriz Palmeira de Araújo","trt":"TRT 02","processo":"1001334-06.2025.5.02.0613","idHuggy":"436571846","checked":false,"contactDate":null,"nextContact":null},{"id":28,"lote":2,"nome":"Maria Luiza Santos de Oliveira","trt":"TRT 02","processo":"1001374-20.2025.5.02.0473","idHuggy":"436573422","checked":false,"contactDate":null,"nextContact":null},{"id":29,"lote":2,"nome":"Michelle Batista da Silva","trt":"TRT 02","processo":"1000808-51.2025.5.02.0318","idHuggy":"434761347","checked":false,"contactDate":null,"nextContact":null},{"id":30,"lote":2,"nome":"Laryssa Coelho Moreira","trt":"TRT 02","processo":"1001488-02.2026.5.02.0221","idHuggy":"430831480","checked":false,"contactDate":null,"nextContact":null},{"id":31,"lote":2,"nome":"Elisangela de Fatima Adriano","trt":"TRT 03","processo":"0010566-90.2026.5.03.0065","idHuggy":"442637331","checked":false,"contactDate":null,"nextContact":null},{"id":32,"lote":2,"nome":"Echiley Medeiros Duarte Porcilio","trt":"TRT 03","processo":"0010709-39.2026.5.03.0143","idHuggy":"434245668","checked":false,"contactDate":null,"nextContact":null},{"id":33,"lote":2,"nome":"Renata Cristina Carvalho De Souza","trt":"TRT 03","processo":"0010687-34.2026.5.03.0093","idHuggy":"450105241","checked":false,"contactDate":null,"nextContact":null},{"id":34,"lote":2,"nome":"Leticia de Oliveira","trt":"TRT 03","processo":"0010930-10.2025.5.03.0029","idHuggy":"442109318","checked":false,"contactDate":null,"nextContact":null},{"id":35,"lote":2,"nome":"Einir dias Silva","trt":"TRT 03","processo":"0010009-85.2026.5.03.0071","idHuggy":"431701524","checked":false,"contactDate":null,"nextContact":null},{"id":36,"lote":2,"nome":"Geovanna Dos Santos Silva Simões","trt":"TRT 03","processo":"0010216-70.2026.5.03.0011","idHuggy":"430628527","checked":false,"contactDate":null,"nextContact":null},{"id":37,"lote":2,"nome":"Carolina Moraes de Freitas","trt":"TRT 03","processo":"0010290-43.2026.5.03.0135","idHuggy":"432028606","checked":false,"contactDate":null,"nextContact":null},{"id":38,"lote":2,"nome":"Jennifer Patricia Da Silva","trt":"TRT 03","processo":"0010337-59.2026.5.03.0024","idHuggy":"453109364","checked":false,"contactDate":null,"nextContact":null},{"id":39,"lote":2,"nome":"Camila Pereira Santos","trt":"TRT 03","processo":"0010018-51.2026.5.03.0005","idHuggy":"435783685","checked":false,"contactDate":null,"nextContact":null},{"id":40,"lote":3,"nome":"Nicole Souto Medeiros","trt":"TRT 03","processo":"0010792-87.2026.5.03.0100","idHuggy":"460954652","checked":false,"contactDate":null,"nextContact":null},{"id":41,"lote":3,"nome":"Ana Julia Nascimento Silva","trt":"TRT 03","processo":"0010580-95.2025.5.03.0037","idHuggy":"430823822","checked":false,"contactDate":null,"nextContact":null},{"id":42,"lote":3,"nome":"Jennifer Mikaely Pereira da Silva","trt":"TRT 03","processo":"0011397-45.2025.5.03.0075","idHuggy":"437138597","checked":false,"contactDate":null,"nextContact":null},{"id":43,"lote":3,"nome":"Brenda Maurrem Neves Oliveira","trt":"TRT 03","processo":"0010146-87.2026.5.03.0129","idHuggy":"431689171","checked":false,"contactDate":null,"nextContact":null},{"id":44,"lote":3,"nome":"Naiara Teodoro Alves","trt":"TRT 03","processo":"0010070-18.2026.5.03.0047","idHuggy":"431680303","checked":false,"contactDate":null,"nextContact":null},{"id":45,"lote":3,"nome":"Michelle Crispim dos Santos","trt":"TRT 03","processo":"0010818-06.2025.5.03.0073","idHuggy":"430060596","checked":false,"contactDate":null,"nextContact":null},{"id":46,"lote":3,"nome":"Franciele Graciene da Silva","trt":"TRT 03","processo":"0010844-95.2025.5.03.0075","idHuggy":"430074638","checked":false,"contactDate":null,"nextContact":null},{"id":47,"lote":3,"nome":"Ana Caroline De Freitas Souza","trt":"TRT 03","processo":"0010732-74.2026.5.03.0178","idHuggy":"446223209","checked":false,"contactDate":null,"nextContact":null},{"id":48,"lote":3,"nome":"Carina de Araujo Ruiz (Jana atualiza)","trt":"TRT 04","processo":"0020542-87.2025.5.04.0305","idHuggy":"434863524","checked":false,"contactDate":null,"nextContact":null},{"id":49,"lote":3,"nome":"Camila Vitoria Ramos Santana","trt":"TRT 04","processo":"0020180-21.2026.5.04.0024","idHuggy":"435963938","checked":false,"contactDate":null,"nextContact":null},{"id":50,"lote":3,"nome":"Liliane Priscila Pohl da Silva","trt":"TRT 04","processo":"0020345-38.2025.5.04.0304","idHuggy":"437083503","checked":false,"contactDate":null,"nextContact":null},{"id":51,"lote":3,"nome":"Lidiane Cristina Rosa Muller","trt":"TRT 04","processo":"0020598-08.2025.5.04.0019","idHuggy":"437142797","checked":false,"contactDate":null,"nextContact":null},{"id":52,"lote":3,"nome":"Franciele Moraes de Moraes","trt":"TRT 04","processo":"0020492-03.2025.5.04.0001","idHuggy":"434355646","checked":false,"contactDate":null,"nextContact":null},{"id":53,"lote":3,"nome":"Nurkelys Carolina Lopez","trt":"TRT 04","processo":"0020558-30.2025.5.04.0341","idHuggy":"431604009","checked":false,"contactDate":null,"nextContact":null},{"id":54,"lote":3,"nome":"Elen Oliveira de Andrade","trt":"TRT 04","processo":"0020509-65.2025.5.04.0251","idHuggy":"435154485","checked":false,"contactDate":null,"nextContact":null},{"id":55,"lote":3,"nome":"Janine Alves Nogueira Nunes","trt":"TRT 04","processo":"0020257-53.2026.5.04.0372","idHuggy":"447233116","checked":false,"contactDate":null,"nextContact":null},{"id":56,"lote":3,"nome":"Renata de Oliveira Marquardt","trt":"TRT 04","processo":"0020386-76.2025.5.04.0733","idHuggy":"437150126","checked":false,"contactDate":null,"nextContact":null},{"id":57,"lote":3,"nome":"ANA PAULA TAVARES DE PAULA","trt":"TRT 04","processo":"0020876-30.2025.5.04.0303","idHuggy":"431589236","checked":false,"contactDate":null,"nextContact":null},{"id":58,"lote":3,"nome":"Karen Andrieli Costa Rodrigues","trt":"TRT 04","processo":"0020263-24.2026.5.04.0384","idHuggy":"442526348","checked":false,"contactDate":null,"nextContact":null},{"id":59,"lote":4,"nome":"Caroline Gomes Barbosa","trt":"TRT 05","processo":"0001210-69.2025.5.05.0641","idHuggy":"431681656","checked":false,"contactDate":null,"nextContact":null},{"id":60,"lote":4,"nome":"Ericlene da Silva de Jesus","trt":"TRT 05","processo":"0001011-74.2025.5.05.0341","idHuggy":"434832528","checked":false,"contactDate":null,"nextContact":null},{"id":61,"lote":4,"nome":"Elizete dos Santos","trt":"TRT 05","processo":"0000978-29.2025.5.05.0133","idHuggy":"431690511","checked":false,"contactDate":null,"nextContact":null},{"id":62,"lote":4,"nome":"Andreza Moreira Barbosa","trt":"TRT 07","processo":"0000783-32.2025.5.07.0022","idHuggy":"431845721","checked":false,"contactDate":null,"nextContact":null},{"id":63,"lote":4,"nome":"Aisha Kayllane Pereira","trt":"TRT 07","processo":"0000524-67.2026.5.07.0033","idHuggy":"458796436","checked":false,"contactDate":null,"nextContact":null},{"id":64,"lote":4,"nome":"MARIANA SOUSA ROCHA","trt":"TRT 09","processo":"0000383-59.2026.5.09.0658","idHuggy":"441563533","checked":false,"contactDate":null,"nextContact":null},{"id":65,"lote":4,"nome":"Gabriela da Silva Alexandre","trt":"TRT 09","processo":"0000264-26.2026.5.09.0585","idHuggy":"430599207","checked":false,"contactDate":null,"nextContact":null},{"id":66,"lote":4,"nome":"Andriely Sedonia Jung","trt":"TRT 09","processo":"0000851-60.2025.5.09.0657","idHuggy":"433369493","checked":false,"contactDate":null,"nextContact":null},{"id":67,"lote":4,"nome":"Melissa de Oliveira Cavalcanti","trt":"TRT 09","processo":"0000272-90.2026.5.09.0653","idHuggy":"434523109","checked":false,"contactDate":null,"nextContact":null},{"id":68,"lote":4,"nome":"Evanielys José Guevara Zamora","trt":"TRT 09","processo":"0000844-86.2025.5.09.0069","idHuggy":"434279782","checked":false,"contactDate":null,"nextContact":null},{"id":69,"lote":4,"nome":"Agatha Bianca Barbosa dos Santos","trt":"TRT 09","processo":"0000832-03.2025.5.09.0965","idHuggy":"434660136","checked":false,"contactDate":null,"nextContact":null},{"id":70,"lote":4,"nome":"Jéssica Eduardo Silva Alves","trt":"TRT 09","processo":"0000963-48.2025.5.09.0004","idHuggy":"442609197","checked":false,"contactDate":null,"nextContact":null},{"id":71,"lote":4,"nome":"Mayara Cristina Lima de Araújo","trt":"TRT 09","processo":"0000307-91.2026.5.09.0122","idHuggy":"458866433","checked":false,"contactDate":null,"nextContact":null},{"id":72,"lote":4,"nome":"Scheila Taborda May","trt":"TRT 09","processo":"0000289-54.2026.5.09.0095","idHuggy":"431670410","checked":false,"contactDate":null,"nextContact":null},{"id":73,"lote":4,"nome":"Bruna Vitoria da Silva","trt":"TRT 09","processo":"0000063-34.2026.5.09.0585","idHuggy":"431602297","checked":false,"contactDate":null,"nextContact":null},{"id":74,"lote":4,"nome":"Heloysa Bezerra da Silva","trt":"TRT 09","processo":"0000026-97.2026.5.09.0749","idHuggy":"431698681","checked":false,"contactDate":null,"nextContact":null},{"id":75,"lote":4,"nome":"Mariana Sousa Rocha","trt":"TRT 09","processo":"0000383-59.2026.5.09.0658","idHuggy":"441563533","checked":false,"contactDate":null,"nextContact":null},{"id":76,"lote":4,"nome":"Monaliza Gonvalves Bassedon","trt":"TRT 09","processo":"0000648-95.2025.5.09.0658","idHuggy":"434127999","checked":false,"contactDate":null,"nextContact":null},{"id":77,"lote":4,"nome":"Maria Cristalina Franco De Lima","trt":"TRT 09","processo":"0000386-37.2026.5.09.0133","idHuggy":"456538684","checked":false,"contactDate":null,"nextContact":null},{"id":78,"lote":5,"nome":"Maria Eduarda Silva Gomes","trt":"TRT 10","processo":"0000999-63.2026.5.10.0801","idHuggy":"453231165","checked":false,"contactDate":null,"nextContact":null},{"id":79,"lote":5,"nome":"Danielle Vitória Martins Mota","trt":"TRT 11","processo":"0000566-23.2025.5.11.0007","idHuggy":"445146538","checked":false,"contactDate":null,"nextContact":null},{"id":80,"lote":5,"nome":"Iandara Ellen Rodrigues Maciel","trt":"TRT 11","processo":"0001261-36.2025.5.11.0052","idHuggy":"437147967","checked":false,"contactDate":null,"nextContact":null},{"id":81,"lote":5,"nome":"Juliana Vasconcelos Nascimento","trt":"TRT 11","processo":"0000514-84.2026.5.11.0009","idHuggy":"458799127","checked":false,"contactDate":null,"nextContact":null},{"id":82,"lote":5,"nome":"Caroline Menezes de Assis","trt":"TRT 12","processo":"0002554-86.2025.5.12.0028","idHuggy":"442124964","checked":false,"contactDate":null,"nextContact":null},{"id":83,"lote":5,"nome":"Shirley Kerolaine da Silva Nascimento","trt":"TRT 12","processo":"0000160-53.2026.5.12.0002","idHuggy":"434187634","checked":false,"contactDate":null,"nextContact":null},{"id":84,"lote":5,"nome":"Dacxyx Adriana Sarmiento Canelones","trt":"TRT 12","processo":"0000185-27.2026.5.12.0015","idHuggy":"434223372","checked":false,"contactDate":null,"nextContact":null},{"id":85,"lote":5,"nome":"Iria Sabrina Silva","trt":"TRT 12","processo":"0000217-33.2026.5.12.0047","idHuggy":"434227868","checked":false,"contactDate":null,"nextContact":null},{"id":86,"lote":5,"nome":"Maria Gabriela Sebastião de Oliveira","trt":"TRT 12","processo":"0000214-54.2026.5.12.0055","idHuggy":"429556070","checked":false,"contactDate":null,"nextContact":null},{"id":87,"lote":5,"nome":"Jaqueline Miguins","trt":"TRT 12","processo":"0000290-93.2026.5.12.0050","idHuggy":"434233393","checked":false,"contactDate":null,"nextContact":null},{"id":88,"lote":5,"nome":"Jessica fernandes","trt":"TRT 12","processo":"0000231-96.2025.5.12.0032","idHuggy":"436565226","checked":false,"contactDate":null,"nextContact":null},{"id":89,"lote":5,"nome":"Natalia Nogueira Reis de Freitas","trt":"TRT 12","processo":"0000924-83.2025.5.12.0031","idHuggy":"436588016","checked":false,"contactDate":null,"nextContact":null},{"id":90,"lote":5,"nome":"Suely Viana do Nascimento","trt":"TRT 12","processo":"0000626-28.2025.5.12.0052","idHuggy":"437039960","checked":false,"contactDate":null,"nextContact":null},{"id":91,"lote":5,"nome":"Kelly Maria Costa Tito","trt":"TRT 12","processo":"0000491-72.2026.5.12.0022","idHuggy":"442023714","checked":false,"contactDate":null,"nextContact":null},{"id":92,"lote":5,"nome":"Rayra Araújo Furtado","trt":"TRT 12","processo":"0000736-72.2026.5.12.0058","idHuggy":"453918135","checked":false,"contactDate":null,"nextContact":null},{"id":93,"lote":5,"nome":"Débora Matias Guedes","trt":"TRT 14","processo":"0000736-87.2025.5.14.0402","idHuggy":"435785941","checked":false,"contactDate":null,"nextContact":null},{"id":94,"lote":5,"nome":"Maria Vanessa da Silva Luz","trt":"TRT 14","processo":"0000324-53.2025.5.14.0404","idHuggy":"436559957","checked":false,"contactDate":null,"nextContact":null},{"id":95,"lote":5,"nome":"Kaires Gabriele Pereira Dantas","trt":"TRT 14","processo":"0000217-51.2026.5.14.0411","idHuggy":"432383249","checked":false,"contactDate":null,"nextContact":null},{"id":96,"lote":5,"nome":"Vitoria Cristina Dias da Silva","trt":"TRT 15","processo":"0010590-54.2026.5.15.0140","idHuggy":"433595326","checked":false,"contactDate":null,"nextContact":null},{"id":97,"lote":5,"nome":"Iolanda Maria Filgueira do Nascimento","trt":"TRT 15","processo":"0010398-24.2026.5.15.0043","idHuggy":"431574768","checked":false,"contactDate":null,"nextContact":null},{"id":98,"lote":6,"nome":"Gabriela Mathias Magnani","trt":"TRT 15","processo":"0010604-26.2025.5.15.0026","idHuggy":"430139207","checked":false,"contactDate":null,"nextContact":null},{"id":99,"lote":6,"nome":"Amanda Simões da Silva","trt":"TRT 15","processo":"0010972-96.2025.5.15.0135","idHuggy":"434352374","checked":false,"contactDate":null,"nextContact":null},{"id":100,"lote":6,"nome":"Paloma Diniz Gomes","trt":"TRT 15","processo":"0011147-71.2025.5.15.0109","idHuggy":"434358515","checked":false,"contactDate":null,"nextContact":null},{"id":101,"lote":6,"nome":"Camila de Jesus Rodrigues da Conceição","trt":"TRT 15","processo":"0010793-67.2025.5.15.0005","idHuggy":"434330727","checked":false,"contactDate":null,"nextContact":null},{"id":102,"lote":6,"nome":"Mariane de Oliveira Moreira","trt":"TRT 15","processo":"0011296-88.2025.5.15.0102","idHuggy":"431728893","checked":false,"contactDate":null,"nextContact":null},{"id":103,"lote":6,"nome":"JOSEANE RAFAEL PEREIRA","trt":"TRT 15","processo":"0012736-59.2025.5.15.0025","idHuggy":"431715087","checked":false,"contactDate":null,"nextContact":null},{"id":104,"lote":6,"nome":"Maria Eduarda Souza da Cruz","trt":"TRT 15","processo":"0012054-90.2025.5.15.0062","idHuggy":"471869580","checked":false,"contactDate":null,"nextContact":null},{"id":105,"lote":6,"nome":"Francisca Beatriz de Sousa Araujo","trt":"TRT 15","processo":"0012114-32.2025.5.15.0137","idHuggy":"431708510","checked":false,"contactDate":null,"nextContact":null},{"id":106,"lote":6,"nome":"Maria Eduarda de Oliveira Ribeiro","trt":"TRT 15","processo":"0011403-93.2025.5.15.0018","idHuggy":"431719926","checked":false,"contactDate":null,"nextContact":null},{"id":107,"lote":6,"nome":"Jenifer de Paula Oliveira","trt":"TRT 15","processo":"0011200-09.2025.5.15.0188","idHuggy":"431716178","checked":false,"contactDate":null,"nextContact":null},{"id":108,"lote":6,"nome":"Ana Julia Honorato Costa","trt":"TRT 15","processo":"0012008-33.2025.5.15.0020","idHuggy":"476053642","checked":false,"contactDate":null,"nextContact":null},{"id":109,"lote":6,"nome":"Luciana Fernanda Gasparelo","trt":"TRT 15","processo":"0012096-19.2025.5.15.0005","idHuggy":"431723395","checked":false,"contactDate":null,"nextContact":null},{"id":110,"lote":6,"nome":"Carolina Vitoria Monteiro de Oliveira","trt":"TRT 15","processo":"0011981-31.2025.5.15.0188","idHuggy":"431727435","checked":false,"contactDate":null,"nextContact":null},{"id":111,"lote":6,"nome":"Karoline Siqueira da Silva Lucas","trt":"TRT 15","processo":"0011087-46.2025.5.15.0094","idHuggy":"431712608","checked":false,"contactDate":null,"nextContact":null},{"id":112,"lote":6,"nome":"Taina Sousa Lopes","trt":"TRT 15","processo":"0011158-39.2025.5.15.0097","idHuggy":"431740164","checked":false,"contactDate":null,"nextContact":null},{"id":113,"lote":6,"nome":"Larissa Cappia","trt":"TRT 15","processo":"0013309-93.2025.5.15.0091","idHuggy":"431732836","checked":false,"contactDate":null,"nextContact":null},{"id":114,"lote":6,"nome":"Angélica Cristina Silva","trt":"TRT 15","processo":"0012031-85.2025.5.15.0114","idHuggy":"431729014","checked":false,"contactDate":null,"nextContact":null},{"id":115,"lote":6,"nome":"BEATRIZ CAROLINE MOURA DO NASCIMENTO","trt":"TRT 15","processo":"0013923-05.2025.5.15.0122","idHuggy":"431732137","checked":false,"contactDate":null,"nextContact":null},{"id":116,"lote":6,"nome":"Raissa Carolaine Tofanelli","trt":"TRT 15","processo":"0010245-07.2026.5.15.0070","idHuggy":"431712594","checked":false,"contactDate":null,"nextContact":null},{"id":117,"lote":6,"nome":"Larissa Vaz Ferreira","trt":"TRT 15","processo":"0012923-03.2025.5.15.0111","idHuggy":"431730713","checked":false,"contactDate":null,"nextContact":null},{"id":118,"lote":7,"nome":"Renata Aparecida do Nascimento Silva","trt":"TRT 15","processo":"0012134-09.2025.5.15.0077","idHuggy":"431713060","checked":false,"contactDate":null,"nextContact":null},{"id":119,"lote":7,"nome":"Sarai Del Valle Cordova Aguilera","trt":"TRT 15","processo":"0013187-56.2025.5.15.0002","idHuggy":"431807601","checked":false,"contactDate":null,"nextContact":null},{"id":120,"lote":7,"nome":"Samara Mikaela Ferreira da Silva","trt":"TRT 15","processo":"0010700-07.2025.5.15.0102","idHuggy":"436914627","checked":false,"contactDate":null,"nextContact":null},{"id":121,"lote":7,"nome":"Agata Jaqueline Antunes Vidal","trt":"TRT 15","processo":"0011290-60.2025.5.15.0109","idHuggy":"431822731","checked":false,"contactDate":null,"nextContact":null},{"id":122,"lote":7,"nome":"Greslei Cristina do Carmo","trt":"TRT 15","processo":"0011805-32.2025.5.15.0130","idHuggy":"433321681","checked":false,"contactDate":null,"nextContact":null},{"id":123,"lote":7,"nome":"Patricia Aparecida Lopes Pereira","trt":"TRT 15","processo":"0012403-55.2025.5.15.0010","idHuggy":"432033535","checked":false,"contactDate":null,"nextContact":null},{"id":124,"lote":7,"nome":"Thainá Naiumi de Souza","trt":"TRT 15","processo":"0010815-52.2025.5.15.0094","idHuggy":"473339197","checked":false,"contactDate":null,"nextContact":null},{"id":125,"lote":7,"nome":"Amanda Iris Dias da Silva","trt":"TRT 15","processo":"0010652-67.2025.5.15.0128","idHuggy":"435136530","checked":false,"contactDate":null,"nextContact":null},{"id":126,"lote":7,"nome":"Maria Kelly Leite de Farias Souza","trt":"TRT 15","processo":"0010544-22.2025.5.15.0004","idHuggy":"435802681","checked":false,"contactDate":null,"nextContact":null},{"id":127,"lote":7,"nome":"Ana Caroline Duarte de Lima","trt":"TRT 15","processo":"0010447-52.2025.5.15.0188","idHuggy":"436516808","checked":false,"contactDate":null,"nextContact":null},{"id":128,"lote":7,"nome":"Eduarda Conceição","trt":"TRT 15","processo":"0010887-36.2024.5.15.0074","idHuggy":"430618622","checked":false,"contactDate":null,"nextContact":null},{"id":129,"lote":7,"nome":"Nahara Chrispim Custodio da Silva","trt":"TRT 15","processo":"0010586-65.2025.5.15.0006","idHuggy":"436520410","checked":false,"contactDate":null,"nextContact":null},{"id":130,"lote":7,"nome":"Ananda Julia Soares Souza","trt":"TRT 15","processo":"0010939-57.2025.5.15.0022","idHuggy":"435983698","checked":false,"contactDate":null,"nextContact":null},{"id":131,"lote":7,"nome":"Maria Gabrielle Silva dos Santos","trt":"TRT 15","processo":"0011035-34.2025.5.15.0067","idHuggy":"436480592","checked":false,"contactDate":null,"nextContact":null},{"id":132,"lote":7,"nome":"Maria Clara Peti de Souza","trt":"TRT 15","processo":"0010669-22.2025.5.15.0058","idHuggy":"436474943","checked":false,"contactDate":null,"nextContact":null},{"id":133,"lote":7,"nome":"Miria Betania Floriano Ramos Da Silva","trt":"TRT 15","processo":"0010634-97.2026.5.15.0132","idHuggy":"440302790","checked":false,"contactDate":null,"nextContact":null},{"id":134,"lote":7,"nome":"Sophia Loren da Silva Tomaz","trt":"TRT 15","processo":"0011430-42.2026.5.15.0018","idHuggy":"456851008","checked":false,"contactDate":null,"nextContact":null},{"id":135,"lote":7,"nome":"Fabiana da Silva Santos","trt":"TRT 15","processo":"0010852-29.2025.5.15.0046","idHuggy":"442159145","checked":false,"contactDate":null,"nextContact":null},{"id":136,"lote":7,"nome":"Julia Carolina Soares Silva","trt":"TRT 15","processo":"0010896-70.2026.5.15.0092","idHuggy":"457732837","checked":false,"contactDate":null,"nextContact":null},{"id":137,"lote":7,"nome":"Vitoria Alves De Paula","trt":"TRT 15","processo":"0010951-28.2026.5.15.0025","idHuggy":"445349407","checked":false,"contactDate":null,"nextContact":null},{"id":138,"lote":8,"nome":"Camilli Victoria Carrerra Simões","trt":"TRT 15","processo":"0010857-73.2026.5.15.0092","idHuggy":"456442054","checked":false,"contactDate":null,"nextContact":null},{"id":139,"lote":8,"nome":"Hevelin Cristina Martins Sousa","trt":"TRT 16","processo":"0017120-70.2026.5.16.0003","idHuggy":"450720703","checked":false,"contactDate":null,"nextContact":null},{"id":140,"lote":8,"nome":"Zuleidis Manuela Gonzalez Betancourt","trt":"TRT 17","processo":"0000721-81.2025.5.17.0161","idHuggy":"433386917","checked":false,"contactDate":null,"nextContact":null},{"id":141,"lote":8,"nome":"Vanicleia Cruz da Silva","trt":"TRT 17","processo":"0000666-40.2025.5.17.0191","idHuggy":"437917184","checked":false,"contactDate":null,"nextContact":null},{"id":142,"lote":8,"nome":"Yasmin Correa","trt":"TRT 17","processo":"0000460-90.2025.5.17.0008","idHuggy":"436590447","checked":false,"contactDate":null,"nextContact":null},{"id":143,"lote":8,"nome":"Bruna Karla da Silva Ferreira Passos","trt":"TRT 17","processo":"0000867-75.2025.5.17.0015","idHuggy":"436594126","checked":false,"contactDate":null,"nextContact":null},{"id":144,"lote":8,"nome":"Francys Gabrihely Souza Cerqueira","trt":"TRT 17","processo":"0000604-52.2025.5.17.0012","idHuggy":"437144560","checked":false,"contactDate":null,"nextContact":null},{"id":145,"lote":8,"nome":"Deuzilane Lima da Cruz","trt":"TRT 17","processo":"0001140-84.2025.5.17.0005","idHuggy":"437152190","checked":false,"contactDate":null,"nextContact":null},{"id":146,"lote":8,"nome":"SARAH ARIDE DA CONCEICAO","trt":"TRT 17","processo":"0000300-50.2026.5.17.0131","idHuggy":"442762696","checked":false,"contactDate":null,"nextContact":null},{"id":147,"lote":8,"nome":"Jhaddy Nascimento Dos Santos Coutinho","trt":"TRT 17","processo":"0000534-22.2026.5.17.0005","idHuggy":"456557359","checked":false,"contactDate":null,"nextContact":null},{"id":148,"lote":8,"nome":"Keisa Lorrani Gonçalves de Oliveira","trt":"TRT 18","processo":"0000431-49.2026.5.18.0211","idHuggy":"435886855","checked":false,"contactDate":null,"nextContact":null},{"id":149,"lote":8,"nome":"Marcilene Fernandes Xavier","trt":"TRT 18","processo":"0000247-17.2026.5.18.0301","idHuggy":"437207855","checked":false,"contactDate":null,"nextContact":null},{"id":150,"lote":8,"nome":"Denise dos Santos Silva","trt":"TRT 18","processo":"0000258-76.2026.5.18.0291","idHuggy":"430450184","checked":false,"contactDate":null,"nextContact":null},{"id":151,"lote":8,"nome":"Raquel Borges da Silva Ferreira","trt":"TRT 18","processo":"0001515-46.2025.5.18.0009","idHuggy":"431841706","checked":false,"contactDate":null,"nextContact":null},{"id":152,"lote":8,"nome":"Marcela Werica Batista de Jesus","trt":"TRT 18","processo":"0000120-05.2026.5.18.0261","idHuggy":"431813539","checked":false,"contactDate":null,"nextContact":null},{"id":153,"lote":8,"nome":"Maria Eduarda Cristina Souza dos Santos","trt":"TRT 18","processo":"0001209-39.2025.5.18.0054","idHuggy":"435796564","checked":false,"contactDate":null,"nextContact":null},{"id":154,"lote":8,"nome":"Rayssa Veloso Garreto","trt":"TRT 18","processo":"0000319-16.2026.5.18.0103","idHuggy":"434093684","checked":false,"contactDate":null,"nextContact":null},{"id":155,"lote":8,"nome":"Ana Karoline Ferreira Dantas","trt":"TRT 18","processo":"0000609-95.2026.5.18.0017","idHuggy":"450848056","checked":false,"contactDate":null,"nextContact":null},{"id":156,"lote":8,"nome":"MARIA EDUARDA DUARTE DA SILVA","trt":"TRT 18","processo":"0000584-71.2026.5.18.0053","idHuggy":"444194065","checked":false,"contactDate":null,"nextContact":null},{"id":157,"lote":8,"nome":"Klivia Karoline de Oliveira Rodrigues","trt":"TRT 19","processo":"0001438-19.2025.5.19.0006","idHuggy":"437153359","checked":false,"contactDate":null,"nextContact":null},{"id":158,"lote":9,"nome":"Barbara Kelly Santos Bispo","trt":"TRT 20","processo":"0000293-52.2026.5.20.0009","idHuggy":"430572882","checked":false,"contactDate":null,"nextContact":null},{"id":159,"lote":9,"nome":"Leila Ketn dos Santos","trt":"TRT 20","processo":"0000331-80.2025.5.20.0015","idHuggy":"436586414","checked":false,"contactDate":null,"nextContact":null},{"id":160,"lote":9,"nome":"Mirian da Costa","trt":"TRT 21","processo":"0000583-65.2025.5.21.0012","idHuggy":"430092748","checked":false,"contactDate":null,"nextContact":null},{"id":161,"lote":9,"nome":"Maria Fabiana Silva Ferreira","trt":"TRT 23","processo":"0000654-15.2025.5.23.0076","idHuggy":"434341664","checked":false,"contactDate":null,"nextContact":null},{"id":162,"lote":9,"nome":"Alexandra Gomes Almeida","trt":"TRT 23","processo":"0000408-23.2025.5.23.0107","idHuggy":"430028569","checked":false,"contactDate":null,"nextContact":null},{"id":163,"lote":9,"nome":"Graziele Silva Borges","trt":"TRT 23","processo":"0000527-93.2025.5.23.0006","idHuggy":"437024016","checked":false,"contactDate":null,"nextContact":null},{"id":164,"lote":9,"nome":"Mariana de Lima Moraes","trt":"TRT 23","processo":"0001056-24.2025.5.23.0003","idHuggy":"431109547","checked":false,"contactDate":null,"nextContact":null},{"id":165,"lote":9,"nome":"Kedma Delfino Paiva","trt":"TRT 24","processo":"0024558-31.2026.5.24.0002","idHuggy":"444134365","checked":false,"contactDate":null,"nextContact":null},{"id":166,"lote":9,"nome":"Nathalya Camargo Tavares","trt":"TRT 24","processo":"0024646-69.2026.5.24.0002","idHuggy":"437064464","checked":false,"contactDate":null,"nextContact":null},{"id":167,"lote":9,"nome":"Thaissa Santos Assunção","trt":"TRT 24","processo":"0024639-65.2026.5.24.0006","idHuggy":"453599804","checked":false,"contactDate":null,"nextContact":null},{"id":168,"lote":9,"nome":"Ludmila Fernandes Nunes","trt":"TRT 24","processo":"0024514-03.2025.5.24.0081","idHuggy":"473169839","checked":false,"contactDate":null,"nextContact":null},{"id":169,"lote":9,"nome":"MARIELE FIRMINO DA SILVA","trt":"TRT 03","processo":"0010501-43.2026.5.03.0147","idHuggy":"428397890","checked":false,"contactDate":null,"nextContact":null},{"id":170,"lote":9,"nome":"Emilly Oliveira Pereira","trt":"TRT 15","processo":"0010782-75.2026.5.15.0046","idHuggy":"460250008","checked":false,"contactDate":null,"nextContact":null},{"id":171,"lote":9,"nome":"Yasmin Santos da Silva","trt":"TRT 04","processo":"0020473-06.2026.5.04.0019","idHuggy":"439053114","checked":false,"contactDate":null,"nextContact":null},{"id":172,"lote":9,"nome":"Crislei Andressa Poletto Sanches","trt":"TRT 09","processo":"0000845-14.2026.5.09.0012","idHuggy":"443615135","checked":false,"contactDate":null,"nextContact":null},{"id":173,"lote":9,"nome":"Sibele Iara Pereira Soares","trt":"TRT 15","processo":"0011247-22.2026.5.15.0002","idHuggy":"438130215","checked":false,"contactDate":null,"nextContact":null},{"id":174,"lote":9,"nome":"Paloma de Oliveira da Silva","trt":"TRT 15","processo":"0010433-98.2026.5.15.0102","idHuggy":"437106113","checked":false,"contactDate":null,"nextContact":null},{"id":175,"lote":9,"nome":"MARIA MONICA DE ARAUJO CUSTODIO","trt":"TRT 15","processo":"0010831-24.2026.5.15.0109","idHuggy":"446723691","checked":false,"contactDate":null,"nextContact":null},{"id":176,"lote":9,"nome":"Celia Crisostomo De Carvalho","trt":"TRT 17","processo":"0000041-57.2026.5.17.0001","idHuggy":"469107153","checked":false,"contactDate":null,"nextContact":null},{"id":177,"lote":9,"nome":"AMANDA DOS SANTOS NOGUEIRA","trt":"TRT 01","processo":"0100965-24.2026.5.01.0421","idHuggy":"470175894","checked":false,"contactDate":null,"nextContact":null},{"id":178,"lote":10,"nome":"Gecivania Miranda Costa de Souza","trt":"TRT 15","processo":"0011259-31.2026.5.15.0133","idHuggy":"449812415","checked":false,"contactDate":null,"nextContact":null},{"id":179,"lote":10,"nome":"Evellyn Eduarda da Silva Oliveira","trt":"TRT 02","processo":"1001319-66.2026.5.02.0204","idHuggy":"470177041","checked":false,"contactDate":null,"nextContact":null},{"id":180,"lote":10,"nome":"Benedita Ramos Oliveira","trt":"TRT 08","processo":"0000627-04.2026.5.08.0209","idHuggy":"436753149","checked":false,"contactDate":null,"nextContact":null},{"id":181,"lote":10,"nome":"Lauany Cristiane Pontes de Faria","trt":"TRT 09","processo":"0000871-75.2026.5.09.0670","idHuggy":"436337461","checked":false,"contactDate":null,"nextContact":null},{"id":182,"lote":10,"nome":"Maria Inislaine Bezerra Dos Santos","trt":"TRT 02","processo":"1001446-94.2026.5.02.0271","idHuggy":"470982210","checked":false,"contactDate":null,"nextContact":null},{"id":183,"lote":10,"nome":"Keila Rosa De Paula","trt":"TRT 04","processo":"0020413-38.2026.5.04.0373","idHuggy":"434247416","checked":false,"contactDate":null,"nextContact":null},{"id":184,"lote":10,"nome":"Ana Clara de Araújo","trt":"TRT 15","processo":"0011469-04.2026.5.15.0062","idHuggy":"471783682","checked":false,"contactDate":null,"nextContact":null},{"id":185,"lote":10,"nome":"Tatiane Mello Oliveira","trt":"TRT 09","processo":"0000708-53.2026.5.09.0684","idHuggy":"470969600","checked":false,"contactDate":null,"nextContact":null},{"id":186,"lote":10,"nome":"Aline Fernanda Martins","trt":"TRT 15","processo":"0011446-14.2026.5.15.0012","idHuggy":"467678911","checked":false,"contactDate":null,"nextContact":null},{"id":187,"lote":10,"nome":"Carmen Del Valle Jimenez Peraza","trt":"TRT 12","processo":"0001850-34.2026.5.12.0062","idHuggy":"473728469","checked":false,"contactDate":null,"nextContact":null}];
+let lotesA=ld("lotesA", JANAINA_DEFAULT.map(c=>({...c})));
+let lotesB=ld("lotesB",[]);
+let activeCartela="A";
+let lineChart=null;
+let confDone=false;
+
+// ─── BLOCKS ────────────────────────────────────────────────
+const blocks=[
+  {time:"08h00–08h15",title:"Montagem de pasta",dur:"~15min",durMin:15,icon:"📂",badge:"todo dia",badgeCls:"badge-green",
+   items:["Montar as pastas pendentes do dia (~15 min cada)","Não deixar acumular mais de 3 pastas"]},
+  {time:"08h15–09h15",title:"Audiências — avisos",dur:"~1h",durMin:60,icon:"⚖️",badge:"todo dia",badgeCls:"badge-green",
+   subs:[
+     {title:"Filtro 1 — próximos 7 dias",items:["Filtrar audiências dos próximos 7 dias","Identificar clientes ainda não avisadas","Enviar aviso no WhatsApp e registrar"]},
+     {title:"Filtro 2 — exatamente 1 mês à frente",items:["Ex: hoje 09/06 → filtrar audiências do dia 09/07","Avisar com 1 mês de antecedência","Registrar o aviso no sistema"]}
+   ],note:"Fazer sempre primeiro — audiência esquecida é urgência que quebra o dia."},
+  {time:"09h15–09h45",title:"Retorno de clientes — manhã",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
+   items:["Responder mensagens recebidas desde o dia anterior","Não deixar mensagem sem resposta antes dos andamentos"]},
+  {time:"09h45–11h15",title:"Andamentos — Dra. Janaína",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
+   items:["Entrar no tribunal de cada processo","Verificar andamento e anotar movimentações","Elaborar textinho de atualização (via ChatGPT)","Enviar mensagem no WhatsApp","Meta: 10 clientes — Dra. Janaína"],
+   note:"Mensagens urgentes nesse bloco: anotar e resolver no retorno das 13h45."},
+  {time:"11h15–12h45",title:"Andamentos — Dra. Vitória",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
+   items:["Mesma dinâmica — Dra. Janaína","Meta: 10 clientes — Dra. Vitória","Ritmo bom: avance para 15–20 clientes"],
+   note:"Sextas: feche as duas listas completas (20+20) se a pauta de réplicas for menor."},
+  {time:"12h45–13h45",title:"Almoço e pausa",dur:"1h",durMin:60,icon:"🍽️",badge:null,
+   items:["Pausa obrigatória — sem processos","Pode checar mensagens, mas sem resolver nada"]},
+  {time:"13h45–14h15",title:"Retorno de clientes — tarde",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
+   items:["Responder mensagens dos andamentos e do almoço","Resolver pendências simples da manhã"]},
+  {time:"14h15–18h00",title:"Prazos processuais",dur:"~3h45",durMin:225,icon:"⏰",badge:"todo dia",badgeCls:"badge-green",
+   items:["Priorizar prazos mais próximos primeiro","Réplicas: 1h30–2h cada → máximo 2 por tarde","Manifestações: ~30–40min cada → 4–5 por tarde","5 réplicas no dia: dividir (3 hoje, 2 amanhã)"],
+   note:"Nunca tente 3 réplicas num único dia — a qualidade cai e o prazo fica em risco."},
+  {time:"17h45–18h00",title:"Cobrança de ultrassom",dur:"~15min",durMin:15,icon:"🤰",badge:"dias alternados",badgeCls:"badge-pink",
+   items:["Abrir lista de mães com ultrassom pendente","Enviar mensagem no WhatsApp cobrando o ultrassom","Registrar: data + nº da cobrança (1ª, 2ª ou 3ª)","Na 3ª cobrança sem retorno → elaborar confissão de dívida e encaminhar ao cancelamento"],
+   highlight:"📅 Fazer apenas em: SEGUNDA · QUARTA · SEXTA",
+   note:"Terça e quinta: pula essa tarefa."},
+  {time:"18h00–18h30",title:"Retorno de clientes — fim do dia",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
+   items:["Responder mensagens que chegaram durante os prazos","Último retorno do dia — nenhuma cliente sem resposta"]},
+  {time:"18h30–19h00",title:"Fechamento do dia",dur:"30min",durMin:30,icon:"✅",badge:"todo dia",badgeCls:"badge-green",
+   items:["Verificar audiências do dia (máx. 5)","Confirmar subestabelecimento de cada audiência","Lançar prazos da ata no sistema","Abrir AASP e pegar publicações para a Dra. Gabrielly","Anotar pendências para amanhã"],
+   note:"Esse bloco encerra o expediente. Não abrir nova réplica depois das 18h30."}
+];
+
+const weekData=[
+  {day:"Seg",badge:"Padrão",items:["10 and. Janaína + 10 and. Vitória","~3 réplicas","Cobrança ultrassom ✓","Audiências"]},
+  {day:"Ter",badge:"Réplicas ↑",items:["10 and. Janaína + 10 and. Vitória","~5 réplicas*","Sem cobrança ultrassom","Audiências"]},
+  {day:"Qua",badge:"Padrão",items:["10 and. Janaína + 10 and. Vitória","~3 réplicas","Cobrança ultrassom ✓","Audiências"]},
+  {day:"Qui",badge:"Força total",items:["20 and. Janaína (se poss.)","20 and. Vitória (se poss.)","~2–3 réplicas","Sem cobrança ultrassom"]},
+  {day:"Sex",badge:"Adiantamento",items:["Fechar cartelas","Manifestações","Cobrança ultrassom ✓","Fechamento semanal"]}
+];
+
+// ─── DAY SELECTOR ──────────────────────────────────────────
+function buildDaySelector(){
+  const el=document.getElementById("day-selector"); el.innerHTML="";
+  DAYS.forEach(d=>{
+    const b=document.createElement("button");
+    b.className="day-btn"+(d===currentDay?" active":"");
+    b.textContent=d;
+    b.onclick=()=>switchDay(d);
+    el.appendChild(b);
+  });
+}
+function switchDay(d){
+  currentDay=d; sv("currentDay",d);
+  checked=ld("checked_"+d,{}); timers={};
+  buildDaySelector(); rebuildTimeline(); updateCat();
+}
+function resetDay(){
+  showConfirm("Zerar todas as tarefas de "+currentDay+"?", ()=>{
+    checked={}; sv("checked_"+currentDay,{}); timers={};
+    rebuildTimeline(); updateCat();
+  });
+}
+
+// ─── CAT ───────────────────────────────────────────────────
+function updateCat(){
+  const total=blocks.length,done=Object.values(checked).filter(Boolean).length;
+  const pct=Math.round((done/total)*100);
+  document.getElementById("cat-bar").style.width=pct+"%";
+  document.getElementById("cat-count").textContent=done+" de "+total+" tarefas concluídas";
+  const sl=document.getElementById("f-sleep"),hp=document.getElementById("f-happy"),lv=document.getElementById("f-love");
+  if(pct===100){sl.style.display="none";hp.style.display="none";lv.style.display="block";document.getElementById("cat-msg").textContent="Dia completo! Você arrasou! 🎉💕";launchConfetti();}
+  else if(pct>=50){sl.style.display="none";hp.style.display="block";lv.style.display="none";document.getElementById("cat-msg").textContent="Boa, tá indo muito bem! 🐱💖";}
+  else if(pct>0){sl.style.display="block";hp.style.display="none";lv.style.display="none";document.getElementById("cat-msg").textContent="Aquecendo os motores... 🌸";}
+  else{sl.style.display="block";hp.style.display="none";lv.style.display="none";document.getElementById("cat-msg").textContent="Vamos começar! 🌸";}
+}
+
+// ─── CONFETTI ──────────────────────────────────────────────
+function launchConfetti(){
+  if(confDone)return; confDone=true;
+  const canvas=document.getElementById("confetti-canvas");
+  canvas.style.display="block";
+  const ctx=canvas.getContext("2d");
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const colors=["#e91e8c","#f48fb1","#fff","#ffb6c1","#fce4ec","#c2185b","#ff80ab"];
+  const pieces=Array.from({length:130},()=>({x:Math.random()*canvas.width,y:-10-Math.random()*200,w:5+Math.random()*8,h:5+Math.random()*8,r:Math.random()*Math.PI*2,dr:(.04+Math.random()*.06)*(Math.random()<.5?1:-1),dy:2+Math.random()*3,dx:(Math.random()-.5)*2,color:colors[Math.floor(Math.random()*colors.length)]}));
+  let frame=0;
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.y+=p.dy;p.x+=p.dx;p.r+=p.dr;});frame++;if(frame<200)requestAnimationFrame(draw);else{ctx.clearRect(0,0,canvas.width,canvas.height);canvas.style.display="none";confDone=false;}}
+  draw();
+}
+
+// ─── TIMELINE ──────────────────────────────────────────────
+function rebuildTimeline(){
+  confDone=false;
+  const tl=document.getElementById("timeline"); tl.innerHTML="";
+  blocks.forEach((b,i)=>{
+    const ck=!!checked[i];
+    const bh=b.badge?`<span class="badge ${b.badgeCls||''}">${b.badge}</span>`:"";
+    const nh=b.note?`<div class="note">${b.note}</div>`:"";
+    const hlh=b.highlight?`<div class="highlight">${b.highlight}</div>`:"";
+    let bc="";
+    if(b.subs){b.subs.forEach(s=>{bc+=`<div class="sub-section"><div class="sub-title">${s.title}</div><ul>${s.items.map(it=>`<li>${it}</li>`).join("")}</ul></div>`;});}
+    else if(b.items){bc=`<ul>${b.items.map(it=>`<li>${it}</li>`).join("")}</ul>`;}
+    const dm=Math.floor(b.durMin),ds=Math.round((b.durMin%1)*60);
+    const th=`<div class="timer-wrap">
+      <div class="tdisp" id="td${i}">${pad(dm)}:${pad(ds)}</div>
+      <div class="tbar-bg"><div class="tbar" id="tb${i}" style="width:0%"></div></div>
+      <div class="tbtns">
+        <button class="tbtn primary" id="ts${i}" onclick="startT(${i})">▶ Iniciar</button>
+        <button class="tbtn" id="tp${i}" style="display:none" onclick="pauseT(${i})">⏸ Pausar</button>
+        <button class="tbtn" id="tf${i}" style="display:none" onclick="finishT(${i})">✓ Finalizar</button>
+      </div>
+      <div class="tover" id="to${i}">😿 Você ultrapassou o tempo desta tarefa!</div>
+    </div>`;
+    const div=document.createElement("div");
+    div.className="block"+(ck?" done":""); div.id="blk"+i;
+    div.innerHTML=`<div class="block-header">
+      <div class="chk${ck?" checked":""}" id="chk${i}" onclick="toggleChk(${i})">${ck?"✓":""}</div>
+      <div class="blk-icon">${b.icon}</div>
+      <div class="blk-meta" onclick="toggleBlk(${i})"><div class="blk-time">${b.time}</div><div class="blk-title">${b.title}${bh}</div></div>
+      <div class="blk-dur">${b.dur}</div>
+      <div class="chev" id="chev${i}" onclick="toggleBlk(${i})">▾</div>
+    </div>
+    <div class="blk-body" id="body${i}">${bc}${hlh}${th}${nh}</div>`;
+    tl.appendChild(div);
+  });
+}
+function toggleChk(i){
+  checked[i]=!checked[i]; sv("checked_"+currentDay,checked);
+  const btn=document.getElementById("chk"+i),blk=document.getElementById("blk"+i);
+  btn.classList.toggle("checked",checked[i]); btn.textContent=checked[i]?"✓":"";
+  blk.classList.toggle("done",checked[i]); updateCat();
+}
+function toggleBlk(i){document.getElementById("body"+i).classList.toggle("open");document.getElementById("chev"+i).classList.toggle("open");}
+
+// ─── TIMERS ────────────────────────────────────────────────
+function startT(i){
+  if(!timers[i])timers[i]={elapsed:0,running:false,interval:null};
+  if(timers[i].running)return;
+  timers[i].running=true; timers[i].startedAt=Date.now()-timers[i].elapsed*1000;
+  timers[i].interval=setInterval(()=>tickT(i),1000);
+  document.getElementById("ts"+i).style.display="none";
+  document.getElementById("tp"+i).style.display="inline-block";
+  document.getElementById("tf"+i).style.display="inline-block";
+}
+function pauseT(i){
+  if(!timers[i])return; clearInterval(timers[i].interval); timers[i].running=false;
+  timers[i].elapsed=Math.floor((Date.now()-timers[i].startedAt)/1000);
+  document.getElementById("ts"+i).style.display="inline-block";
+  document.getElementById("tp"+i).style.display="none";
+}
+function finishT(i){
+  if(timers[i]){clearInterval(timers[i].interval);timers[i]={elapsed:0,running:false,interval:null};}
+  const dm=Math.floor(blocks[i].durMin);
+  document.getElementById("td"+i).textContent=pad(dm)+":00";
+  document.getElementById("td"+i).classList.remove("over");
+  document.getElementById("tb"+i).style.width="0%"; document.getElementById("tb"+i).classList.remove("over");
+  document.getElementById("to"+i).classList.remove("show");
+  document.getElementById("ts"+i).style.display="inline-block";
+  document.getElementById("tp"+i).style.display="none";
+  document.getElementById("tf"+i).style.display="none";
+}
+function tickT(i){
+  const elapsed=Math.floor((Date.now()-timers[i].startedAt)/1000);
+  timers[i].elapsed=elapsed;
+  const durSec=blocks[i].durMin*60,disp=document.getElementById("td"+i),bar=document.getElementById("tb"+i),ov=document.getElementById("to"+i);
+  if(elapsed>=durSec){const ex=elapsed-durSec,m=Math.floor(ex/60),s=ex%60;disp.textContent="+"+pad(m)+":"+pad(s);disp.classList.add("over");bar.style.width="100%";bar.classList.add("over");ov.classList.add("show");}
+  else{const rem=durSec-elapsed,m=Math.floor(rem/60),s=rem%60;disp.textContent=pad(m)+":"+pad(s);disp.classList.remove("over");bar.style.width=Math.round((elapsed/durSec)*100)+"%";bar.classList.remove("over");ov.classList.remove("show");}
+}
+
+// ─── WEEK GRID ─────────────────────────────────────────────
+function buildWeekGrid(){
+  const el=document.getElementById("week-grid"); el.innerHTML="";
+  weekData.forEach(d=>{
+    const div=document.createElement("div"); div.className="day-card";
+    div.innerHTML=`<div class="day-name">${d.day}</div><span class="day-badge">${d.badge}</span>${d.items.map(it=>`<div class="day-item">• ${it}</div>`).join("")}`;
+    el.appendChild(div);
+  });
+}
+
+// ─── INSIGHTS ──────────────────────────────────────────────
+function buildInsights(){buildWeekTabs();buildMoodGrid();renderLineChart();}
+function buildWeekTabs(){
+  const el=document.getElementById("week-tabs"); el.innerHTML="";
+  ["Semana 1","Semana 2","Semana 3","Semana 4"].forEach((lb,i)=>{
+    const k="w"+i,btn=document.createElement("button");
+    btn.className="week-tab"+(k===currentWeek?" active":"");
+    btn.textContent=lb;
+    btn.onclick=()=>{currentWeek=k;buildMoodGrid();renderLineChart();buildWeekTabs();};
+    el.appendChild(btn);
+  });
+}
+function buildMoodGrid(){
+  const el=document.getElementById("mood-grid"); el.innerHTML="";
+  DAYS.forEach(d=>{
+    const saved=(weekInsights[currentWeek]||{})[d]||"";
+    const mObj=MOODS.find(m=>m.val===saved);
+    const div=document.createElement("div"); div.className="mood-day";
+    div.innerHTML=`<div class="mood-day-name">${d}</div>
+      <div class="mood-emoji" id="me-${d}">${mObj?mObj.emoji:"—"}</div>
+      <select class="mood-select" onchange="saveMood('${d}',this.value)">
+        <option value="">—</option>
+        ${MOODS.map(m=>`<option value="${m.val}"${saved===m.val?" selected":""}>${m.emoji} ${m.label}</option>`).join("")}
+      </select>`;
+    el.appendChild(div);
+  });
+}
+function saveMood(day,val){
+  if(!weekInsights[currentWeek])weekInsights[currentWeek]={};
+  weekInsights[currentWeek][day]=val; sv("weekInsights",weekInsights);
+  buildMoodGrid(); renderLineChart();
+}
+function resetInsights(){
+  showConfirm("Zerar registros da semana atual?", ()=>{
+    weekInsights[currentWeek]={}; sv("weekInsights",weekInsights);
+    buildMoodGrid(); renderLineChart();
+  });
+}
+
+function renderLineChart(){
+  const ctx=document.getElementById("line-chart");
+  const wdata=weekInsights[currentWeek]||{};
+  const labels=DAYS;
+  const scores=DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.score:null;});
+  const hasAny=scores.some(s=>s!==null);
+
+  // build datasets for all weeks as lines
+  const datasets=[];
+  const wColors=["#e91e8c","#f48fb1","#c2185b","#ff80ab"];
+  ["w0","w1","w2","w3"].forEach((k,wi)=>{
+    const wd=weekInsights[k]||{};
+    const sc=DAYS.map(d=>{const m=MOODS.find(x=>x.val===wd[d]);return m?m.score:null;});
+    if(sc.some(s=>s!==null)){
+      datasets.push({label:"Semana "+(wi+1),data:sc,borderColor:wColors[wi],backgroundColor:wColors[wi]+"33",pointBackgroundColor:wColors[wi],pointRadius:5,pointHoverRadius:7,fill:false,tension:.4,spanGaps:true});
+    }
+  });
+
+  if(lineChart){lineChart.destroy();lineChart=null;}
+  if(datasets.length===0){document.getElementById("insight-note").textContent="Registre os dias da semana para ver o gráfico aqui! 🌸";return;}
+
+  lineChart=new Chart(ctx,{type:"line",data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:"top",labels:{color:"#c2185b",font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:(c)=>{const m=MOODS.find(x=>x.score===c.raw);return c.dataset.label+": "+(m?m.emoji+" "+m.label:"—");}}}},scales:{y:{min:0,max:4.5,ticks:{stepSize:1,color:"#e991b8",font:{size:10},callback:(v)=>{const m=MOODS.find(x=>x.score===v);return m?m.emoji+" "+m.label:"";}},grid:{color:"#fce4ec"}},x:{ticks:{color:"#c2185b",font:{size:11,weight:"bold"}},grid:{color:"#fce4ec"}}}}});
+
+  const vals=DAYS.map(d=>MOODS.find(x=>x.val===wdata[d])?.score||0).filter(v=>v>0);
+  const avg=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+  const note=document.getElementById("insight-note");
+  if(avg>=3.5)note.textContent="Semana bem intensa! Tente redistribuir as réplicas 💪";
+  else if(avg>=2.5)note.textContent="Semana movimentada, mas dentro do esperado 🌸";
+  else if(avg>0)note.textContent="Semana tranquila — ótimo ritmo! 😊";
+  else note.textContent="Registre os dias da semana para ver o gráfico aqui! 🌸";
+
+  // legend
+  const lg=document.getElementById("chart-legend"); lg.innerHTML="";
+  MOODS.forEach(m=>{const s=document.createElement("span");s.style.cssText="font-size:11px;color:#555;display:flex;align-items:center;gap:3px";s.innerHTML=`<span style="width:9px;height:9px;border-radius:2px;background:${m.color};display:inline-block"></span>${m.emoji} ${m.label}`;lg.appendChild(s);});
+}
+
+// ─── LOTES ─────────────────────────────────────────────────
+function getLotes(){return activeCartela==="A"?lotesA:lotesB;}
+function saveLotes(){if(activeCartela==="A")sv("lotesA",lotesA);else sv("lotesB",lotesB);}
+function ensureSeqNums(){
+  // Assign global sequential numbers if missing
+  [lotesA, lotesB].forEach((arr, ai) => {
+    let changed = false;
+    arr.forEach((c, i) => {
+      if(!c.seq) { c.seq = i + 1; changed = true; }
+    });
+    if(changed){ if(ai===0) sv("lotesA",lotesA); else sv("lotesB",lotesB); }
+  });
+}
+function buildLoteFilters(curTrt, curLote){
+  const lotes=getLotes();
+  const trts=[...new Set(lotes.map(l=>l.trt).filter(Boolean))].sort();
+  const lotNums=[...new Set(lotes.map(l=>String(l.lote)))].sort((a,b)=>Number(a)-Number(b));
+  const trtSel=document.getElementById("filter-trt");
+  const _curTrt = curTrt !== undefined ? curTrt : trtSel.value;
+  trtSel.innerHTML=`<option value="">Todos os TRTs</option>`+trts.map(t=>`<option value="${t}"${_curTrt===t?" selected":""}>${t}</option>`).join("");
+  trtSel.value=_curTrt;
+  const loteSel=document.getElementById("filter-lote");
+  const _curLote = curLote !== undefined ? curLote : loteSel.value;
+  loteSel.innerHTML=`<option value="">Todos os lotes</option>`+lotNums.map(n=>`<option value="${n}"${_curLote==n?" selected":""}>${n}</option>`).join("");
+  loteSel.value=_curLote;
+}
+
+function renderLotes(){
+  // Read values BEFORE rebuilding filters
+  const filterTrt=document.getElementById("filter-trt").value;
+  const filterLote=document.getElementById("filter-lote").value;
+  const sortCol=document.getElementById("sort-col").value;
+  const viewMode=parseInt(document.getElementById("view-mode").value)||20;
+  buildLoteFilters(filterTrt, filterLote);
+  const lotes=getLotes();
+
+  let data=[...lotes];
+  const searchQ=(document.getElementById("search-lote")?.value||"").toLowerCase().trim();
+  if(filterTrt) data=data.filter(l=>l.trt===filterTrt);
+  if(filterLote) data=data.filter(l=>String(l.lote)===filterLote);
+  if(searchQ) data=data.filter(l=>l.nome.toLowerCase().includes(searchQ)||(l.processo||"").includes(searchQ)||(l.idHuggy||"").includes(searchQ));
+  if(sortCol==="trt") data.sort((a,b)=>a.trt.localeCompare(b.trt));
+  else if(sortCol==="next") data.sort((a,b)=>{if(!a.nextContact)return 1;if(!b.nextContact)return -1;return a.nextContact.localeCompare(b.nextContact);});
+  else if(sortCol==="seq") data.sort((a,b)=>(a.seq||0)-(b.seq||0));
+  else data.sort((a,b)=>a.lote-b.lote);
+
+  const cName=activeCartela==="A"?"Dra. Janaína":"Dra. Vitória";
+  document.getElementById("lotes-count").textContent=cName+" — "+data.length+" cliente(s)";
+  const tbody=document.getElementById("lotes-body"); tbody.innerHTML="";
+
+  // Group by lote number for display
+  const loteNums=[...new Set(data.map(r=>r.lote))].sort((a,b)=>a-b);
+  
+  loteNums.forEach(loteNum=>{
+    let loteData=data.filter(r=>r.lote===loteNum);
+    // Split by viewMode chunks (10 or 20)
+    const chunks=[];
+    for(let i=0;i<loteData.length;i+=viewMode) chunks.push(loteData.slice(i,i+viewMode));
+    
+    chunks.forEach((chunk,ci)=>{
+      // Lote header row
+      const headerTr=document.createElement("tr");
+      headerTr.innerHTML=`<td colspan="8" style="background:#e91e8c;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;text-align:left;letter-spacing:.3px;">
+        📋 Lote ${loteNum}${chunks.length>1?" — Parte "+(ci+1):""}
+        <span style="font-weight:400;opacity:.85;margin-left:8px">${chunk.filter(r=>r.checked).length}/${chunk.length} contatadas</span>
+      </td>`;
+      // spacing row before each lote group (except first)
+      tbody.appendChild(headerTr);
+
+      chunk.forEach((row,rowIdx)=>{
+        const idx=lotes.findIndex(l=>l.id===row.id);
+        const du=daysUntil(row.nextContact);
+        const ncClass=row.checked?(du!==null&&du<=3?"soon":du!==null&&du<=7?"ok":"pending"):"pending";
+        const ncText=row.nextContact?fmtDate(row.nextContact):"—";
+        const tr=document.createElement("tr");
+        if(row.checked) tr.className="checked-row";
+        const posNum=ci*viewMode+rowIdx+1;
+        tr.innerHTML=`
+          <td style="padding:10px 8px;text-align:center">
+            <span class="lote-num">${posNum}</span>
+            <div style="font-size:9px;color:#e8c4d0;margin-top:2px;line-height:1">lote ${loteNum}</div>
+          </td>
+          <td style="text-align:left;padding:12px 14px">
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">
+              <span class="trt-badge" style="flex-shrink:0">${row.trt}</span>
+              <span style="font-size:11px;color:#e8b4c8;font-weight:700;flex-shrink:0">#${row.seq||"—"}</span>
+              <span style="font-size:13px;font-weight:600;color:#1a1a1a;word-break:break-word">${row.nome}</span>
+            </div>
+          </td>
+          <td style="font-size:12px;color:#777;word-break:break-all;padding:12px 10px">${row.processo||"—"}</td>
+          <td style="font-size:12px;color:#888;padding:12px 10px">${row.idHuggy||"—"}</td>
+          <td class="date-cell">${row.contactDate?fmtDate(row.contactDate):"—"}</td>
+          <td><div class="row-chk${row.checked?" checked":""}" onclick="toggleRowChk(${idx})">${row.checked?"✓":""}</div></td>
+          <td><span class="next-contact ${ncClass}">${ncText}</span></td>
+          <td style="display:flex;gap:4px;justify-content:center;padding:10px 6px">
+            <button class="edit-btn" onclick="openEditModal(${idx})" title="Editar">✏️</button>
+            <button class="del-btn" onclick="deleteRow(${idx})">✕</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    });
+  });
+}
+
+function toggleRowChk(idx){
+  const lotes=getLotes();
+  lotes[idx].checked=!lotes[idx].checked;
+  if(lotes[idx].checked){
+    lotes[idx].contactDate=todayStr();
+    lotes[idx].nextContact=addBusinessDays(todayStr(),20);
+  } else {
+    lotes[idx].contactDate=null;
+    lotes[idx].nextContact=null;
+  }
+  saveLotes(); renderLotes();
+}
+
+function deleteRow(idx){
+  const lotes=getLotes();
+  showConfirm("Remover "+lotes[idx].nome+"?", ()=>{
+    lotes.splice(idx,1); saveLotes(); renderLotes();
+  });
+}
+
+function openModal(){document.getElementById("add-modal").classList.add("open");}
+function closeModal(){document.getElementById("add-modal").classList.remove("open");["m-lote","m-nome","m-proc","m-id"].forEach(id=>document.getElementById(id).value="");document.getElementById("m-trt").value="";}
+function saveModal(){
+  const lote=parseInt(document.getElementById("m-lote").value);
+  const nome=document.getElementById("m-nome").value.trim();
+  const trt=document.getElementById("m-trt").value;
+  const processo=document.getElementById("m-proc").value.trim();
+  const idHuggy=document.getElementById("m-id").value.trim();
+  if(!nome||!trt){alert("Nome e TRT são obrigatórios!");return;}
+  const lotes=getLotes();
+  const allLotes=[...lotesA,...lotesB];
+  const maxSeq = allLotes.length > 0 ? Math.max(...allLotes.map(c=>c.seq||0)) : 0;
+  lotes.push({id:Date.now(),lote:lote||1,nome,trt,processo,idHuggy,seq:maxSeq+1,checked:false,contactDate:null,nextContact:null});
+  saveLotes(); closeModal(); renderLotes();
+}
+
+let _confirmCb=null;
+function showConfirm(msg, cb){
+  _confirmCb=cb;
+  document.getElementById("confirm-msg").textContent=msg;
+  document.getElementById("confirm-yes-btn").onclick=()=>{closeConfirm();if(_confirmCb)_confirmCb();};
+  document.getElementById("confirm-overlay").classList.add("open");
+}
+function closeConfirm(){document.getElementById("confirm-overlay").classList.remove("open");}
+function openObsModal(idx){
+  document.getElementById("obs-aud-idx").value=idx;
+  document.getElementById("obs-text").value=audiencias[idx].observacao||"";
+  document.getElementById("obs-modal").classList.add("open");
+}
+function closeObsModal(){document.getElementById("obs-modal").classList.remove("open");}
+function saveObsModal(){
+  const idx=parseInt(document.getElementById("obs-aud-idx").value);
+  audiencias[idx].observacao=document.getElementById("obs-text").value.trim();
+  sv("audiencias",audiencias);
+  closeObsModal();
+  renderAud();
+}
+function switchCartela(c){
+  activeCartela=c;
+  document.getElementById("ctab-A").classList.toggle("active",c==="A");
+  document.getElementById("ctab-B").classList.toggle("active",c==="B");
+  // reset filters
+  document.getElementById("filter-trt").value="";
+  document.getElementById("filter-lote").value="";
+  document.getElementById("sort-col").value="lote";
+  renderLotes();
+}
+function openEditModal(idx){
+  const lotes=getLotes();
+  const row=lotes[idx];
+  document.getElementById("e-idx").value=idx;
+  document.getElementById("e-nome").value=row.nome||"";
+  document.getElementById("e-trt").value=row.trt||"";
+  document.getElementById("e-proc").value=row.processo||"";
+  document.getElementById("e-id").value=row.idHuggy||"";
+  document.getElementById("e-date").value=row.contactDate||"";
+  document.getElementById("edit-modal").classList.add("open");
+}
+function closeEditModal(){document.getElementById("edit-modal").classList.remove("open");}
+function saveEdit(){
+  const idx=parseInt(document.getElementById("e-idx").value);
+  const lotes=getLotes();
+  lotes[idx].nome=document.getElementById("e-nome").value.trim();
+  lotes[idx].trt=document.getElementById("e-trt").value;
+  lotes[idx].processo=document.getElementById("e-proc").value.trim();
+  lotes[idx].idHuggy=document.getElementById("e-id").value.trim();
+  const newDate=document.getElementById("e-date").value;
+  if(newDate){
+    lotes[idx].contactDate=newDate;
+    lotes[idx].checked=true;
+    lotes[idx].nextContact=addBusinessDays(newDate,20);
+  }
+  saveLotes(); closeEditModal(); renderLotes();
+}
+// ─── TABS ──────────────────────────────────────────────────
+function show(view,btn){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("view-"+view).classList.add("active");
+  btn.classList.add("active");
+  if(view==="insights")buildInsights();
+  if(view==="lotes")renderLotes();
+  if(view==="audiencias")renderAud();
+}
+
+// ─── INIT ──────────────────────────────────────────────────
+const AUD_DEFAULT=[{"id":1,"mes":"2026-06","data":"2026-06-01","adv":"DRA. JANAINA","cliente":"Luciana Fernanda Gasparelo","telefone":"14 99665-2620","idHuggy":"431723395","processo":"0012096-19.2025.5.15.0005","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":2,"mes":"2026-06","data":"2026-06-01","adv":"DRA. JANAINA","cliente":"Ana Julia Honorato Costa","telefone":"55 12 99727-8994","idHuggy":"431720183","processo":"0012008-33.2025.5.15.0020","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":3,"mes":"2026-06","data":"2026-06-02","adv":"DRA. JANAINA","cliente":"Caroline Gomes Barbosa","telefone":"77 99817-5059","idHuggy":"431681656","processo":"0001210-69.2025.5.05.0641","status":"pendente de resposta","observacao":"Recebe mensagem no corporativo e não retorna. Pedi para Jana tentar também.","semana":"SEMANA 01"},{"id":4,"mes":"2026-06","data":"2026-06-02","adv":"DRA. JANAINA","cliente":"Raissa Carolaine Tofanelli","telefone":"55 16 99405-3911","idHuggy":"431712594","processo":"0010245-07.2026.5.15.0070","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":5,"mes":"2026-06","data":"2026-06-03","adv":"DRA. JANAINA","cliente":"Yasmin Santos da Silva","telefone":"555195939594","idHuggy":"439053114","processo":"0020473-06.2026.5.04.0019","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":6,"mes":"2026-06","data":"2026-06-03","adv":"DRA. JANAINA","cliente":"Mariana Sousa Rocha","telefone":"554599595816","idHuggy":"441563533","processo":"0000383-59.2026.5.09.0658","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":7,"mes":"2026-06","data":"2026-06-03","adv":"DRA. JANAINA","cliente":"Elisangela de Fatima Adriano","telefone":"553598883154","idHuggy":"442637331","processo":"0010566-90.2026.5.03.0065","status":"confirmada","observacao":"","semana":"SEMANA 01"},{"id":8,"mes":"2026-06","data":"2026-06-08","adv":"DRA. JANAINA","cliente":"Thainá Naiumi de Souza","telefone":"5519994824829","idHuggy":"473339197","processo":"0010815-52.2025.5.15.0094","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":9,"mes":"2026-06","data":"2026-06-08","adv":"DRA. JANAINA","cliente":"Maria Cristalina Franco de Lima","telefone":"554396356212","idHuggy":"456538684","processo":"0000386-37.2026.5.09.0133","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":10,"mes":"2026-06","data":"2026-06-09","adv":"DRA. JANAINA","cliente":"Juliana Vasconcelos Nascimento","telefone":"559281828624","idHuggy":"458799127","processo":"0000514-84.2026.5.11.0009","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":11,"mes":"2026-06","data":"2026-06-11","adv":"DRA. JANAINA","cliente":"Mariane de Oliveira Moreira","telefone":"12 99614-0798","idHuggy":"431728893","processo":"0011296-88.2025.5.15.0102","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":12,"mes":"2026-06","data":"2026-06-11","adv":"DRA. JANAINA","cliente":"Paloma de Oliveira da Silva","telefone":"5512991313533","idHuggy":"437106113","processo":"0010433-98.2026.5.15.0102","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":13,"mes":"2026-06","data":"2026-06-11","adv":"DRA. VITÓRIA","cliente":"Natali Hene Fernandes Fontanelli","telefone":"556992083556","idHuggy":"469359256","processo":"0000302-10.2026.5.14.0032","status":"confirmada","observacao":"","semana":"SEMANA 02"},{"id":14,"mes":"2026-06","data":"2026-06-12","adv":"DRA. JANAINA","cliente":"Jhaddy Nascimento dos Santos Coutinho","telefone":"5527998887220","idHuggy":"456557359","processo":"0000534-22.2026.5.17.0005","status":"sem confirmação","observacao":"telegrama enviado","semana":"SEMANA 02"},{"id":15,"mes":"2026-06","data":"2026-06-15","adv":"DRA. JANAINA","cliente":"Angélica Cristina Silva","telefone":"19 98770-7278","idHuggy":"431729014","processo":"0012031-85.2025.5.15.0114","status":"pendente de resposta","observacao":"","semana":"SEMANA 03"},{"id":16,"mes":"2026-06","data":"2026-06-15","adv":"DRA. JANAINA","cliente":"Maria Eduarda Silva Gomes","telefone":"556392484935","idHuggy":"453231165","processo":"0000999-63.2026.5.10.0801","status":"confirmada","observacao":"","semana":"SEMANA 03"},{"id":17,"mes":"2026-06","data":"2026-06-15","adv":"DRA. VITÓRIA","cliente":"Ana Carolina de Paula Rosa","telefone":"554599798900","idHuggy":"448918381","processo":"0000540-53.2026.5.09.0069","status":"pendente de resposta","observacao":"","semana":"SEMANA 03"},{"id":18,"mes":"2026-06","data":"2026-06-16","adv":"DRA. VITÓRIA","cliente":"Natalia Viana da Silva","telefone":"55 11 95160-9370","idHuggy":"","processo":"1000103-90.2026.5.02.0262","status":"","observacao":"","semana":"SEMANA 03"},{"id":19,"mes":"2026-06","data":"2026-06-16","adv":"DRA. VITÓRIA","cliente":"Caren Vitoria de Souza Goncalves","telefone":"55 22 99915-7574","idHuggy":"","processo":"0100021-33.2026.5.01.0482","status":"","observacao":"","semana":"SEMANA 03"},{"id":20,"mes":"2026-06","data":"2026-06-16","adv":"DRA. VITÓRIA","cliente":"Weylliara Ingryd da Silva Ferreira","telefone":"55 31 98204-0963","idHuggy":"","processo":"0011559-33.2025.5.03.0142","status":"","observacao":"","semana":"SEMANA 03"},{"id":21,"mes":"2026-06","data":"2026-06-18","adv":"DRA. JANAINA","cliente":"Janine Alves Nogueira Nunes","telefone":"555195732490","idHuggy":"","processo":"0020257-53.2026.5.04.0372","status":"","observacao":"","semana":"SEMANA 03"},{"id":22,"mes":"2026-06","data":"2026-06-18","adv":"DRA. VITÓRIA","cliente":"Simone Mendonca","telefone":"556793025300","idHuggy":"","processo":"0024299-83.2026.5.24.0051","status":"","observacao":"","semana":"SEMANA 03"},{"id":23,"mes":"2026-06","data":"2026-06-18","adv":"DRA. VITÓRIA","cliente":"Mayanny Moreira Theodoro","telefone":"55 21 99850-4751","idHuggy":"","processo":"0000222-53.2026.5.17.0132","status":"","observacao":"","semana":"SEMANA 03"},{"id":24,"mes":"2026-06","data":"2026-06-23","adv":"DRA. JANAINA","cliente":"Einir Dias Silva","telefone":"34 99996-9987","idHuggy":"","processo":"0010009-85.2026.5.03.0071","status":"","observacao":"","semana":"SEMANA 04"},{"id":25,"mes":"2026-06","data":"2026-06-23","adv":"DRA. VITÓRIA","cliente":"Ana Clara Jesus Ferreira","telefone":"55 19 99295-0185","idHuggy":"","processo":"0012225-39.2025.5.15.0097","status":"","observacao":"","semana":"SEMANA 04"},{"id":26,"mes":"2026-06","data":"2026-06-23","adv":"DRA. VITÓRIA","cliente":"Janaina Alves Rodrigues da Silva","telefone":"55 11 98379-5407","idHuggy":"","processo":"1000637-97.2026.5.02.0047","status":"","observacao":"","semana":"SEMANA 04"},{"id":27,"mes":"2026-06","data":"2026-06-24","adv":"DRA. VITÓRIA","cliente":"Naiely Pereira Rosa","telefone":"55 19 99920-6327","idHuggy":"","processo":"0012149-27.2025.5.15.0093","status":"","observacao":"","semana":"SEMANA 04"},{"id":28,"mes":"2026-06","data":"2026-06-24","adv":"DRA. VITÓRIA","cliente":"Marcileia Goncalves da Silva","telefone":"(19) 98605-5146","idHuggy":"","processo":"0011730-60.2025.5.15.0043","status":"","observacao":"","semana":"SEMANA 04"},{"id":29,"mes":"2026-06","data":"2026-06-25","adv":"DRA. JANAINA","cliente":"Ana Caroline de Freitas Souza","telefone":"553597540787","idHuggy":"","processo":"0010732-74.2026.5.03.0178","status":"","observacao":"","semana":"SEMANA 04"},{"id":30,"mes":"2026-06","data":"2026-06-25","adv":"DRA. VITÓRIA","cliente":"Jackeline Pescador Soares","telefone":"55 49 99976-6149","idHuggy":"","processo":"0001614-34.2025.5.12.0057","status":"","observacao":"","semana":"SEMANA 04"},{"id":31,"mes":"2026-06","data":"2026-06-25","adv":"DRA. VITÓRIA","cliente":"Maria Kamila Fernandes de Almeida","telefone":"559291022213","idHuggy":"","processo":"0000651-45.2026.5.11.0016","status":"","observacao":"","semana":"SEMANA 04"},{"id":32,"mes":"2026-06","data":"2026-06-26","adv":"DRA. VITÓRIA","cliente":"Ananda dos Santos Costa","telefone":"556281490661","idHuggy":"","processo":"0000997-16.2026.5.18.0011","status":"","observacao":"","semana":"SEMANA 04"},{"id":33,"mes":"2026-06","data":"2026-06-29","adv":"DRA. JANAINA","cliente":"Vitoria Pereira Santos de Jesus","telefone":"5511992785447","idHuggy":"","processo":"1001299-61.2026.5.02.0241","status":"","observacao":"","semana":"SEMANA 05"},{"id":34,"mes":"2026-06","data":"2026-06-29","adv":"DRA. JANAINA","cliente":"Maria Monica de Araujo Custodio","telefone":"5511937520942","idHuggy":"","processo":"0010831-24.2026.5.15.0109","status":"","observacao":"","semana":"SEMANA 05"},{"id":35,"mes":"2026-06","data":"2026-06-30","adv":"DRA. JANAINA","cliente":"Echiley Medeiros Duarte Porcilio","telefone":"553298270011","idHuggy":"","processo":"0010709-39.2026.5.03.0143","status":"","observacao":"","semana":"SEMANA 05"},{"id":36,"mes":"2026-06","data":"2026-06-30","adv":"DRA. JANAINA","cliente":"Elen Oliveira de Andrade","telefone":"5551981826067","idHuggy":"","processo":"0020509-65.2025.5.04.0251","status":"","observacao":"","semana":"SEMANA 05"},{"id":37,"mes":"2026-06","data":"2026-06-30","adv":"DRA. VITÓRIA","cliente":"Ingrid Carolina Calixto Rodrigues","telefone":"55 11 96277-9688","idHuggy":"","processo":"1000568-96.2026.5.02.0263","status":"","observacao":"","semana":"SEMANA 05"},{"id":38,"mes":"2026-06","data":"2026-06-30","adv":"DRA. JANAINA","cliente":"Julia Carolina Soares Silva","telefone":"5519989370260","idHuggy":"","processo":"0010896-70.2026.5.15.0092","status":"","observacao":"","semana":"SEMANA 05"},{"id":39,"mes":"2026-06","data":"2026-06-30","adv":"DRA. JANAINA","cliente":"Kelly Maria Costa Tito","telefone":"554497369393","idHuggy":"","processo":"0000491-72.2026.5.12.0022","status":"","observacao":"","semana":"SEMANA 05"}];
+let audiencias=ld("audiencias", AUD_DEFAULT.map(a=>({...a})));
+
+function fmtDateBR(d){if(!d)return"—";const p=d.split("-");return pad(parseInt(p[2]))+"/"+pad(parseInt(p[1]))+"/"+p[0];}
+
+
+
+function statusClass(s){
+  if(s==="confirmada") return "s-confirmada";
+  if(s==="pendente de resposta") return "s-pendente";
+  if(s==="sem confirmação") return "s-sem";
+  return "s-vazio";
+}
+function renderAud(){
+  const mes=document.getElementById("aud-mes").value;
+  const dataFiltro=document.getElementById("aud-data-filter").value;
+  const adv=document.getElementById("aud-adv").value;
+  const status=document.getElementById("aud-status").value;
+  const q=(document.getElementById("aud-search").value||"").toLowerCase().trim();
+  let data=[...audiencias];
+  if(mes) data=data.filter(a=>a.data&&a.data.startsWith(mes));
+  if(dataFiltro) data=data.filter(a=>a.data===dataFiltro);
+  if(adv) data=data.filter(a=>a.adv===adv);
+  if(status) data=data.filter(a=>a.status===status);
+  if(q) data=data.filter(a=>a.cliente.toLowerCase().includes(q)||(a.processo||"").includes(q));
+  data.sort((a,b)=>a.data.localeCompare(b.data));
+  document.getElementById("aud-count").textContent=data.length+" audiência(s) encontrada(s)";
+  const tbody=document.getElementById("aud-body"); tbody.innerHTML="";
+  let lastDate="";
+  data.forEach(row=>{
+    const idx=audiencias.findIndex(a=>a.id===row.id);
+    if(row.data!==lastDate){
+      lastDate=row.data;
+      const dtr=document.createElement("tr"); dtr.className="aud-date-header";
+      dtr.innerHTML=`<td colspan="10">📅 ${fmtDateBR(row.data)}</td>`;
+      tbody.appendChild(dtr);
+    }
+    const advBadge=row.adv==="DRA. JANAINA"
+      ?'<span style="font-size:10px;font-weight:700;background:#fce4ec;color:#880e4f;border-radius:20px;padding:2px 7px;white-space:nowrap">Jana</span>'
+      :'<span style="font-size:10px;font-weight:700;background:#ede7f6;color:#4527a0;border-radius:20px;padding:2px 7px;white-space:nowrap">Vitória</span>';
+    const sc=statusClass(row.status);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td style="white-space:nowrap;font-size:11px">${fmtDateBR(row.data)}</td>
+      <td>${advBadge}</td>
+      <td style="text-align:left;font-weight:600;font-size:11px;word-break:break-word">${row.cliente}</td>
+      <td style="font-size:11px">${row.telefone||"—"}</td>
+      <td style="font-size:11px">${row.idHuggy||"—"}</td>
+      <td style="font-size:10px;word-break:break-all">${row.processo||"—"}</td>
+      <td>
+        <select class="status-select ${sc}" onchange="saveStatus(${idx},this.value,this)">
+          <option value="" ${!row.status?"selected":""}>— sem status —</option>
+          <option value="confirmada" ${row.status==="confirmada"?"selected":""}>✓ Confirmada</option>
+          <option value="pendente de resposta" ${row.status==="pendente de resposta"?"selected":""}>⏳ Pendente</option>
+          <option value="sem confirmação" ${row.status==="sem confirmação"?"selected":""}>✗ Sem confirm.</option>
+        </select>
+      </td>
+      <td style="font-size:11px">${row.semana||"—"}</td>
+      <td class="obs-cell" style="text-align:center">
+        <button onclick="openObsModal(${idx})" style="background:${row.observacao?'#fce4ec':'#f5f5f5'};border:1.5px solid ${row.observacao?'#f48fb1':'#ddd'};border-radius:8px;padding:3px 8px;font-size:10px;cursor:pointer;color:${row.observacao?'#c2185b':'#aaa'};max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;width:100%">
+          ${row.observacao?row.observacao.substring(0,20)+(row.observacao.length>20?"...":""):"+ obs"}
+        </button>
+      </td>
+      <td style="display:flex;gap:3px;justify-content:center;padding:7px 4px">
+        <button class="edit-btn" onclick="openAudModal(${idx})" title="Editar">✏️</button>
+        <button class="del-btn" onclick="delAud(${idx})">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+function saveStatus(idx,val,sel){
+  audiencias[idx].status=val;
+  sv("audiencias",audiencias);
+  sel.className="status-select "+statusClass(val);
+}
+
+function saveObs(idx,val){audiencias[idx].observacao=val;sv("audiencias",audiencias);}
+
+function openAudModal(idx){
+  document.getElementById("am-idx").value=idx!==undefined?idx:"";
+  if(idx!==undefined){
+    const a=audiencias[idx];
+    document.getElementById("am-cliente").value=a.cliente||"";
+    document.getElementById("am-adv").value=a.adv||"DRA. JANAINA";
+    document.getElementById("am-data").value=a.data||"";
+    document.getElementById("am-semana").value=a.semana||"SEMANA 01";
+    document.getElementById("am-proc").value=a.processo||"";
+    document.getElementById("am-tel").value=a.telefone||"";
+    document.getElementById("am-id").value=a.idHuggy||"";
+    document.getElementById("am-status").value=a.status||"";
+    document.getElementById("am-obs").value=a.observacao||"";
+  } else {
+    ["am-cliente","am-proc","am-tel","am-id","am-obs"].forEach(id=>document.getElementById(id).value="");
+    document.getElementById("am-adv").value="DRA. JANAINA";
+    document.getElementById("am-status").value="";
+    document.getElementById("am-semana").value="SEMANA 01";
+    document.getElementById("am-data").value="";
+  }
+  document.getElementById("aud-modal").classList.add("open");
+}
+function closeAudModal(){document.getElementById("aud-modal").classList.remove("open");}
+function saveAud(){
+  const idx=document.getElementById("am-idx").value;
+  const dataVal=document.getElementById("am-data").value;
+  const mes=dataVal?dataVal.substring(0,7):"";
+  const obj={
+    cliente:document.getElementById("am-cliente").value.trim(),
+    adv:document.getElementById("am-adv").value,
+    data:dataVal,mes,
+    semana:document.getElementById("am-semana").value,
+    processo:document.getElementById("am-proc").value.trim(),
+    telefone:document.getElementById("am-tel").value.trim(),
+    idHuggy:document.getElementById("am-id").value.trim(),
+    status:document.getElementById("am-status").value,
+    observacao:document.getElementById("am-obs").value.trim()
+  };
+  if(idx!==""){Object.assign(audiencias[parseInt(idx)],obj);}
+  else{obj.id=Date.now();audiencias.push(obj);}
+  sv("audiencias",audiencias);closeAudModal();renderAud();
+}
+function delAud(idx){
+  showConfirm("Remover audiência de "+audiencias[idx].cliente+"?",()=>{
+    audiencias.splice(idx,1);sv("audiencias",audiencias);renderAud();
+  });
+}
+
+ensureSeqNums();
+buildDaySelector();
+rebuildTimeline();
+buildWeekGrid();
+updateCat();
+</script>
+</body>
+</html>
