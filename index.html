@@ -583,20 +583,20 @@ input[type=file]{display:none}
     <p style="font-size:13px;color:#e991b8;margin-bottom:16px">Controle de contatos e entrega de ultrassom</p>
     <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
     <span style="font-size:13px;font-weight:700;color:#c2185b">Cartela:</span>
-    <button class="cartela-tab active" id="uctab-J" onclick="ultSwitchCartela('J')">🌸 Dra. Janaína</button>
-    <button class="cartela-tab" id="uctab-V" onclick="ultSwitchCartela('V')">💜 Dra. Vitória</button>
-    <button class="cartela-tab" id="uctab-all" onclick="ultSwitchCartela('all')">👥 Todas</button>
+    <button class="cartela-tab active" id="ult-ctab-J" onclick="ultSwitchCartela('J')">🌸 Dra. Janaína</button>
+    <button class="cartela-tab" id="ult-ctab-V" onclick="ultSwitchCartela('V')">💜 Dra. Vitória</button>
+    <button class="cartela-tab" id="ult-ctab-all" onclick="ultSwitchCartela('all')">👥 Todas</button>
   </div>
   <div class="toolbar">
-    <input type="text" id="search" placeholder="🔍 Buscar cliente..." oninput="render()">
-    <select id="filter-status" onchange="render()">
+    <input type="text" id="ult-search" placeholder="🔍 Buscar cliente..." oninput="ultRender()">
+    <select id="ult-filter-status" onchange="ultRender()">
       <option value="">Todos os status</option>
       <option value="promessa">Promessa de entrega</option>
       <option value="nao">Não responde</option>
       <option value="entregue">Entregue</option>
       <option value="cancelamento">Providência tomada</option>
     </select>
-    <select id="filter-contatos" onchange="render()">
+    <select id="ult-filter-contatos" onchange="ultRender()">
       <option value="">Todos os contatos</option>
       <option value="0">Sem contato ainda</option>
       <option value="1">1 contato</option>
@@ -605,12 +605,12 @@ input[type=file]{display:none}
       <option value="4">4 contatos</option>
       <option value="5">5 contatos (finalizado)</option>
     </select>
-    <button class="btn-primary" onclick="openAddModal()">+ Adicionar</button>
-    <button class="btn-sec" onclick="openChart()">📊 Gráfico</button>
-    <button class="btn-sec" onclick="gerarPDF()">📄 Gerar PDF</button>
+    <button class="btn-primary" onclick="ultOpenAddModal()">+ Adicionar</button>
+    <button class="btn-sec" onclick="ultOpenChart()">📊 Gráfico</button>
+    <button class="btn-sec" onclick="ultGerarPDF()">📄 Gerar PDF</button>
   </div>
-  <div class="count" id="count"></div>
-  <div class="cards" id="cards"></div>
+  <div class="count" id="ult-count"></div>
+  <div class="cards" id="ult-cards"></div>
   </div>
 
   <!-- AUDIENCIAS -->
@@ -1285,7 +1285,7 @@ function show(view,btn){
   if(view==="insights")buildInsights();
   if(view==="lotes")renderLotes();
   if(view==="audiencias")renderAud();
-  if(view==="ultrassom"){ultRender(); setTimeout(()=>ultRender(),500);}
+  if(view==="ultrassom"){ultRender();}
 }
 
 // ─── INIT ──────────────────────────────────────────────────
@@ -1425,81 +1425,81 @@ updateCat();
   <div class="confirm-box">
     <p id="ult-confirm-msg"></p>
     <div class="confirm-box-btns">
-      <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
+      <button class="confirm-no" onclick="ultCloseConfirm()">Cancelar</button>
       <button class="confirm-yes" id="ult-confirm-yes-btn">Confirmar</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="add-modal">
+<div class="modal-overlay" id="ult-add-modal">
   <div class="modal">
     <h3>🤰 Nova cliente — Pendente de Ultrassom</h3>
     <label>Advogada responsável</label>
-    <select id="m-resp"><option value="DRA. JANAINA">🌸 Dra. Janaína</option><option value="DRA. VITÓRIA">💜 Dra. Vitória</option></select>
+    <select id="ult-m-resp"><option value="DRA. JANAINA">🌸 Dra. Janaína</option><option value="DRA. VITÓRIA">💜 Dra. Vitória</option></select>
     <div class="modal-2col">
       <div>
         <label>Nome da cliente</label>
-        <input type="text" id="m-nome" placeholder="Nome completo"/>
+        <input type="text" id="ult-m-nome" placeholder="Nome completo"/>
       </div>
       <div>
         <label>ID Huggy</label>
-        <input type="text" id="m-id" placeholder="Ex: 441143889"/>
+        <input type="text" id="ult-m-id" placeholder="Ex: 441143889"/>
       </div>
     </div>
     <div class="modal-2col">
       <div>
         <label>Telefone</label>
-        <input type="text" id="m-tel" placeholder="Ex: 55 11 99999-9999"/>
+        <input type="text" id="ult-m-tel" placeholder="Ex: 55 11 99999-9999"/>
       </div>
       <div>
         <label>Data de entrada no pendente</label>
-        <input type="date" id="m-entrada"/>
+        <input type="date" id="ult-m-entrada"/>
       </div>
     </div>
     <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeAddModal()">Cancelar</button>
-      <button class="modal-save" onclick="saveAdd()">Cadastrar</button>
+      <button class="modal-cancel" onclick="ultCloseAddModal()">Cancelar</button>
+      <button class="modal-save" onclick="ultSaveAdd()">Cadastrar</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="edit-modal">
+<div class="modal-overlay" id="ult-edit-modal">
   <div class="modal">
     <h3>✏️ Editar cliente</h3>
-    <input type="hidden" id="em-idx"/>
+    <input type="hidden" id="ult-em-idx"/>
     <label>Nome da cliente</label>
-    <input type="text" id="em-nome" placeholder="Nome completo"/>
+    <input type="text" id="ult-em-nome" placeholder="Nome completo"/>
     <label>Advogada responsável</label>
-    <select id="em-resp">
+    <select id="ult-em-resp">
       <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
       <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
     </select>
     <div class="modal-2col">
       <div>
         <label>ID Huggy</label>
-        <input type="text" id="em-id" placeholder="Ex: 441143889"/>
+        <input type="text" id="ult-em-id" placeholder="Ex: 441143889"/>
       </div>
       <div>
         <label>Telefone</label>
-        <input type="text" id="em-tel" placeholder="Ex: 55 11 99999-9999"/>
+        <input type="text" id="ult-em-tel" placeholder="Ex: 55 11 99999-9999"/>
       </div>
     </div>
     <label>Data de entrada no pendente</label>
-    <input type="date" id="em-entrada"/>
+    <input type="date" id="ult-em-entrada"/>
     <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeEditModal()">Cancelar</button>
-      <button class="modal-save" onclick="saveEdit()">Salvar</button>
+      <button class="modal-cancel" onclick="ultCloseEditModal()">Cancelar</button>
+      <button class="modal-save" onclick="ultSaveEdit()">Salvar</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="chart-modal">
+<div class="modal-overlay" id="ult-chart-modal">
   <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto">
     <h3>📊 Gráficos — Pendentes de Ultrassom</h3>
     <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="cartela-tab active" id="ctab-chart-all" onclick="drawCharts('all')">👥 Todas</button>
-      <button class="cartela-tab" id="ctab-chart-J" onclick="drawCharts('J')">🌸 Dra. Janaína</button>
-      <button class="cartela-tab" id="ctab-chart-V" onclick="drawCharts('V')">💜 Dra. Vitória</button>
+      <button class="cartela-tab active" id="ult-ctab-chart-all" onclick="ultDrawCharts('all')">👥 Todas</button>
+      <button class="cartela-tab" id="ult-ctab-chart-J" onclick="ultDrawCharts('J')">🌸 Dra. Janaína</button>
+      <button class="cartela-tab" id="ult-ctab-chart-V" onclick="ultDrawCharts('V')">💜 Dra. Vitória</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
       <div>
@@ -1511,12 +1511,14 @@ updateCat();
         <canvas id="ult-chart2"></canvas>
       </div>
     </div>
-    <div id="chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
+    <div id="ult-chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
     <div class="modal-btns" style="margin-top:14px">
       <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
     </div>
   </div>
-</di// ── ULTRASSOM JS ──
+</div>
+<script>
+// ── ULTRASSOM JS ──
 
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function ld(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}}
@@ -1533,23 +1535,23 @@ function ultShowConfirm(msg,cb){_cb=cb;document.getElementById("ult-confirm-msg"
 function ultCloseConfirm(){document.getElementById("ult-confirm-overlay").classList.remove("open");}
 
 // ── ADD MODAL ──
-function openAddModal(){
-  ["m-nome","m-id","m-tel"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("m-entrada").value=todayStr();
-  document.getElementById("add-modal").classList.add("open");
+function ultOpenAddModal(){
+  ["ult-m-nome","ult-m-id","ult-m-tel"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("ult-m-entrada").value=todayStr();
+  document.getElementById("ult-add-modal").classList.add("open");
 }
-function closeAddModal(){document.getElementById("add-modal").classList.remove("open");}
-function saveAdd(){
-  const nome=document.getElementById("m-nome").value.trim();
+function ultCloseAddModal(){document.getElementById("ult-add-modal").classList.remove("open");}
+function ultSaveAdd(){
+  const nome=document.getElementById("ult-m-nome").value.trim();
   if(!nome){alert("Nome é obrigatório!");return;}
   clientes.push({
     id:Date.now(),
     seq:clientes.length+1,
     nome,
-    responsavel:document.getElementById("m-resp").value,
-    idHuggy:document.getElementById("m-id").value.trim(),
-    telefone:document.getElementById("m-tel").value.trim(),
-    entrada:document.getElementById("m-entrada").value,
+    responsavel:document.getElementById("ult-m-resp").value,
+    idHuggy:document.getElementById("ult-m-id").value.trim(),
+    telefone:document.getElementById("ult-m-tel").value.trim(),
+    entrada:document.getElementById("ult-m-entrada").value,
     contatos:[null,null,null,null,null],
     statusContatos:["","","","",""],
     observacao:"",
@@ -1558,24 +1560,24 @@ function saveAdd(){
     open:true
   });
   sv("ultrassom_clientes",clientes);
-  closeAddModal();
+  ultCloseAddModal();
   ultRender();
 }
 
 // ── STATUS ──
-function statusClass(s){
+function ultStatusClass(s){
   if(s==="promessa") return "s-promessa";
   if(s==="nao") return "s-nao";
   if(s==="entregue") return "s-entregue";
   return "s-vazio";
 }
-function statusLabel(s){
+function ultStatusLabel(s){
   if(s==="promessa") return "⏳ Promessa de entrega";
   if(s==="nao") return "✗ Não responde";
   if(s==="entregue") return "✓ Entregue";
   return "— sem status —";
 }
-function cardBadge(c){
+function ultCardBadge(c){
   const totalContatos=c.contatos.filter(Boolean).length;
   if(c.statusContatos.includes("entregue")) return "entregue";
   if(c.providencia) return "cancelamento";
@@ -1584,7 +1586,7 @@ function cardBadge(c){
 }
 
 // ── CONTATO ──
-function marcarContato(cIdx, cNum){
+function ultMarcarContato(cIdx, cNum){
   const c=clientes[cIdx];
   if(c.contatos[cNum]){
     ultShowConfirm("Desmarcar contato "+(cNum+1)+" de "+c.nome+"?",()=>{
@@ -1597,17 +1599,17 @@ function marcarContato(cIdx, cNum){
     sv("ultrassom_clientes",clientes);ultRender();
   }
 }
-function saveStatusContato(cIdx, cNum, val){
+function ultSaveStatusContato(cIdx, cNum, val){
   clientes[cIdx].statusContatos[cNum]=val;
   sv("ultrassom_clientes",clientes);
   // update select style
   const sel=document.getElementById(`sc-${cIdx}-${cNum}`);
-  if(sel) sel.className="contato-status "+statusClass(val);
+  if(sel) sel.className="contato-status "+ultStatusClass(val);
   // if entregue, re-render to update card border
   if(val==="entregue") ultRender();
 }
-function saveObs(cIdx, val){clientes[cIdx].observacao=val;sv("ultrassom_clientes",clientes);}
-function saveProvidencia(cIdx, val){
+function ultSaveObs(cIdx, val){clientes[cIdx].observacao=val;sv("ultrassom_clientes",clientes);}
+function ultSaveProvidencia(cIdx, val){
   clientes[cIdx].providencia=val;
   sv("ultrassom_clientes",clientes);
   // update obs text
@@ -1621,7 +1623,7 @@ function saveProvidencia(cIdx, val){
 }
 
 // ── EVIDÊNCIAS ──
-function uploadEvidencia(cIdx){
+function ultUploadEvidencia(cIdx){
   const input=document.createElement("input");
   input.type="file";
   input.accept="image/*,application/pdf";
@@ -1633,31 +1635,31 @@ function uploadEvidencia(cIdx){
       if(!clientes[cIdx].evidencias) clientes[cIdx].evidencias=[];
       clientes[cIdx].evidencias.push({name:file.name,type:file.type,data:ev.target.result});
       sv("ultrassom_clientes",clientes);
-      renderEvidencias(cIdx);
+      ultRenderEvidencias(cIdx);
     };
     reader.readAsDataURL(file);
   };
   input.click();
 }
-function deleteEvidencia(cIdx, eIdx){
+function ultDeleteEvidencia(cIdx, eIdx){
   clientes[cIdx].evidencias.splice(eIdx,1);
   sv("ultrassom_clientes",clientes);
-  renderEvidencias(cIdx);
+  ultRenderEvidencias(cIdx);
 }
-function renderEvidencias(cIdx){
+function ultRenderEvidencias(cIdx){
   const el=document.getElementById(`ev-list-${cIdx}`);
   if(!el) return;
   const evs=clientes[cIdx].evidencias||[];
   el.innerHTML=evs.map((e,ei)=>`
     <div class="file-item">
       <a href="${e.data}" target="_blank" title="${e.name}">${e.name.length>25?e.name.substring(0,25)+"...":e.name}</a>
-      <button class="file-del" onclick="deleteEvidencia(${cIdx},${ei})">✕</button>
+      <button class="file-del" onclick="ultDeleteEvidencia(${cIdx},${ei})">✕</button>
     </div>`).join("")+
-    `<label class="file-upload-btn" onclick="uploadEvidencia(${cIdx})">📎 Anexar PDF ou imagem</label>`;
+    `<label class="file-upload-btn" onclick="ultUploadEvidencia(${cIdx})">📎 Anexar PDF ou imagem</label>`;
 }
 
 // ── TOGGLE CARD ──
-function toggleCard(cIdx){
+function ultToggleCard(cIdx){
   clientes[cIdx].open=!clientes[cIdx].open;
   sv("ultrassom_clientes",clientes);
   const body=document.getElementById(`body-${cIdx}`);
@@ -1667,7 +1669,7 @@ function toggleCard(cIdx){
 }
 
 // ── DELETE ──
-function deleteCliente(cIdx){
+function ultDeleteCliente(cIdx){
   ultShowConfirm("Remover "+clientes[cIdx].nome+" do controle?",()=>{
     clientes.splice(cIdx,1);
     clientes.forEach((c,i)=>c.seq=i+1);
@@ -1677,30 +1679,30 @@ function deleteCliente(cIdx){
 
 // ── RENDER ──
 // ── EDIT ──
-function openEditModal(cIdx){
+function ultOpenEditModal(cIdx){
   const c=clientes[cIdx];
-  document.getElementById("em-idx").value=cIdx;
-  document.getElementById("em-nome").value=c.nome||"";
-  document.getElementById("em-resp").value=c.responsavel||"DRA. JANAINA";
-  document.getElementById("em-id").value=c.idHuggy||"";
-  document.getElementById("em-tel").value=c.telefone||"";
-  document.getElementById("em-entrada").value=c.entrada||"";
-  document.getElementById("edit-modal").classList.add("open");
+  document.getElementById("ult-em-idx").value=cIdx;
+  document.getElementById("ult-em-nome").value=c.nome||"";
+  document.getElementById("ult-em-resp").value=c.responsavel||"DRA. JANAINA";
+  document.getElementById("ult-em-id").value=c.idHuggy||"";
+  document.getElementById("ult-em-tel").value=c.telefone||"";
+  document.getElementById("ult-em-entrada").value=c.entrada||"";
+  document.getElementById("ult-edit-modal").classList.add("open");
 }
-function closeEditModal(){document.getElementById("edit-modal").classList.remove("open");}
-function saveEdit(){
-  const idx=parseInt(document.getElementById("em-idx").value);
-  clientes[idx].nome=document.getElementById("em-nome").value.trim();
-  clientes[idx].responsavel=document.getElementById("em-resp").value;
-  clientes[idx].idHuggy=document.getElementById("em-id").value.trim();
-  clientes[idx].telefone=document.getElementById("em-tel").value.trim();
-  clientes[idx].entrada=document.getElementById("em-entrada").value;
+function ultCloseEditModal(){document.getElementById("ult-edit-modal").classList.remove("open");}
+function ultSaveEdit(){
+  const idx=parseInt(document.getElementById("ult-em-idx").value);
+  clientes[idx].nome=document.getElementById("ult-em-nome").value.trim();
+  clientes[idx].responsavel=document.getElementById("ult-em-resp").value;
+  clientes[idx].idHuggy=document.getElementById("ult-em-id").value.trim();
+  clientes[idx].telefone=document.getElementById("ult-em-tel").value.trim();
+  clientes[idx].entrada=document.getElementById("ult-em-entrada").value;
   sv("ultrassom_clientes",clientes);
-  closeEditModal(); ultRender();
+  ultCloseEditModal(); ultRender();
 }
 
 // ── RESET STATUS ──
-function resetCliente(cIdx){
+function ultResetCliente(cIdx){
   ultShowConfirm("Zerar todos os contatos e status de "+clientes[cIdx].nome+"?",()=>{
     clientes[cIdx].contatos=[null,null,null,null,null];
     clientes[cIdx].statusContatos=["","","","",""];
@@ -1711,14 +1713,14 @@ function resetCliente(cIdx){
 
 // ── CHART ──
 let ultChart1=null, ultChart2=null;
-let ultChartCartela="all";
+let chartCartela="all";
 
-function openChart(){
-  document.getElementById("chart-modal").classList.add("open");
-  setTimeout(()=>drawCharts("all"),100);
+function ultOpenChart(){
+  document.getElementById("ult-chart-modal").classList.add("open");
+  setTimeout(()=>ultDrawCharts("all"),100);
 }
 
-function getChartData(cartela){
+function ultGetChartData(cartela){
   const data = cartela==="J" ? clientes.filter(c=>c.responsavel==="DRA. JANAINA")
               : cartela==="V" ? clientes.filter(c=>c.responsavel==="DRA. VITÓRIA")
               : clientes;
@@ -1732,14 +1734,14 @@ function getChartData(cartela){
   };
 }
 
-function drawCharts(cartela){
-  ultChartCartela=cartela;
+function ultDrawCharts(cartela){
+  chartCartela=cartela;
   // update tab buttons
   ["all","J","V"].forEach(k=>{
     const btn=document.getElementById("ctab-chart-"+k);
     if(btn) btn.classList.toggle("active",k===cartela);
   });
-  const d=getChartData(cartela);
+  const d=ultGetChartData(cartela);
 
   // Chart 1: Donut - sem contato vs com contato
   const ctx1=document.getElementById("ult-chart1");
@@ -1778,7 +1780,7 @@ function drawCharts(cartela){
   });
 
   // Stats cards
-  const stats=document.getElementById("chart-stats");
+  const stats=document.getElementById("ult-chart-stats");
   stats.innerHTML=[
     {label:"Total",val:d.total,color:"#e91e8c"},
     {label:"✓ Entregues",val:d.entregues,color:"#2e7d32"},
@@ -1792,7 +1794,7 @@ function drawCharts(cartela){
 }
 
 // ── PDF ──
-function makeStatsHTML(d, label){
+function ultMakeStatsHTML(d, label){
   return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin:8px 0">'+
     '<span style="background:#fce4ec;color:#880e4f;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">'+label+'</span>'+
     '<span style="background:#e8f5e9;color:#2e7d32;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">✓ Entregues: '+d.entregues+'</span>'+
@@ -1801,7 +1803,7 @@ function makeStatsHTML(d, label){
     '<span style="background:#fce4ec;color:#e91e8c;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">Total: '+d.total+'</span>'+
   '</div>';
 }
-function makeTableHTML(data){
+function ultMakeTableHTML(data){
   if(!data.length) return '<p style="color:#aaa;font-size:12px">Nenhuma cliente.</p>';
   const rows=data.map((c,i)=>{
     const conts=c.contatos.map((d,n)=>{
@@ -1814,36 +1816,36 @@ function makeTableHTML(data){
   }).join("");
   return '<table><thead><tr><th>#</th><th>Nome</th><th>ID</th><th>Telefone</th><th>Entrada</th><th>Contatos</th><th>Providência</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
-function gerarPDF(){
+function ultGerarPDF(){
   const hoje=fmtDate(todayStr());
-  const dJana=getChartData("J"); const cJana=clientes.filter(c=>c.responsavel==="DRA. JANAINA");
-  const dVit=getChartData("V");  const cVit=clientes.filter(c=>c.responsavel==="DRA. VITÓRIA");
-  const dAll=getChartData("all");
+  const dJana=ultGetChartData("J"); const cJana=clientes.filter(c=>c.responsavel==="DRA. JANAINA");
+  const dVit=ultGetChartData("V");  const cVit=clientes.filter(c=>c.responsavel==="DRA. VITÓRIA");
+  const dAll=ultGetChartData("all");
 
   const content=
     '<h1 style="color:#c2185b;font-size:18px;margin-bottom:4px">🤰 Relatório — Pendentes de Ultrassom</h1>'+
     '<div style="font-size:12px;color:#888;margin-bottom:16px">Gerado em '+hoje+' | Total geral: '+dAll.total+' clientes</div>'+
-    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">📊 Resumo Geral</h2>'+makeStatsHTML(dAll,"Todas")+
-    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Resumo</h2>'+makeStatsHTML(dJana,"Dra. Janaína")+
-    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Clientes ('+cJana.length+')</h2>'+makeTableHTML(cJana)+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">📊 Resumo Geral</h2>'+ultMakeStatsHTML(dAll,"Todas")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Resumo</h2>'+ultMakeStatsHTML(dJana,"Dra. Janaína")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Clientes ('+cJana.length+')</h2>'+ultMakeTableHTML(cJana)+
     '<div style="page-break-before:always"></div>'+
-    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Resumo</h2>'+makeStatsHTML(dVit,"Dra. Vitória")+
-    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Clientes ('+cVit.length+')</h2>'+makeTableHTML(cVit);
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Resumo</h2>'+ultMakeStatsHTML(dVit,"Dra. Vitória")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Clientes ('+cVit.length+')</h2>'+ultMakeTableHTML(cVit);
 
   // Create a hidden printable div inside the page
-  let printDiv=document.getElementById("print-area");
+  let printDiv=document.getElementById("ult-print-area");
   if(!printDiv){
     printDiv=document.createElement("div");
-    printDiv.id="print-area";
+    printDiv.id="ult-print-area";
     document.body.appendChild(printDiv);
   }
   printDiv.innerHTML=content;
   
   // Add print styles if not already there
-  let printStyle=document.getElementById("print-style");
+  let printStyle=document.getElementById("ult-print-style");
   if(!printStyle){
     printStyle=document.createElement("style");
-    printStyle.id="print-style";
+    printStyle.id="ult-print-style";
     printStyle.textContent=
       "@media print{"+
         "body > *:not(#print-area){display:none!important}"+
@@ -1863,15 +1865,15 @@ function gerarPDF(){
 let ultActiveCartela="J";
 function ultSwitchCartela(c){
   ultActiveCartela=c;
-  document.getElementById("uctab-J").classList.toggle("active",c==="J");
-  document.getElementById("uctab-V").classList.toggle("active",c==="V");
-  document.getElementById("uctab-all").classList.toggle("active",c==="all");
+  document.getElementById("ult-ctab-J").classList.toggle("active",c==="J");
+  document.getElementById("ult-ctab-V").classList.toggle("active",c==="V");
+  document.getElementById("ult-ctab-all").classList.toggle("active",c==="all");
   ultRender();
 }
 function ultRender(){
-  const q=(document.getElementById("search").value||"").toLowerCase().trim();
-  const fs=document.getElementById("filter-status").value;
-  const fc=document.getElementById("filter-contatos").value;
+  const q=(document.getElementById("ult-search").value||"").toLowerCase().trim();
+  const fs=document.getElementById("ult-filter-status").value;
+  const fc=document.getElementById("ult-filter-contatos").value;
 
   let data=clientes.map((c,i)=>({...c,_idx:i}));
   if(ultActiveCartela==="J") data=data.filter(c=>c.responsavel==="DRA. JANAINA");
@@ -1893,15 +1895,15 @@ function ultRender(){
 
   const jTotal=clientes.filter(c=>c.responsavel==="DRA. JANAINA").length;
   const vTotal=clientes.filter(c=>c.responsavel==="DRA. VITÓRIA").length;
-  document.getElementById("count").textContent=data.length+" cliente(s) | Janaína: "+jTotal+" | Vitória: "+vTotal+" | Total: "+clientes.length;
+  document.getElementById("ult-count").textContent=data.length+" cliente(s) | Janaína: "+jTotal+" | Vitória: "+vTotal+" | Total: "+clientes.length;
 
-  const container=document.getElementById("cards");
+  const container=document.getElementById("ult-cards");
   container.innerHTML="";
 
   data.forEach(c=>{
     const cIdx=c._idx;
     const totalContatos=c.contatos.filter(Boolean).length;
-    const badge=cardBadge(c);
+    const badge=ultCardBadge(c);
     const badgeHtml=badge==="entregue"
       ?'<span class="badge badge-contatos">✓ Entregue</span>'
       :badge==="cancelamento"
@@ -1920,7 +1922,7 @@ function ultRender(){
       const provHtml = n===4&&isDone ? (
         '<div class="providencia-box">'+
         '<div class="providencia-label">⚖️ Providência tomada</div>'+
-        '<select class="providencia-select" onchange="saveProvidencia('+cIdx+',this.value)">'+
+        '<select class="providencia-select" onchange="ultSaveProvidencia('+cIdx+',this.value)">'+
         '<option value=""'+((!c.providencia)?' selected':'')+'>— selecionar —</option>'+
         '<option value="nao_assinada"'+((c.providencia==="nao_assinada")?' selected':'')+'>Confissão enviada — não assinada</option>'+
         '<option value="assinada"'+((c.providencia==="assinada")?' selected':'')+'>Confissão enviada — assinada</option>'+
@@ -1933,8 +1935,8 @@ function ultRender(){
       const disabledAttr = !isDone ? " disabled" : "";
       return '<div class="'+boxClass+'">'+
         '<div class="contato-num">'+CLABELS[n]+'</div>'+
-        '<button class="'+btnClass+'" onclick="marcarContato('+cIdx+','+n+')">'+btnLabel+'</button>'+
-        '<select class="contato-status '+statusClass(sc)+'" id="sc-'+cIdx+'-'+n+'" onchange="saveStatusContato('+cIdx+','+n+',this.value)"'+disabledAttr+'>'+
+        '<button class="'+btnClass+'" onclick="ultMarcarContato('+cIdx+','+n+')">'+btnLabel+'</button>'+
+        '<select class="contato-status '+ultStatusClass(sc)+'" id="sc-'+cIdx+'-'+n+'" onchange="ultSaveStatusContato('+cIdx+','+n+',this.value)"'+disabledAttr+'>'+
         '<option value=""'+(!sc?' selected':'')+'>— status —</option>'+
         '<option value="promessa"'+(sc==="promessa"?' selected':'')+'>⏳ Promessa</option>'+
         '<option value="nao"'+(sc==="nao"?' selected':'')+'>✗ Não responde</option>'+
@@ -1951,7 +1953,7 @@ function ultRender(){
     const card=document.createElement("div");
     card.className=cardClass;
     card.innerHTML=
-      '<div class="card-header" onclick="toggleCard('+cIdx+')">'+
+      '<div class="card-header" onclick="ultToggleCard('+cIdx+')">'+
         '<div class="card-num">'+c.seq+'</div>'+
         '<div class="card-info">'+
           '<div class="card-name">'+c.nome+' <span class="resp-badge '+respClass+'">'+respLabel+'</span></div>'+
@@ -1965,7 +1967,7 @@ function ultRender(){
         '<div class="extras-grid">'+
           '<div class="extra-box">'+
             '<div class="extra-label">📝 Observação</div>'+
-            '<textarea class="obs-ta" placeholder="Escreva uma observação sobre essa cliente..." onchange="saveObs('+cIdx+',this.value)">'+(c.observacao||"")+'</textarea>'+
+            '<textarea class="obs-ta" placeholder="Escreva uma observação sobre essa cliente..." onchange="ultSaveObs('+cIdx+',this.value)">'+(c.observacao||"")+'</textarea>'+
           '</div>'+
           '<div class="extra-box">'+
             '<div class="extra-label">📎 Evidências</div>'+
@@ -1974,19 +1976,16 @@ function ultRender(){
         '</div>'+
         '<div style="display:flex;justify-content:flex-end;margin-top:10px">'+
           '<div style="display:flex;gap:8px">'+
-          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="openEditModal('+cIdx+')">✏️ Editar</button>'+
-          '<button class="btn-sec" style="font-size:12px;padding:6px 14px;color:#e65100;border-color:#ffcc80" onclick="resetCliente('+cIdx+')">↺ Reset status</button>'+
-          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="deleteCliente('+cIdx+')">✕ Remover</button>'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="ultOpenEditModal('+cIdx+')">✏️ Editar</button>'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px;color:#e65100;border-color:#ffcc80" onclick="ultResetCliente('+cIdx+')">↺ Reset status</button>'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="ultDeleteCliente('+cIdx+')">✕ Remover</button>'+
         '</div>'+
         '</div>'+
       '</div>';
     container.appendChild(card);
-    renderEvidencias(cIdx);
+    ultRenderEvidencias(cIdx);
   });
 }
-
-ultRender();
-
 
 ultRender();
 
