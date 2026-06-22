@@ -577,115 +577,15 @@ input[type=file]{display:none}
       </table>
     </div>
   </div>
-
   <!-- ULTRASSOM -->
   <div class="view" id="view-ultrassom">
     <h2 style="font-size:18px;font-weight:700;color:#c2185b;margin-bottom:4px">🤰 Pendentes de Ultrassom</h2>
     <p style="font-size:13px;color:#e991b8;margin-bottom:16px">Controle de contatos e entrega de ultrassom</p>
-    <div class="confirm-overlay" id="confirm-overlay">
-  <div class="confirm-box">
-    <p id="confirm-msg"></p>
-    <div class="confirm-box-btns">
-      <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
-      <button class="confirm-yes" id="confirm-yes-btn">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="add-modal">
-  <div class="modal">
-    <h3>🤰 Nova cliente — Pendente de Ultrassom</h3>
-    <label>Advogada responsável</label>
-    <select id="m-resp"><option value="DRA. JANAINA">🌸 Dra. Janaína</option><option value="DRA. VITÓRIA">💜 Dra. Vitória</option></select>
-    <div class="modal-2col">
-      <div>
-        <label>Nome da cliente</label>
-        <input type="text" id="m-nome" placeholder="Nome completo"/>
-      </div>
-      <div>
-        <label>ID Huggy</label>
-        <input type="text" id="m-id" placeholder="Ex: 441143889"/>
-      </div>
-    </div>
-    <div class="modal-2col">
-      <div>
-        <label>Telefone</label>
-        <input type="text" id="m-tel" placeholder="Ex: 55 11 99999-9999"/>
-      </div>
-      <div>
-        <label>Data de entrada no pendente</label>
-        <input type="date" id="m-entrada"/>
-      </div>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeAddModal()">Cancelar</button>
-      <button class="modal-save" onclick="saveAdd()">Cadastrar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal">
-    <h3>✏️ Editar cliente</h3>
-    <input type="hidden" id="em-idx"/>
-    <label>Nome da cliente</label>
-    <input type="text" id="em-nome" placeholder="Nome completo"/>
-    <label>Advogada responsável</label>
-    <select id="em-resp">
-      <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
-      <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
-    </select>
-    <div class="modal-2col">
-      <div>
-        <label>ID Huggy</label>
-        <input type="text" id="em-id" placeholder="Ex: 441143889"/>
-      </div>
-      <div>
-        <label>Telefone</label>
-        <input type="text" id="em-tel" placeholder="Ex: 55 11 99999-9999"/>
-      </div>
-    </div>
-    <label>Data de entrada no pendente</label>
-    <input type="date" id="em-entrada"/>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeEditModal()">Cancelar</button>
-      <button class="modal-save" onclick="saveEdit()">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="chart-modal">
-  <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto">
-    <h3>📊 Gráficos — Pendentes de Ultrassom</h3>
-    <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
-      <button class="cartela-tab active" id="ctab-chart-all" onclick="drawCharts('all')">👥 Todas</button>
-      <button class="cartela-tab" id="ctab-chart-J" onclick="drawCharts('J')">🌸 Dra. Janaína</button>
-      <button class="cartela-tab" id="ctab-chart-V" onclick="drawCharts('V')">💜 Dra. Vitória</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Contatos realizados</div>
-        <canvas id="ult-chart1"></canvas>
-      </div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Status de entrega</div>
-        <canvas id="ult-chart2"></canvas>
-      </div>
-    </div>
-    <div id="chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
-    <div class="modal-btns" style="margin-top:14px">
-      <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
-    </div>
-  </div>
-</div>
-
-
-
-  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
     <span style="font-size:13px;font-weight:700;color:#c2185b">Cartela:</span>
-    <button class="cartela-tab active" id="ctab-J" onclick="switchCartela('J')">🌸 Dra. Janaína</button>
-    <button class="cartela-tab" id="ctab-V" onclick="switchCartela('V')">💜 Dra. Vitória</button>
-    <button class="cartela-tab" id="ctab-all" onclick="switchCartela('all')">👥 Todas</button>
+    <button class="cartela-tab active" id="uctab-J" onclick="ultSwitchCartela('J')">🌸 Dra. Janaína</button>
+    <button class="cartela-tab" id="uctab-V" onclick="ultSwitchCartela('V')">💜 Dra. Vitória</button>
+    <button class="cartela-tab" id="uctab-all" onclick="ultSwitchCartela('all')">👥 Todas</button>
   </div>
   <div class="toolbar">
     <input type="text" id="search" placeholder="🔍 Buscar cliente..." oninput="render()">
@@ -711,7 +611,6 @@ input[type=file]{display:none}
   </div>
   <div class="count" id="count"></div>
   <div class="cards" id="cards"></div>
-
   </div>
 
   <!-- AUDIENCIAS -->
@@ -1386,7 +1285,7 @@ function show(view,btn){
   if(view==="insights")buildInsights();
   if(view==="lotes")renderLotes();
   if(view==="audiencias")renderAud();
-  if(view==="ultrassom")render();
+  if(view==="ultrassom"){ultRender(); setTimeout(()=>ultRender(),500);}
 }
 
 // ─── INIT ──────────────────────────────────────────────────
@@ -1522,6 +1421,16 @@ rebuildTimeline();
 buildWeekGrid();
 updateCat();
 </script>
+<div class="confirm-overlay" id="ult-confirm-overlay">
+  <div class="confirm-box">
+    <p id="ult-confirm-msg"></p>
+    <div class="confirm-box-btns">
+      <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
+      <button class="confirm-yes" id="ult-confirm-yes-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
     <h3>🤰 Nova cliente — Pendente de Ultrassom</h3>
@@ -1607,12 +1516,7 @@ updateCat();
       <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
     </div>
   </div>
-</div>
-
-
-
-<script>
-// ── ULTRASSOM JS ──
+</di// ── ULTRASSOM JS ──
 
 function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function ld(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}}
@@ -1625,8 +1529,8 @@ let clientes = ld("ultrassom_clientes", ULTRASSOM_DEFAULT.map(c=>({...c})));
 
 // ── CONFIRM ──
 let _cb=null;
-function showConfirm(msg,cb){_cb=cb;document.getElementById("confirm-msg").textContent=msg;document.getElementById("confirm-yes-btn").onclick=()=>{closeConfirm();if(_cb)_cb();};document.getElementById("confirm-overlay").classList.add("open");}
-function closeConfirm(){document.getElementById("confirm-overlay").classList.remove("open");}
+function ultShowConfirm(msg,cb){_cb=cb;document.getElementById("ult-confirm-msg").textContent=msg;document.getElementById("ult-confirm-yes-btn").onclick=()=>{ultCloseConfirm();if(_cb)_cb();};document.getElementById("ult-confirm-overlay").classList.add("open");}
+function ultCloseConfirm(){document.getElementById("ult-confirm-overlay").classList.remove("open");}
 
 // ── ADD MODAL ──
 function openAddModal(){
@@ -1655,7 +1559,7 @@ function saveAdd(){
   });
   sv("ultrassom_clientes",clientes);
   closeAddModal();
-  render();
+  ultRender();
 }
 
 // ── STATUS ──
@@ -1683,14 +1587,14 @@ function cardBadge(c){
 function marcarContato(cIdx, cNum){
   const c=clientes[cIdx];
   if(c.contatos[cNum]){
-    showConfirm("Desmarcar contato "+(cNum+1)+" de "+c.nome+"?",()=>{
+    ultShowConfirm("Desmarcar contato "+(cNum+1)+" de "+c.nome+"?",()=>{
       c.contatos[cNum]=null;
       c.statusContatos[cNum]="";
-      sv("ultrassom_clientes",clientes);render();
+      sv("ultrassom_clientes",clientes);ultRender();
     });
   } else {
     c.contatos[cNum]=todayStr();
-    sv("ultrassom_clientes",clientes);render();
+    sv("ultrassom_clientes",clientes);ultRender();
   }
 }
 function saveStatusContato(cIdx, cNum, val){
@@ -1700,7 +1604,7 @@ function saveStatusContato(cIdx, cNum, val){
   const sel=document.getElementById(`sc-${cIdx}-${cNum}`);
   if(sel) sel.className="contato-status "+statusClass(val);
   // if entregue, re-render to update card border
-  if(val==="entregue") render();
+  if(val==="entregue") ultRender();
 }
 function saveObs(cIdx, val){clientes[cIdx].observacao=val;sv("ultrassom_clientes",clientes);}
 function saveProvidencia(cIdx, val){
@@ -1713,7 +1617,7 @@ function saveProvidencia(cIdx, val){
     else if(val==="assinada") obsEl.textContent="📌 Cliente enviada para cancelamento.";
     else obsEl.textContent="";
   }
-  render();
+  ultRender();
 }
 
 // ── EVIDÊNCIAS ──
@@ -1764,10 +1668,10 @@ function toggleCard(cIdx){
 
 // ── DELETE ──
 function deleteCliente(cIdx){
-  showConfirm("Remover "+clientes[cIdx].nome+" do controle?",()=>{
+  ultShowConfirm("Remover "+clientes[cIdx].nome+" do controle?",()=>{
     clientes.splice(cIdx,1);
     clientes.forEach((c,i)=>c.seq=i+1);
-    sv("ultrassom_clientes",clientes);render();
+    sv("ultrassom_clientes",clientes);ultRender();
   });
 }
 
@@ -1792,22 +1696,22 @@ function saveEdit(){
   clientes[idx].telefone=document.getElementById("em-tel").value.trim();
   clientes[idx].entrada=document.getElementById("em-entrada").value;
   sv("ultrassom_clientes",clientes);
-  closeEditModal(); render();
+  closeEditModal(); ultRender();
 }
 
 // ── RESET STATUS ──
 function resetCliente(cIdx){
-  showConfirm("Zerar todos os contatos e status de "+clientes[cIdx].nome+"?",()=>{
+  ultShowConfirm("Zerar todos os contatos e status de "+clientes[cIdx].nome+"?",()=>{
     clientes[cIdx].contatos=[null,null,null,null,null];
     clientes[cIdx].statusContatos=["","","","",""];
     clientes[cIdx].providencia="";
-    sv("ultrassom_clientes",clientes); render();
+    sv("ultrassom_clientes",clientes); ultRender();
   });
 }
 
 // ── CHART ──
 let ultChart1=null, ultChart2=null;
-let chartCartela="all";
+let ultChartCartela="all";
 
 function openChart(){
   document.getElementById("chart-modal").classList.add("open");
@@ -1829,7 +1733,7 @@ function getChartData(cartela){
 }
 
 function drawCharts(cartela){
-  chartCartela=cartela;
+  ultChartCartela=cartela;
   // update tab buttons
   ["all","J","V"].forEach(k=>{
     const btn=document.getElementById("ctab-chart-"+k);
@@ -1956,22 +1860,22 @@ function gerarPDF(){
   window.print();
 }
 
-let activeCartela="J";
-function switchCartela(c){
-  activeCartela=c;
-  document.getElementById("ctab-J").classList.toggle("active",c==="J");
-  document.getElementById("ctab-V").classList.toggle("active",c==="V");
-  document.getElementById("ctab-all").classList.toggle("active",c==="all");
-  render();
+let ultActiveCartela="J";
+function ultSwitchCartela(c){
+  ultActiveCartela=c;
+  document.getElementById("uctab-J").classList.toggle("active",c==="J");
+  document.getElementById("uctab-V").classList.toggle("active",c==="V");
+  document.getElementById("uctab-all").classList.toggle("active",c==="all");
+  ultRender();
 }
-function render(){
+function ultRender(){
   const q=(document.getElementById("search").value||"").toLowerCase().trim();
   const fs=document.getElementById("filter-status").value;
   const fc=document.getElementById("filter-contatos").value;
 
   let data=clientes.map((c,i)=>({...c,_idx:i}));
-  if(activeCartela==="J") data=data.filter(c=>c.responsavel==="DRA. JANAINA");
-  else if(activeCartela==="V") data=data.filter(c=>c.responsavel==="DRA. VITÓRIA");
+  if(ultActiveCartela==="J") data=data.filter(c=>c.responsavel==="DRA. JANAINA");
+  else if(ultActiveCartela==="V") data=data.filter(c=>c.responsavel==="DRA. VITÓRIA");
   if(q) data=data.filter(c=>c.nome.toLowerCase().includes(q)||(c.idHuggy||"").includes(q)||(c.telefone||"").includes(q));
   if(fs){
     data=data.filter(c=>{
@@ -2081,7 +1985,10 @@ function render(){
   });
 }
 
-render();
+ultRender();
+
+
+ultRender();
 
 </script>
 </body>
