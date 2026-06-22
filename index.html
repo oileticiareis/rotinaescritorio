@@ -202,94 +202,104 @@ table thead th{position:sticky;top:0}
   .cat-section{flex-direction:column;text-align:center}
 }
 </style>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script>
+// ── JSONBIN CLOUD SYNC ──
+const JSONBIN_KEY = "$2a$10$yAfgbdIxVjyUNk3hl14x2epxRi5jhAwTqMS68F3uxA5HVri4x9TJq";
+const JSONBIN_BASE = "https://api.jsonbin.io/v3";
+let binIds = {};
+let syncStatus = null;
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAn4-1CF-67vcB5hgjXHzahm5VOKgd9KDc",
-    authDomain: "rotina-9f9cc.firebaseapp.com",
-    projectId: "rotina-9f9cc",
-    storageBucket: "rotina-9f9cc.firebasestorage.app",
-    messagingSenderId: "211988352818",
-    appId: "1:211988352818:web:1ba838485e13198243112b"
-  };
+function showSync(msg, color="#e91e8c"){
+  if(!syncStatus) syncStatus = document.getElementById("sync-status");
+  if(syncStatus){ syncStatus.textContent = msg; syncStatus.style.background = color; }
+}
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+// Save to JSONBin
+async function cloudSave(key, value){
+  try{
+    if(binIds[key]){
+      await fetch(JSONBIN_BASE+"/b/"+binIds[key], {
+        method:"PUT",
+        headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY},
+        body: JSON.stringify({key, data: value})
+      });
+    } else {
+      const res = await fetch(JSONBIN_BASE+"/b", {
+        method:"POST",
+        headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY,"X-Bin-Name":key,"X-Bin-Private":"false"},
+        body: JSON.stringify({key, data: value})
+      });
+      const json = await res.json();
+      binIds[key] = json.metadata?.id;
+      // save binIds locally
+      localStorage.setItem("binIds", JSON.stringify(binIds));
+    }
+  } catch(e){ console.error("cloudSave error:", e); }
+}
 
-  // Save to Firestore
-  window.fbSave = async function(key, value) {
-    try {
-      await setDoc(doc(db, "rotina", key), { data: JSON.stringify(value) });
-    } catch(e) { console.error("fbSave error:", e); }
-  };
+// Load from JSONBin
+async function cloudLoad(key){
+  try{
+    if(!binIds[key]) return null;
+    const res = await fetch(JSONBIN_BASE+"/b/"+binIds[key]+"/latest", {
+      headers:{"X-Master-Key":JSONBIN_KEY}
+    });
+    const json = await res.json();
+    return json.record?.data ?? null;
+  } catch(e){ return null; }
+}
 
-  // Load from Firestore
-  window.fbLoad = async function(key) {
-    try {
-      const snap = await getDoc(doc(db, "rotina", key));
-      if(snap.exists()) return JSON.parse(snap.data().data);
-      return null;
-    } catch(e) { console.error("fbLoad error:", e); return null; }
-  };
+// Override sv() to also save to cloud
+const _origSv = window.sv;
+window.sv = function(k, v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+  cloudSave(k, v);
+};
 
-  // Migrate from localStorage to Firestore (runs once)
-  window.fbMigrate = async function() {
-    const keys = [
-      "currentDay","weekInsights","lotes","lotesA","lotesB","audiencias",
-      "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
-    ];
-    let migrated = false;
-    for(const key of keys) {
-      const local = localStorage.getItem(key);
-      if(local) {
-        const cloudVal = await window.fbLoad(key);
-        if(!cloudVal) { // only migrate if not already in cloud
-          await window.fbSave(key, JSON.parse(local));
-          migrated = true;
-          console.log("Migrated:", key);
-        }
+// Load all data from cloud on startup
+const SYNC_KEYS = [
+  "currentDay","weekInsights","lotesA","lotesB","audiencias",
+  "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
+];
+
+async function initCloud(){
+  showSync("⏳ Conectando...");
+  
+  // Load saved bin IDs
+  const savedBinIds = localStorage.getItem("binIds");
+  if(savedBinIds) binIds = JSON.parse(savedBinIds);
+
+  // If no bins yet, create them from localStorage data
+  let hasBins = Object.keys(binIds).length > 0;
+  
+  if(hasBins){
+    // Load from cloud
+    showSync("⏳ Carregando dados...");
+    for(const key of SYNC_KEYS){
+      const val = await cloudLoad(key);
+      if(val !== null){
+        localStorage.setItem(key, JSON.stringify(val));
       }
     }
-    if(migrated) {
-      console.log("Migração concluída!");
-      document.getElementById("sync-status").textContent = "✅ Dados migrados para a nuvem!";
-      setTimeout(()=>document.getElementById("sync-status").textContent="☁️ Nuvem ativa",3000);
+    showSync("☁️ Nuvem ativa", "#2e7d32");
+  } else {
+    // First time - migrate localStorage to cloud
+    showSync("⏳ Salvando na nuvem...");
+    for(const key of SYNC_KEYS){
+      const local = localStorage.getItem(key);
+      if(local){
+        await cloudSave(key, JSON.parse(local));
+      }
     }
-    return true;
-  };
+    showSync("✅ Dados salvos na nuvem!", "#2e7d32");
+    setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"), 3000);
+  }
+  
+  // Re-init app with fresh data
+  if(typeof initApp === "function") initApp();
+}
 
-  // Load all data from cloud on startup
-  window.fbLoadAll = async function() {
-    document.getElementById("sync-status").textContent = "⏳ Carregando dados...";
-    const keys = [
-      "currentDay","weekInsights","lotesA","lotesB","audiencias",
-      "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
-    ];
-    for(const key of keys) {
-      const val = await window.fbLoad(key);
-      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
-    }
-    await window.fbMigrate();
-    document.getElementById("sync-status").textContent = "☁️ Nuvem ativa";
-    // Re-init the app after loading
-    if(typeof initApp === "function") initApp();
-  };
-
-  // Override sv() to also save to Firebase
-  const _origSv = window.sv;
-  window.sv = function(k, v) {
-    // Save to localStorage as backup
-    try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
-    // Save to Firebase
-    window.fbSave(k, v);
-  };
-
-  // Start loading from cloud
-  window.addEventListener("load", () => {
-    window.fbLoadAll();
-  });
+window.addEventListener("load", initCloud);
 </script>
 </head>
 <body>
@@ -1352,13 +1362,13 @@ function delAud(idx){
   });
 }
 
-function initApp() {
+function initApp(){{
   ensureSeqNums();
   buildDaySelector();
   rebuildTimeline();
   buildWeekGrid();
   updateCat();
-}
+}}
 initApp();
 </script>
 </body>
