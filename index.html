@@ -201,90 +201,122 @@ table thead th{position:sticky;top:0}
   .mood-grid{grid-template-columns:repeat(3,1fr)}
   .cat-section{flex-direction:column;text-align:center}
 }
+
+/* ── ULTRASSOM ── */
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fff0f5;color:#1a1a1a}
+.container{max-width:1100px;margin:0 auto;padding:28px 32px}
+h1{font-size:20px;font-weight:700;color:#c2185b;margin-bottom:4px}
+.subtitle{font-size:13px;color:#e991b8;margin-bottom:20px}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:8px 14px;border-radius:20px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff;outline:none}
+.btn-primary{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+.btn-primary:hover{background:#c2185b}
+.btn-sec{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c}
+.btn-sec:hover{background:#fce4ec}
+.count{font-size:13px;color:#e991b8;margin-bottom:10px}
+
+/* CARDS */
+.cards{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:1.5px solid #f8bbd0;border-radius:16px;overflow:hidden;transition:border-color .2s}
+.card.entregue{border-color:#a5d6a7}
+.card.cancelamento{border-color:#ef9a9a}
+
+/* CARD HEADER */
+.card-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;background:#fff}
+.card-header:hover{background:#fff8fb}
+.card-num{width:32px;height:32px;border-radius:50%;background:#e91e8c;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-info{flex:1}
+.card-name{font-size:14px;font-weight:700;color:#1a1a1a}
+.card-meta{font-size:12px;color:#e991b8;margin-top:2px}
+.card-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.badge-entrada{background:#fce4ec;color:#880e4f}
+.badge-contatos{background:#e8f5e9;color:#2e7d32}
+.badge-pendente{background:#fff3e0;color:#e65100}
+.badge-cancel{background:#ffebee;color:#c62828}
+.chev{font-size:13px;color:#f48fb1;transition:transform .2s;flex-shrink:0}
+.chev.open{transform:rotate(180deg)}
+
+/* CARD BODY */
+.card-body{display:none;padding:0 18px 18px 18px;border-top:1px solid #fce4ec}
+.card-body.open{display:block}
+
+/* CONTATOS GRID */
+.contatos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.contato-box{background:#fff0f5;border:1.5px solid #f8bbd0;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.contato-box.done{border-color:#f48fb1;background:#fff8fb}
+.contato-box.entregue-box{border-color:#a5d6a7;background:#f1f8f1}
+.contato-num{font-size:11px;font-weight:700;color:#e991b8;text-transform:uppercase;letter-spacing:.04em}
+.contato-data-btn{padding:6px 0;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px dashed #f8bbd0;background:#fff;color:#c2185b;width:100%;text-align:center;transition:all .2s}
+.contato-data-btn:hover{background:#fce4ec;border-style:solid}
+.contato-data-btn.filled{border-style:solid;border-color:#f48fb1;background:#fce4ec;color:#880e4f}
+.contato-status{width:100%;border:1.5px solid #f8bbd0;border-radius:8px;padding:5px 6px;font-size:11px;font-weight:700;outline:none;cursor:pointer;background:#fff}
+.contato-status.s-promessa{background:#fff3e0;color:#e65100;border-color:#ffcc80}
+.contato-status.s-nao{background:#ffebee;color:#c62828;border-color:#ef9a9a}
+.contato-status.s-entregue{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
+.contato-status.s-vazio{background:#f5f5f5;color:#999}
+
+/* EVIDENCIA + OBS */
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.extra-box{background:#fff0f5;border:1.5px solid #f8bbd0;border-radius:12px;padding:12px}
+.extra-label{font-size:11px;font-weight:700;color:#e991b8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.obs-ta{width:100%;border:1.5px solid #f8bbd0;border-radius:8px;padding:8px 10px;font-size:12px;color:#1a1a1a;background:#fff;outline:none;resize:vertical;min-height:70px;font-family:Arial,sans-serif}
+.obs-ta:focus{border-color:#e91e8c}
+.file-list{display:flex;flex-direction:column;gap:5px}
+.file-item{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #f8bbd0;border-radius:8px;padding:5px 9px;font-size:12px;color:#555}
+.file-item a{color:#c2185b;text-decoration:none;font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item a:hover{text-decoration:underline}
+.file-del{background:none;border:none;cursor:pointer;color:#f48fb1;font-size:13px;padding:0 3px}
+.file-del:hover{color:#e91e8c}
+.file-upload-btn{display:block;width:100%;padding:7px;border-radius:8px;border:1.5px dashed #f8bbd0;background:#fff;color:#e991b8;font-size:12px;font-weight:700;cursor:pointer;text-align:center;margin-top:6px}
+.file-upload-btn:hover{background:#fce4ec;border-color:#f48fb1;color:#c2185b}
+input[type=file]{display:none}
+
+/* PROVIDÊNCIA (5º contato) */
+.providencia-box{background:#fff0f5;border:2px solid #e91e8c;border-radius:12px;padding:14px;margin-top:12px}
+.providencia-label{font-size:12px;font-weight:700;color:#c2185b;margin-bottom:8px}
+.providencia-select{width:100%;border:1.5px solid #f8bbd0;border-radius:8px;padding:8px 10px;font-size:12px;font-weight:700;outline:none;cursor:pointer;background:#fff;color:#1a1a1a;margin-bottom:8px}
+.providencia-obs{font-size:12px;color:#880e4f;background:#fce4ec;border-radius:8px;padding:8px 10px;line-height:1.6;min-height:36px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:14px;padding:22px 24px;width:100%;max-width:480px;border:1.5px solid #f8bbd0}
+.modal h3{font-size:15px;font-weight:700;color:#c2185b;margin-bottom:16px}
+.modal label{font-size:11px;color:#e991b8;font-weight:700;display:block;margin-bottom:4px;margin-top:12px}
+.modal input,.modal select,.modal textarea{width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff0f5;outline:none;box-sizing:border-box;font-family:Arial,sans-serif}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:#e91e8c}
+.modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-btns{display:flex;gap:8px;margin-top:18px;justify-content:flex-end}
+.modal-cancel{padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.modal-save{padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+
+/* CONFIRM */
+.cartela-tab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid #f8bbd0;background:#fff;color:#c2185b;transition:all .15s}
+.cartela-tab.active{background:#e91e8c;color:#fff;border-color:#e91e8c}
+.cartela-tab:hover{background:#fce4ec}
+.resp-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px}
+.resp-jana{background:#fce4ec;color:#880e4f}
+.resp-vit{background:#ede7f6;color:#4527a0}
+.confirm-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:#fff;border-radius:16px;padding:24px 22px;width:88%;max-width:340px;border:1.5px solid #f8bbd0;text-align:center}
+.confirm-box p{font-size:14px;color:#1a1a1a;margin-bottom:18px;line-height:1.5}
+.confirm-box-btns{display:flex;gap:10px;justify-content:center}
+.confirm-no{padding:8px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b}
+.confirm-yes{padding:8px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+
+@media(max-width:600px){
+  .contatos-grid{grid-template-columns:1fr 1fr}
+  .extras-grid{grid-template-columns:1fr}
+  .container{padding:16px}
+}
+
 </style>
-<script>
-// ── GOOGLE SHEETS CLOUD SYNC ──
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
-let syncEl = null;
-
-function showSync(msg, color){
-  if(!syncEl) syncEl = document.getElementById("sync-status");
-  if(syncEl){ syncEl.textContent = msg; if(color) syncEl.style.background = color; }
-}
-
-async function cloudSave(key, value){
-  try{
-    await fetch(SHEETS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({key, value: JSON.stringify(value)})
-    });
-  } catch(e){ console.error("cloudSave:", e); }
-}
-
-async function cloudLoad(key){
-  try{
-    const res = await fetch(SHEETS_URL + "?key=" + encodeURIComponent(key));
-    const json = await res.json();
-    if(json.value && json.value !== "null") return JSON.parse(json.value);
-    return null;
-  } catch(e){ return null; }
-}
-
-// Override sv() to also save to cloud
-const _sv = window.sv;
-window.sv = function(k, v){
-  try{ localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
-  cloudSave(k, v);
-};
-
-const SYNC_KEYS = [
-  "currentDay","weekInsights","lotesA","lotesB","audiencias",
-  "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
-];
-
-async function initCloud(){
-  showSync("⏳ Conectando...");
-  
-  // Try to load from cloud first
-  const testVal = await cloudLoad("currentDay");
-  
-  if(testVal !== null){
-    // Cloud has data - load everything from cloud
-    showSync("⏳ Carregando dados...");
-    for(const key of SYNC_KEYS){
-      const val = await cloudLoad(key);
-      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
-    }
-    showSync("☁️ Nuvem ativa", "#2e7d32");
-  } else {
-    // First time - migrate from localStorage to cloud
-    showSync("⏳ Salvando dados na nuvem...");
-    for(const key of SYNC_KEYS){
-      const local = localStorage.getItem(key);
-      if(local){
-        await cloudSave(key, JSON.parse(local));
-        await new Promise(r => setTimeout(r, 300)); // small delay between saves
-      }
-    }
-    showSync("✅ Dados salvos!", "#2e7d32");
-    setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"), 3000);
-  }
-  
-  initApp();
-}
-
-function initApp(){
-  ensureSeqNums();
-  buildDaySelector();
-  rebuildTimeline();
-  buildWeekGrid();
-  updateCat();
-}
-
-window.addEventListener("load", initCloud);
-</script>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
@@ -384,8 +416,7 @@ window.addEventListener("load", initCloud);
 </div>
 
 <div class="container">
-  <div id="sync-status" style="position:fixed;top:10px;right:16px;background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
-<div class="topbar">
+  <div class="topbar">
     <h1>🌸 Minha Rotina</h1>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
       <div class="day-selector" id="day-selector"></div>
@@ -449,6 +480,7 @@ window.addEventListener("load", initCloud);
     <button class="tab" onclick="show('insights',this)">Insights 📊</button>
     <button class="tab" onclick="show('lotes',this)">Lotes 📋</button>
     <button class="tab" onclick="show('audiencias',this)">Audiências ⚖️</button>
+    <button class="tab" onclick="show('ultrassom',this)">🤰 Ultrassom</button>
   </div>
 
   <!-- DIA -->
@@ -545,6 +577,143 @@ window.addEventListener("load", initCloud);
       </table>
     </div>
   </div>
+
+  <!-- ULTRASSOM -->
+  <div class="view" id="view-ultrassom">
+    <h2 style="font-size:18px;font-weight:700;color:#c2185b;margin-bottom:4px">🤰 Pendentes de Ultrassom</h2>
+    <p style="font-size:13px;color:#e991b8;margin-bottom:16px">Controle de contatos e entrega de ultrassom</p>
+    <div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <p id="confirm-msg"></p>
+    <div class="confirm-box-btns">
+      <button class="confirm-no" onclick="closeConfirm()">Cancelar</button>
+      <button class="confirm-yes" id="confirm-yes-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>🤰 Nova cliente — Pendente de Ultrassom</h3>
+    <label>Advogada responsável</label>
+    <select id="m-resp"><option value="DRA. JANAINA">🌸 Dra. Janaína</option><option value="DRA. VITÓRIA">💜 Dra. Vitória</option></select>
+    <div class="modal-2col">
+      <div>
+        <label>Nome da cliente</label>
+        <input type="text" id="m-nome" placeholder="Nome completo"/>
+      </div>
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="m-id" placeholder="Ex: 441143889"/>
+      </div>
+    </div>
+    <div class="modal-2col">
+      <div>
+        <label>Telefone</label>
+        <input type="text" id="m-tel" placeholder="Ex: 55 11 99999-9999"/>
+      </div>
+      <div>
+        <label>Data de entrada no pendente</label>
+        <input type="date" id="m-entrada"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAddModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveAdd()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>✏️ Editar cliente</h3>
+    <input type="hidden" id="em-idx"/>
+    <label>Nome da cliente</label>
+    <input type="text" id="em-nome" placeholder="Nome completo"/>
+    <label>Advogada responsável</label>
+    <select id="em-resp">
+      <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
+      <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
+    </select>
+    <div class="modal-2col">
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="em-id" placeholder="Ex: 441143889"/>
+      </div>
+      <div>
+        <label>Telefone</label>
+        <input type="text" id="em-tel" placeholder="Ex: 55 11 99999-9999"/>
+      </div>
+    </div>
+    <label>Data de entrada no pendente</label>
+    <input type="date" id="em-entrada"/>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveEdit()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="chart-modal">
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto">
+    <h3>📊 Gráficos — Pendentes de Ultrassom</h3>
+    <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="cartela-tab active" id="ctab-chart-all" onclick="drawCharts('all')">👥 Todas</button>
+      <button class="cartela-tab" id="ctab-chart-J" onclick="drawCharts('J')">🌸 Dra. Janaína</button>
+      <button class="cartela-tab" id="ctab-chart-V" onclick="drawCharts('V')">💜 Dra. Vitória</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Contatos realizados</div>
+        <canvas id="ult-chart1"></canvas>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Status de entrega</div>
+        <canvas id="ult-chart2"></canvas>
+      </div>
+    </div>
+    <div id="chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+
+
+  <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;color:#c2185b">Cartela:</span>
+    <button class="cartela-tab active" id="ctab-J" onclick="switchCartela('J')">🌸 Dra. Janaína</button>
+    <button class="cartela-tab" id="ctab-V" onclick="switchCartela('V')">💜 Dra. Vitória</button>
+    <button class="cartela-tab" id="ctab-all" onclick="switchCartela('all')">👥 Todas</button>
+  </div>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="🔍 Buscar cliente..." oninput="render()">
+    <select id="filter-status" onchange="render()">
+      <option value="">Todos os status</option>
+      <option value="promessa">Promessa de entrega</option>
+      <option value="nao">Não responde</option>
+      <option value="entregue">Entregue</option>
+      <option value="cancelamento">Providência tomada</option>
+    </select>
+    <select id="filter-contatos" onchange="render()">
+      <option value="">Todos os contatos</option>
+      <option value="0">Sem contato ainda</option>
+      <option value="1">1 contato</option>
+      <option value="2">2 contatos</option>
+      <option value="3">3 contatos</option>
+      <option value="4">4 contatos</option>
+      <option value="5">5 contatos (finalizado)</option>
+    </select>
+    <button class="btn-primary" onclick="openAddModal()">+ Adicionar</button>
+    <button class="btn-sec" onclick="openChart()">📊 Gráfico</button>
+    <button class="btn-sec" onclick="gerarPDF()">📄 Gerar PDF</button>
+  </div>
+  <div class="count" id="count"></div>
+  <div class="cards" id="cards"></div>
+
+  </div>
+
   <!-- AUDIENCIAS -->
   <div class="view" id="view-audiencias">
     <div class="aud-toolbar">
@@ -1217,6 +1386,7 @@ function show(view,btn){
   if(view==="insights")buildInsights();
   if(view==="lotes")renderLotes();
   if(view==="audiencias")renderAud();
+  if(view==="ultrassom")render();
 }
 
 // ─── INIT ──────────────────────────────────────────────────
@@ -1351,6 +1521,568 @@ buildDaySelector();
 rebuildTimeline();
 buildWeekGrid();
 updateCat();
+</script>
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>🤰 Nova cliente — Pendente de Ultrassom</h3>
+    <label>Advogada responsável</label>
+    <select id="m-resp"><option value="DRA. JANAINA">🌸 Dra. Janaína</option><option value="DRA. VITÓRIA">💜 Dra. Vitória</option></select>
+    <div class="modal-2col">
+      <div>
+        <label>Nome da cliente</label>
+        <input type="text" id="m-nome" placeholder="Nome completo"/>
+      </div>
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="m-id" placeholder="Ex: 441143889"/>
+      </div>
+    </div>
+    <div class="modal-2col">
+      <div>
+        <label>Telefone</label>
+        <input type="text" id="m-tel" placeholder="Ex: 55 11 99999-9999"/>
+      </div>
+      <div>
+        <label>Data de entrada no pendente</label>
+        <input type="date" id="m-entrada"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAddModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveAdd()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>✏️ Editar cliente</h3>
+    <input type="hidden" id="em-idx"/>
+    <label>Nome da cliente</label>
+    <input type="text" id="em-nome" placeholder="Nome completo"/>
+    <label>Advogada responsável</label>
+    <select id="em-resp">
+      <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
+      <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
+    </select>
+    <div class="modal-2col">
+      <div>
+        <label>ID Huggy</label>
+        <input type="text" id="em-id" placeholder="Ex: 441143889"/>
+      </div>
+      <div>
+        <label>Telefone</label>
+        <input type="text" id="em-tel" placeholder="Ex: 55 11 99999-9999"/>
+      </div>
+    </div>
+    <label>Data de entrada no pendente</label>
+    <input type="date" id="em-entrada"/>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="modal-save" onclick="saveEdit()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="chart-modal">
+  <div class="modal" style="max-width:640px;max-height:90vh;overflow-y:auto">
+    <h3>📊 Gráficos — Pendentes de Ultrassom</h3>
+    <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="cartela-tab active" id="ctab-chart-all" onclick="drawCharts('all')">👥 Todas</button>
+      <button class="cartela-tab" id="ctab-chart-J" onclick="drawCharts('J')">🌸 Dra. Janaína</button>
+      <button class="cartela-tab" id="ctab-chart-V" onclick="drawCharts('V')">💜 Dra. Vitória</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Contatos realizados</div>
+        <canvas id="ult-chart1"></canvas>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#e991b8;margin-bottom:8px;text-align:center">Status de entrega</div>
+        <canvas id="ult-chart2"></canvas>
+      </div>
+    </div>
+    <div id="chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// ── ULTRASSOM JS ──
+
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function ld(k,d){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):d}catch(e){return d}}
+function pad(n){return String(n).padStart(2,"0")}
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function fmtDate(d){if(!d)return"—";const p=d.split("-");return pad(parseInt(p[2]))+"/"+pad(parseInt(p[1]))+"/"+p[0]}
+
+const ULTRASSOM_DEFAULT=[{"id":1,"seq":1,"nome":"JAMILY JANE LOPES PEREIRA DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":2,"seq":2,"nome":"Jéssica Silva Munhoz","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":3,"seq":3,"nome":"Maiara Cristina Prado dos Santos","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":4,"seq":4,"nome":"Karen Thais de Paula Alves","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":5,"seq":5,"nome":"Poliana Gabrieli de Melo Teixeira","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":6,"seq":6,"nome":"Stephanie Ribeiro Batista","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":7,"seq":7,"nome":"Gracielle Muller Dias","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":8,"seq":8,"nome":"Julia Luiza Gregorio Coelho","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":9,"seq":9,"nome":"GABRIELA CRISTINA TOBIAS DE LARA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":10,"seq":10,"nome":"ANITA VICENTE MACEDO SOARES","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":11,"seq":11,"nome":"GEOVANA CAROLINA DE OLIVEIRA NUNES","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":12,"seq":12,"nome":"PAMELA DA CONCEIÇÃO DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":13,"seq":13,"nome":"ERICACARLA TARGINO DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":14,"seq":14,"nome":"LETICIA EVELYN MACHADO DE AQUINO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":15,"seq":15,"nome":"THAIS CARDAMONI DA SILVA FLORENCIO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":16,"seq":16,"nome":"MARIA VITORIA DE AQUINO DE OLIVEIRA NASCIMENTO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":17,"seq":17,"nome":"Yngrid Vitoria Cesar Costa","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":18,"seq":18,"nome":"CRISTIELLEN SANTANA FONSECA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":19,"seq":19,"nome":"NAHILLY VITORIA GONCALVES GRIGIO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":20,"seq":20,"nome":"Ana Paula da Silva Ribeiro","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":21,"seq":21,"nome":"KAUANI SILVANO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":22,"seq":22,"nome":"Maria Luiza Vieira Rosa","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":23,"seq":23,"nome":"KAREN KECIELLY ALMEIDA MIRANDA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":24,"seq":24,"nome":"Leticia Calixto de Queiroz","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":25,"seq":25,"nome":"FERNANDA VICTORIA DE SOUSA LIMA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":26,"seq":26,"nome":"NOELIA SANTOS MACEDO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":27,"seq":27,"nome":"ISABEL CRISTINA VEIGA AMARAL","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":28,"seq":28,"nome":"ELEINNY DEL VALLE HERNANDEZ ALVINS","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":29,"seq":29,"nome":"CRISTIELLEN SANTANA FONSECA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":30,"seq":30,"nome":"ALESSANDRA DA SILVA MACHADO CANDIDO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":31,"seq":31,"nome":"SAMIRA OLIVEIRA PAIXAO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":32,"seq":32,"nome":"MAYRA FERREIRA DO NASCIMENTO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":33,"seq":33,"nome":"Ana Julia do Nascimento","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":34,"seq":34,"nome":"GISELE BORGES DOS ANJOS","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":35,"seq":35,"nome":"ADRIANA FEITOSA BEZERRA DO NASCIMENTO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":36,"seq":36,"nome":"SILVANA MARIA SILVEIRA SPINA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":37,"seq":37,"nome":"Jéssica Aparecida de Jesus Rodrigues","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":38,"seq":38,"nome":"Gabriela Cristo da Conceição","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":39,"seq":39,"nome":"THAIS CAROLINA RIBEIRO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":40,"seq":40,"nome":"Libini Hélem Silva","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":41,"seq":41,"nome":"Herika Sabrini dos Santos Almeida","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":42,"seq":42,"nome":"LUCIVANIA NUNES DE CASTRO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":43,"seq":43,"nome":"CHRISTIANE FRANCISCA NOBREGA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":44,"seq":44,"nome":"Milena Soares Tavares","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":45,"seq":45,"nome":"GYOVANNA KARLLA DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":46,"seq":46,"nome":"SUYANE CRISTINA DE MELO SOUZA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":47,"seq":47,"nome":"THAYNNA DA CRUZ ASSIS PONTES","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":48,"seq":48,"nome":"MARIANA MARTINS DA LUZ","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":49,"seq":49,"nome":"THAINARA DA CRUZ LUQUEZ","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":50,"seq":50,"nome":"Izabelly Vitoria Vanderlei","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":51,"seq":51,"nome":"LUANA CELIA COSTA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":52,"seq":52,"nome":"THAIS LIBERATO DE CARVALHO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":53,"seq":53,"nome":"ANA CRISTINA MARIA DOS SANTOS","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":54,"seq":54,"nome":"JULIA ADRIELY PIMENTEL","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":55,"seq":55,"nome":"NATHALIA CRISTINY CORREA DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":56,"seq":56,"nome":"THAMIRES SANTOS DE CARVALHO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":57,"seq":57,"nome":"Ester Nsembolo","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":58,"seq":58,"nome":"Ana Paula dos Santos Pereira","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":59,"seq":59,"nome":"Tainara Cristina da Cruz","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":60,"seq":60,"nome":"BEATRIZ VITORIA DE OLIVEIRA DE JESUS","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":61,"seq":61,"nome":"Sarah Aisha Vieira da Silva","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":62,"seq":62,"nome":"Priscila Mery de Oliveira Duarte","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":63,"seq":63,"nome":"Joice Ferreira Martins","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":64,"seq":64,"nome":"Maria Vitoria Carvalho","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":65,"seq":65,"nome":"KIMBERTLY EDUARDA MENDES DE CAMARGO","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":66,"seq":66,"nome":"Rosa Maria Freitas Sousa","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":67,"seq":67,"nome":"Ana Vitória Ferreira Gomes da Silva","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":68,"seq":68,"nome":"Isadora Chaves Fernandes","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":69,"seq":69,"nome":"Naiara Mendes de Sousa","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":70,"seq":70,"nome":"WANDA VALENTINA BUSTOS DIAZ","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":71,"seq":71,"nome":"Evilly Aparecida Ferreira da Silva","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":72,"seq":72,"nome":"AMANDA DOS REIS LIMA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":73,"seq":73,"nome":"KELES PICANCO DE SOUZA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":74,"seq":74,"nome":"ANA CAROLINA DA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":75,"seq":75,"nome":"CARLA FERNANDA SILVA","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":76,"seq":76,"nome":"Kalyane Scariot da Silva","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":77,"seq":77,"nome":"TAYNA VITORIA PESSOA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":78,"seq":78,"nome":"KELITA DOS SANTOS PAREDI","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":79,"seq":79,"nome":"RAIKA SIGRIA DA SILVA FERNANDES","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":80,"seq":80,"nome":"ANA ALICE VAZ MOREIRA DOS SANTOS","responsavel":"DRA. JANAINA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":81,"seq":81,"nome":"Larissa de Almeida Santos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":82,"seq":82,"nome":"BRUNA FERNANDES LIMA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":83,"seq":83,"nome":"CAROLAINE CRISTINA CARVALHO DOS SANTOS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":84,"seq":84,"nome":"Ana Caroline de Abreu Haas","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":85,"seq":85,"nome":"PAMELA VALENTINA DE ASSIS SABINO CHAGAS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":86,"seq":86,"nome":"FABIANE PAULA LOBATO","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":87,"seq":87,"nome":"GENINE DE OLIVEIRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":88,"seq":88,"nome":"ISABELA SARAH CARDOSO DOS SANTOS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":89,"seq":89,"nome":"CARINE CICHELERO KAFER","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":90,"seq":90,"nome":"Lorena Rodrigues De Jesus","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":91,"seq":91,"nome":"LAVINIA GABRIELLA MARQUES DE SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":92,"seq":92,"nome":"Maria Fabiana Lourenço da Silva","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":93,"seq":93,"nome":"VANESSA NASCIMENTO PEREIRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":94,"seq":94,"nome":"GREICIELE LETICIA DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":95,"seq":95,"nome":"SUYANE CRISTINA DE MELO SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":96,"seq":96,"nome":"RAQUEL LEITE DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":97,"seq":97,"nome":"Alessandra de Souza","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":98,"seq":98,"nome":"KAMILY VITORIA D. GUEDES","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":99,"seq":99,"nome":"DENIZE DOS SANTOS RAFAEL","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":100,"seq":100,"nome":"Monike Hellen Silva de Moraes","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":101,"seq":101,"nome":"DIANAFER CASANDRA FERREIRA GUSTAFSON","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":102,"seq":102,"nome":"LARISSA DE OLIVEIRA DUTRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":103,"seq":103,"nome":"Jennifer Lopes de Souza","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":104,"seq":104,"nome":"GISLEIA ESPINDULA DOS SANTOS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":105,"seq":105,"nome":"Carolina de Oliveira Baldez","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":106,"seq":106,"nome":"FRANCIELI PATRINI DOS SANTOS SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":107,"seq":107,"nome":"ISABELLA LEMOS DE SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":108,"seq":108,"nome":"Rina da Silva Duarte","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":109,"seq":109,"nome":"LEIDYAMARA ELLEN CLAUDINO ROSA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":110,"seq":110,"nome":"Alessandra Ferreira Domingos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":111,"seq":111,"nome":"Emilly Lorrayne Almeida Silva","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":112,"seq":112,"nome":"NICOLE PANTA MATOS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":113,"seq":113,"nome":"KEYLA CRISTINA SOUSA DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":114,"seq":114,"nome":"EMILI DE MORAES SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":115,"seq":115,"nome":"GEOVANA SILVA SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":116,"seq":116,"nome":"MIRIAN PEREIRA PEDRO","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":117,"seq":117,"nome":"Ana Clara de Oliveira Irineu","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":118,"seq":118,"nome":"DAYARA VITORIA CARVALHO SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":119,"seq":119,"nome":"FABRICIA BATISTA MOREIRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":120,"seq":120,"nome":"Claudene de Araujo Rocha","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":121,"seq":121,"nome":"Brenda Carolai Alves da Costa","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":122,"seq":122,"nome":"Graziele Almeida Brito","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":123,"seq":123,"nome":"Rebeca Apóstolo Evangelista","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":124,"seq":124,"nome":"DANIELLY BIANCA NASCIMENTO DE MORAIS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":125,"seq":125,"nome":"VICTORIA GABRIELLA VIEIRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":126,"seq":126,"nome":"LORRANY DA SILVA LIMA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":127,"seq":127,"nome":"Lais Mariane da Silva de Matos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":128,"seq":128,"nome":"ALICE NUNES DOS SANTOS","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":129,"seq":129,"nome":"CAMILA CONCEICAO DE MOURA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":130,"seq":130,"nome":"Bruna Sodré da Silva","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":131,"seq":131,"nome":"RAYANE CRISTINA GOMES","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":132,"seq":132,"nome":"ANDRESSA BENIGNO DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":133,"seq":133,"nome":"Rayane Flavia Lopes de Proença","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":134,"seq":134,"nome":"Marta Leticia Ferreira Antunes","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":135,"seq":135,"nome":"FERNANDA TEIXEIRA DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":136,"seq":136,"nome":"Thais Alessandra Miguel","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":137,"seq":137,"nome":"Tamara Cristina Silva Rosa","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":138,"seq":138,"nome":"Samia Augusta Ferreira","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":139,"seq":139,"nome":"WISLENE LETICIA PEDRO DILAGRES","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":140,"seq":140,"nome":"Rafaela Cristina Zanella Machado","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":141,"seq":141,"nome":"Jaqueline Gonçalves Santos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":142,"seq":142,"nome":"Cristiane Bueno de Oliveira Costa","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":143,"seq":143,"nome":"Niulanny Costa Santos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":144,"seq":144,"nome":"SUZANA DA SILVA GOMES","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":145,"seq":145,"nome":"MARIA EDUARDA JOVENTINO DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":146,"seq":146,"nome":"LUCIANA DIAS DE SOUZA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":147,"seq":147,"nome":"Mirian Kellry Sousa Ramos","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":148,"seq":148,"nome":"KATHELYN NAYARA DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":149,"seq":149,"nome":"JHAISIANE APARECIDA SANTOS DE OLIVEIRA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false},{"id":150,"seq":150,"nome":"ARIANE GONCALVES DA SILVA","responsavel":"DRA. VITÓRIA","idHuggy":"","telefone":"","entrada":"","contatos":[null,null,null,null,null],"statusContatos":["","","","",""],"observacao":"","evidencias":[],"providencia":"","open":false}];
+let clientes = ld("ultrassom_clientes", ULTRASSOM_DEFAULT.map(c=>({...c})));
+
+// ── CONFIRM ──
+let _cb=null;
+function showConfirm(msg,cb){_cb=cb;document.getElementById("confirm-msg").textContent=msg;document.getElementById("confirm-yes-btn").onclick=()=>{closeConfirm();if(_cb)_cb();};document.getElementById("confirm-overlay").classList.add("open");}
+function closeConfirm(){document.getElementById("confirm-overlay").classList.remove("open");}
+
+// ── ADD MODAL ──
+function openAddModal(){
+  ["m-nome","m-id","m-tel"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("m-entrada").value=todayStr();
+  document.getElementById("add-modal").classList.add("open");
+}
+function closeAddModal(){document.getElementById("add-modal").classList.remove("open");}
+function saveAdd(){
+  const nome=document.getElementById("m-nome").value.trim();
+  if(!nome){alert("Nome é obrigatório!");return;}
+  clientes.push({
+    id:Date.now(),
+    seq:clientes.length+1,
+    nome,
+    responsavel:document.getElementById("m-resp").value,
+    idHuggy:document.getElementById("m-id").value.trim(),
+    telefone:document.getElementById("m-tel").value.trim(),
+    entrada:document.getElementById("m-entrada").value,
+    contatos:[null,null,null,null,null],
+    statusContatos:["","","","",""],
+    observacao:"",
+    evidencias:[],
+    providencia:"",
+    open:true
+  });
+  sv("ultrassom_clientes",clientes);
+  closeAddModal();
+  render();
+}
+
+// ── STATUS ──
+function statusClass(s){
+  if(s==="promessa") return "s-promessa";
+  if(s==="nao") return "s-nao";
+  if(s==="entregue") return "s-entregue";
+  return "s-vazio";
+}
+function statusLabel(s){
+  if(s==="promessa") return "⏳ Promessa de entrega";
+  if(s==="nao") return "✗ Não responde";
+  if(s==="entregue") return "✓ Entregue";
+  return "— sem status —";
+}
+function cardBadge(c){
+  const totalContatos=c.contatos.filter(Boolean).length;
+  if(c.statusContatos.includes("entregue")) return "entregue";
+  if(c.providencia) return "cancelamento";
+  if(totalContatos>=5) return "cancelamento";
+  return "pendente";
+}
+
+// ── CONTATO ──
+function marcarContato(cIdx, cNum){
+  const c=clientes[cIdx];
+  if(c.contatos[cNum]){
+    showConfirm("Desmarcar contato "+(cNum+1)+" de "+c.nome+"?",()=>{
+      c.contatos[cNum]=null;
+      c.statusContatos[cNum]="";
+      sv("ultrassom_clientes",clientes);render();
+    });
+  } else {
+    c.contatos[cNum]=todayStr();
+    sv("ultrassom_clientes",clientes);render();
+  }
+}
+function saveStatusContato(cIdx, cNum, val){
+  clientes[cIdx].statusContatos[cNum]=val;
+  sv("ultrassom_clientes",clientes);
+  // update select style
+  const sel=document.getElementById(`sc-${cIdx}-${cNum}`);
+  if(sel) sel.className="contato-status "+statusClass(val);
+  // if entregue, re-render to update card border
+  if(val==="entregue") render();
+}
+function saveObs(cIdx, val){clientes[cIdx].observacao=val;sv("ultrassom_clientes",clientes);}
+function saveProvidencia(cIdx, val){
+  clientes[cIdx].providencia=val;
+  sv("ultrassom_clientes",clientes);
+  // update obs text
+  const obsEl=document.getElementById(`prov-obs-${cIdx}`);
+  if(obsEl){
+    if(val==="nao_assinada") obsEl.textContent="📌 Cliente enviada para sem interação/cancelamento - Bitrix.";
+    else if(val==="assinada") obsEl.textContent="📌 Cliente enviada para cancelamento.";
+    else obsEl.textContent="";
+  }
+  render();
+}
+
+// ── EVIDÊNCIAS ──
+function uploadEvidencia(cIdx){
+  const input=document.createElement("input");
+  input.type="file";
+  input.accept="image/*,application/pdf";
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      if(!clientes[cIdx].evidencias) clientes[cIdx].evidencias=[];
+      clientes[cIdx].evidencias.push({name:file.name,type:file.type,data:ev.target.result});
+      sv("ultrassom_clientes",clientes);
+      renderEvidencias(cIdx);
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+function deleteEvidencia(cIdx, eIdx){
+  clientes[cIdx].evidencias.splice(eIdx,1);
+  sv("ultrassom_clientes",clientes);
+  renderEvidencias(cIdx);
+}
+function renderEvidencias(cIdx){
+  const el=document.getElementById(`ev-list-${cIdx}`);
+  if(!el) return;
+  const evs=clientes[cIdx].evidencias||[];
+  el.innerHTML=evs.map((e,ei)=>`
+    <div class="file-item">
+      <a href="${e.data}" target="_blank" title="${e.name}">${e.name.length>25?e.name.substring(0,25)+"...":e.name}</a>
+      <button class="file-del" onclick="deleteEvidencia(${cIdx},${ei})">✕</button>
+    </div>`).join("")+
+    `<label class="file-upload-btn" onclick="uploadEvidencia(${cIdx})">📎 Anexar PDF ou imagem</label>`;
+}
+
+// ── TOGGLE CARD ──
+function toggleCard(cIdx){
+  clientes[cIdx].open=!clientes[cIdx].open;
+  sv("ultrassom_clientes",clientes);
+  const body=document.getElementById(`body-${cIdx}`);
+  const chev=document.getElementById(`chev-${cIdx}`);
+  if(body){body.classList.toggle("open",clientes[cIdx].open);}
+  if(chev){chev.classList.toggle("open",clientes[cIdx].open);}
+}
+
+// ── DELETE ──
+function deleteCliente(cIdx){
+  showConfirm("Remover "+clientes[cIdx].nome+" do controle?",()=>{
+    clientes.splice(cIdx,1);
+    clientes.forEach((c,i)=>c.seq=i+1);
+    sv("ultrassom_clientes",clientes);render();
+  });
+}
+
+// ── RENDER ──
+// ── EDIT ──
+function openEditModal(cIdx){
+  const c=clientes[cIdx];
+  document.getElementById("em-idx").value=cIdx;
+  document.getElementById("em-nome").value=c.nome||"";
+  document.getElementById("em-resp").value=c.responsavel||"DRA. JANAINA";
+  document.getElementById("em-id").value=c.idHuggy||"";
+  document.getElementById("em-tel").value=c.telefone||"";
+  document.getElementById("em-entrada").value=c.entrada||"";
+  document.getElementById("edit-modal").classList.add("open");
+}
+function closeEditModal(){document.getElementById("edit-modal").classList.remove("open");}
+function saveEdit(){
+  const idx=parseInt(document.getElementById("em-idx").value);
+  clientes[idx].nome=document.getElementById("em-nome").value.trim();
+  clientes[idx].responsavel=document.getElementById("em-resp").value;
+  clientes[idx].idHuggy=document.getElementById("em-id").value.trim();
+  clientes[idx].telefone=document.getElementById("em-tel").value.trim();
+  clientes[idx].entrada=document.getElementById("em-entrada").value;
+  sv("ultrassom_clientes",clientes);
+  closeEditModal(); render();
+}
+
+// ── RESET STATUS ──
+function resetCliente(cIdx){
+  showConfirm("Zerar todos os contatos e status de "+clientes[cIdx].nome+"?",()=>{
+    clientes[cIdx].contatos=[null,null,null,null,null];
+    clientes[cIdx].statusContatos=["","","","",""];
+    clientes[cIdx].providencia="";
+    sv("ultrassom_clientes",clientes); render();
+  });
+}
+
+// ── CHART ──
+let ultChart1=null, ultChart2=null;
+let chartCartela="all";
+
+function openChart(){
+  document.getElementById("chart-modal").classList.add("open");
+  setTimeout(()=>drawCharts("all"),100);
+}
+
+function getChartData(cartela){
+  const data = cartela==="J" ? clientes.filter(c=>c.responsavel==="DRA. JANAINA")
+              : cartela==="V" ? clientes.filter(c=>c.responsavel==="DRA. VITÓRIA")
+              : clientes;
+  return {
+    total: data.length,
+    semContato: data.filter(c=>c.contatos.filter(Boolean).length===0).length,
+    comContato: data.filter(c=>c.contatos.filter(Boolean).length>0).length,
+    entregues: data.filter(c=>c.statusContatos.includes("entregue")).length,
+    promessa: data.filter(c=>c.statusContatos.some(s=>s==="promessa") && !c.statusContatos.includes("entregue")).length,
+    naoResp: data.filter(c=>c.statusContatos.some(s=>s==="nao") && !c.statusContatos.includes("entregue") && !c.statusContatos.some(s=>s==="promessa")).length,
+  };
+}
+
+function drawCharts(cartela){
+  chartCartela=cartela;
+  // update tab buttons
+  ["all","J","V"].forEach(k=>{
+    const btn=document.getElementById("ctab-chart-"+k);
+    if(btn) btn.classList.toggle("active",k===cartela);
+  });
+  const d=getChartData(cartela);
+
+  // Chart 1: Donut - sem contato vs com contato
+  const ctx1=document.getElementById("ult-chart1");
+  if(ultChart1){ultChart1.destroy();}
+  ultChart1=new Chart(ctx1,{
+    type:"doughnut",
+    data:{
+      labels:["Sem contato","Contato feito"],
+      datasets:[{data:[d.semContato,d.comContato],backgroundColor:["#f8bbd0","#e91e8c"],borderWidth:2,borderColor:"#fff"}]
+    },
+    options:{responsive:true,plugins:{legend:{position:"bottom",labels:{color:"#c2185b",font:{size:12}}},
+      tooltip:{callbacks:{label:c=>c.label+": "+c.raw+" clientes"}}}}
+  });
+
+  // Chart 2: Line - entregues, promessa, não responde
+  const ctx2=document.getElementById("ult-chart2");
+  if(ultChart2){ultChart2.destroy();}
+  ultChart2=new Chart(ctx2,{
+    type:"line",
+    data:{
+      labels:["Entregues","Promessa de entrega","Não responde"],
+      datasets:[{
+        label:"Clientes",
+        data:[d.entregues,d.promessa,d.naoResp],
+        borderColor:"#e91e8c",
+        backgroundColor:"#fce4ec",
+        pointBackgroundColor:["#2e7d32","#e65100","#c62828"],
+        pointRadius:8,pointHoverRadius:10,
+        fill:true,tension:.4,borderWidth:2
+      }]
+    },
+    options:{responsive:true,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:c=>c.raw+" clientes"}}},
+      scales:{y:{beginAtZero:true,ticks:{stepSize:1,color:"#e991b8"},grid:{color:"#fce4ec"}},
+        x:{ticks:{color:"#c2185b",font:{size:11,weight:"bold"}},grid:{color:"#fce4ec"}}}}
+  });
+
+  // Stats cards
+  const stats=document.getElementById("chart-stats");
+  stats.innerHTML=[
+    {label:"Total",val:d.total,color:"#e91e8c"},
+    {label:"✓ Entregues",val:d.entregues,color:"#2e7d32"},
+    {label:"⏳ Promessa",val:d.promessa,color:"#e65100"},
+    {label:"✗ Não responde",val:d.naoResp,color:"#c62828"},
+    {label:"📞 Com contato",val:d.comContato,color:"#880e4f"},
+    {label:"Sem contato",val:d.semContato,color:"#f48fb1"},
+  ].map(s=>'<div style="background:#fff0f5;border-radius:10px;padding:10px;text-align:center;border:1.5px solid #f8bbd0">'+
+    '<div style="font-size:11px;color:'+s.color+';font-weight:700">'+s.label+'</div>'+
+    '<div style="font-size:22px;font-weight:700;color:'+s.color+'">'+s.val+'</div></div>').join("");
+}
+
+// ── PDF ──
+function makeStatsHTML(d, label){
+  return '<div style="display:flex;gap:12px;flex-wrap:wrap;margin:8px 0">'+
+    '<span style="background:#fce4ec;color:#880e4f;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">'+label+'</span>'+
+    '<span style="background:#e8f5e9;color:#2e7d32;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">✓ Entregues: '+d.entregues+'</span>'+
+    '<span style="background:#fff3e0;color:#e65100;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">⏳ Promessa: '+d.promessa+'</span>'+
+    '<span style="background:#ffebee;color:#c62828;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">✗ Não responde: '+d.naoResp+'</span>'+
+    '<span style="background:#fce4ec;color:#e91e8c;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700">Total: '+d.total+'</span>'+
+  '</div>';
+}
+function makeTableHTML(data){
+  if(!data.length) return '<p style="color:#aaa;font-size:12px">Nenhuma cliente.</p>';
+  const rows=data.map((c,i)=>{
+    const conts=c.contatos.map((d,n)=>{
+      if(!d) return "";
+      const stMap={"promessa":"Promessa","nao":"Não resp.","entregue":"Entregue"};
+      return (n+1)+"º: "+fmtDate(d)+(c.statusContatos[n]?" ("+stMap[c.statusContatos[n]]+")":"");
+    }).filter(Boolean).join(" | ");
+    const prov=c.providencia==="nao_assinada"?"Sem interação/Bitrix":c.providencia==="assinada"?"Cancelamento":"—";
+    return "<tr><td>"+(i+1)+"</td><td>"+c.nome+"</td><td>"+(c.idHuggy||"—")+"</td><td>"+(c.telefone||"—")+"</td><td>"+fmtDate(c.entrada)+"</td><td style='font-size:10px'>"+conts+"</td><td>"+prov+"</td></tr>";
+  }).join("");
+  return '<table><thead><tr><th>#</th><th>Nome</th><th>ID</th><th>Telefone</th><th>Entrada</th><th>Contatos</th><th>Providência</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function gerarPDF(){
+  const hoje=fmtDate(todayStr());
+  const dJana=getChartData("J"); const cJana=clientes.filter(c=>c.responsavel==="DRA. JANAINA");
+  const dVit=getChartData("V");  const cVit=clientes.filter(c=>c.responsavel==="DRA. VITÓRIA");
+  const dAll=getChartData("all");
+
+  const content=
+    '<h1 style="color:#c2185b;font-size:18px;margin-bottom:4px">🤰 Relatório — Pendentes de Ultrassom</h1>'+
+    '<div style="font-size:12px;color:#888;margin-bottom:16px">Gerado em '+hoje+' | Total geral: '+dAll.total+' clientes</div>'+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">📊 Resumo Geral</h2>'+makeStatsHTML(dAll,"Todas")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Resumo</h2>'+makeStatsHTML(dJana,"Dra. Janaína")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">🌸 Dra. Janaína — Clientes ('+cJana.length+')</h2>'+makeTableHTML(cJana)+
+    '<div style="page-break-before:always"></div>'+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Resumo</h2>'+makeStatsHTML(dVit,"Dra. Vitória")+
+    '<h2 style="color:#e91e8c;font-size:14px;margin:16px 0 8px;border-bottom:2px solid #fce4ec;padding-bottom:4px">💜 Dra. Vitória — Clientes ('+cVit.length+')</h2>'+makeTableHTML(cVit);
+
+  // Create a hidden printable div inside the page
+  let printDiv=document.getElementById("print-area");
+  if(!printDiv){
+    printDiv=document.createElement("div");
+    printDiv.id="print-area";
+    document.body.appendChild(printDiv);
+  }
+  printDiv.innerHTML=content;
+  
+  // Add print styles if not already there
+  let printStyle=document.getElementById("print-style");
+  if(!printStyle){
+    printStyle=document.createElement("style");
+    printStyle.id="print-style";
+    printStyle.textContent=
+      "@media print{"+
+        "body > *:not(#print-area){display:none!important}"+
+        "#print-area{display:block!important;font-family:Arial,sans-serif;padding:20px;color:#1a1a1a}"+
+        "table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px}"+
+        "thead tr{background:#e91e8c!important;-webkit-print-color-adjust:exact;color-adjust:exact}"+
+        "thead th{color:#fff;padding:7px 6px;text-align:left}"+
+        "tbody td{padding:6px;vertical-align:top;border-bottom:1px solid #fce4ec}"+
+        "tbody tr:nth-child(even){background:#fff0f5!important;-webkit-print-color-adjust:exact}"+
+      "}"+
+      "@media screen{#print-area{display:none}}";
+    document.head.appendChild(printStyle);
+  }
+  window.print();
+}
+
+let activeCartela="J";
+function switchCartela(c){
+  activeCartela=c;
+  document.getElementById("ctab-J").classList.toggle("active",c==="J");
+  document.getElementById("ctab-V").classList.toggle("active",c==="V");
+  document.getElementById("ctab-all").classList.toggle("active",c==="all");
+  render();
+}
+function render(){
+  const q=(document.getElementById("search").value||"").toLowerCase().trim();
+  const fs=document.getElementById("filter-status").value;
+  const fc=document.getElementById("filter-contatos").value;
+
+  let data=clientes.map((c,i)=>({...c,_idx:i}));
+  if(activeCartela==="J") data=data.filter(c=>c.responsavel==="DRA. JANAINA");
+  else if(activeCartela==="V") data=data.filter(c=>c.responsavel==="DRA. VITÓRIA");
+  if(q) data=data.filter(c=>c.nome.toLowerCase().includes(q)||(c.idHuggy||"").includes(q)||(c.telefone||"").includes(q));
+  if(fs){
+    data=data.filter(c=>{
+      if(fs==="entregue") return c.statusContatos.includes("entregue");
+      if(fs==="cancelamento") return !!c.providencia;
+      if(fs==="promessa") return c.statusContatos.some(s=>s==="promessa");
+      if(fs==="nao") return c.statusContatos.some(s=>s==="nao");
+      return true;
+    });
+  }
+  if(fc!==""){
+    const n=parseInt(fc);
+    data=data.filter(c=>c.contatos.filter(Boolean).length===n);
+  }
+
+  const jTotal=clientes.filter(c=>c.responsavel==="DRA. JANAINA").length;
+  const vTotal=clientes.filter(c=>c.responsavel==="DRA. VITÓRIA").length;
+  document.getElementById("count").textContent=data.length+" cliente(s) | Janaína: "+jTotal+" | Vitória: "+vTotal+" | Total: "+clientes.length;
+
+  const container=document.getElementById("cards");
+  container.innerHTML="";
+
+  data.forEach(c=>{
+    const cIdx=c._idx;
+    const totalContatos=c.contatos.filter(Boolean).length;
+    const badge=cardBadge(c);
+    const badgeHtml=badge==="entregue"
+      ?'<span class="badge badge-contatos">✓ Entregue</span>'
+      :badge==="cancelamento"
+      ?'<span class="badge badge-cancel">⚠️ Providência tomada</span>'
+      :`<span class="badge badge-pendente">${totalContatos}/5 contatos</span>`;
+
+    // contatos boxes
+    const CLABELS=["1º contato","2º contato","3º contato","4º contato","5º contato"];
+    const contatosHtml=Array.from({length:5},(_,n)=>{
+      const data_c=c.contatos[n];
+      const sc=c.statusContatos[n]||"";
+      const isDone=!!data_c;
+      const boxClass="contato-box"+(isDone?(sc==="entregue"?" entregue-box":" done"):"");
+      const btnClass="contato-data-btn"+(isDone?" filled":"");
+      const btnLabel=isDone?"📅 "+fmtDate(data_c):"+ "+CLABELS[n];
+      const provHtml = n===4&&isDone ? (
+        '<div class="providencia-box">'+
+        '<div class="providencia-label">⚖️ Providência tomada</div>'+
+        '<select class="providencia-select" onchange="saveProvidencia('+cIdx+',this.value)">'+
+        '<option value=""'+((!c.providencia)?' selected':'')+'>— selecionar —</option>'+
+        '<option value="nao_assinada"'+((c.providencia==="nao_assinada")?' selected':'')+'>Confissão enviada — não assinada</option>'+
+        '<option value="assinada"'+((c.providencia==="assinada")?' selected':'')+'>Confissão enviada — assinada</option>'+
+        '</select>'+
+        '<div class="providencia-obs" id="prov-obs-'+cIdx+'">'+(
+          c.providencia==="nao_assinada"?"📌 Cliente enviada para sem interação/cancelamento - Bitrix.":
+          c.providencia==="assinada"?"📌 Cliente enviada para cancelamento.":""
+        )+'</div></div>'
+      ) : "";
+      const disabledAttr = !isDone ? " disabled" : "";
+      return '<div class="'+boxClass+'">'+
+        '<div class="contato-num">'+CLABELS[n]+'</div>'+
+        '<button class="'+btnClass+'" onclick="marcarContato('+cIdx+','+n+')">'+btnLabel+'</button>'+
+        '<select class="contato-status '+statusClass(sc)+'" id="sc-'+cIdx+'-'+n+'" onchange="saveStatusContato('+cIdx+','+n+',this.value)"'+disabledAttr+'>'+
+        '<option value=""'+(!sc?' selected':'')+'>— status —</option>'+
+        '<option value="promessa"'+(sc==="promessa"?' selected':'')+'>⏳ Promessa</option>'+
+        '<option value="nao"'+(sc==="nao"?' selected':'')+'>✗ Não responde</option>'+
+        '<option value="entregue"'+(sc==="entregue"?' selected':'')+'>✓ Entregue</option>'+
+        '</select>'+provHtml+
+        '</div>';
+    }).join("");
+
+    const respClass = c.responsavel==="DRA. JANAINA" ? "resp-jana" : "resp-vit";
+    const respLabel = c.responsavel==="DRA. JANAINA" ? "Jana" : "Vitória";
+    const cardClass = "card"+(badge==="entregue"?" entregue":badge==="cancelamento"?" cancelamento":"");
+    const chevClass = "chev"+(c.open?" open":"");
+    const bodyClass = "card-body"+(c.open?" open":"");
+    const card=document.createElement("div");
+    card.className=cardClass;
+    card.innerHTML=
+      '<div class="card-header" onclick="toggleCard('+cIdx+')">'+
+        '<div class="card-num">'+c.seq+'</div>'+
+        '<div class="card-info">'+
+          '<div class="card-name">'+c.nome+' <span class="resp-badge '+respClass+'">'+respLabel+'</span></div>'+
+          '<div class="card-meta">ID: '+(c.idHuggy||"—")+' &nbsp;|&nbsp; Tel: '+(c.telefone||"—")+' &nbsp;|&nbsp; Entrada: '+fmtDate(c.entrada)+'</div>'+
+        '</div>'+
+        '<div class="card-badges">'+badgeHtml+'<span class="badge badge-entrada">'+totalContatos+' contato(s)</span></div>'+
+        '<div class="'+chevClass+'" id="chev-'+cIdx+'">▾</div>'+
+      '</div>'+
+      '<div class="'+bodyClass+'" id="body-'+cIdx+'">'+
+        '<div class="contatos-grid">'+contatosHtml+'</div>'+
+        '<div class="extras-grid">'+
+          '<div class="extra-box">'+
+            '<div class="extra-label">📝 Observação</div>'+
+            '<textarea class="obs-ta" placeholder="Escreva uma observação sobre essa cliente..." onchange="saveObs('+cIdx+',this.value)">'+(c.observacao||"")+'</textarea>'+
+          '</div>'+
+          '<div class="extra-box">'+
+            '<div class="extra-label">📎 Evidências</div>'+
+            '<div class="file-list" id="ev-list-'+cIdx+'"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:flex-end;margin-top:10px">'+
+          '<div style="display:flex;gap:8px">'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="openEditModal('+cIdx+')">✏️ Editar</button>'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px;color:#e65100;border-color:#ffcc80" onclick="resetCliente('+cIdx+')">↺ Reset status</button>'+
+          '<button class="btn-sec" style="font-size:12px;padding:6px 14px" onclick="deleteCliente('+cIdx+')">✕ Remover</button>'+
+        '</div>'+
+        '</div>'+
+      '</div>';
+    container.appendChild(card);
+    renderEvidencias(cIdx);
+  });
+}
+
+render();
+
 </script>
 </body>
 </html>
