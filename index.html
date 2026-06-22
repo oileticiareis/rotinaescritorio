@@ -203,60 +203,42 @@ table thead th{position:sticky;top:0}
 }
 </style>
 <script>
-// ── JSONBIN CLOUD SYNC ──
-const JSONBIN_KEY = "$2a$10$yAfgbdIxVjyUNk3hl14x2epxRi5jhAwTqMS68F3uxA5HVri4x9TJq";
-const JSONBIN_BASE = "https://api.jsonbin.io/v3";
-let binIds = {};
-let syncStatus = null;
+// ── GOOGLE SHEETS CLOUD SYNC ──
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
+let syncEl = null;
 
-function showSync(msg, color="#e91e8c"){
-  if(!syncStatus) syncStatus = document.getElementById("sync-status");
-  if(syncStatus){ syncStatus.textContent = msg; syncStatus.style.background = color; }
+function showSync(msg, color){
+  if(!syncEl) syncEl = document.getElementById("sync-status");
+  if(syncEl){ syncEl.textContent = msg; if(color) syncEl.style.background = color; }
 }
 
-// Save to JSONBin
 async function cloudSave(key, value){
   try{
-    if(binIds[key]){
-      await fetch(JSONBIN_BASE+"/b/"+binIds[key], {
-        method:"PUT",
-        headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY},
-        body: JSON.stringify({key, data: value})
-      });
-    } else {
-      const res = await fetch(JSONBIN_BASE+"/b", {
-        method:"POST",
-        headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY,"X-Bin-Name":key,"X-Bin-Private":"false"},
-        body: JSON.stringify({key, data: value})
-      });
-      const json = await res.json();
-      binIds[key] = json.metadata?.id;
-      // save binIds locally
-      localStorage.setItem("binIds", JSON.stringify(binIds));
-    }
-  } catch(e){ console.error("cloudSave error:", e); }
+    await fetch(SHEETS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({key, value: JSON.stringify(value)})
+    });
+  } catch(e){ console.error("cloudSave:", e); }
 }
 
-// Load from JSONBin
 async function cloudLoad(key){
   try{
-    if(!binIds[key]) return null;
-    const res = await fetch(JSONBIN_BASE+"/b/"+binIds[key]+"/latest", {
-      headers:{"X-Master-Key":JSONBIN_KEY}
-    });
+    const res = await fetch(SHEETS_URL + "?key=" + encodeURIComponent(key));
     const json = await res.json();
-    return json.record?.data ?? null;
+    if(json.value && json.value !== "null") return JSON.parse(json.value);
+    return null;
   } catch(e){ return null; }
 }
 
 // Override sv() to also save to cloud
-const _origSv = window.sv;
+const _sv = window.sv;
 window.sv = function(k, v){
   try{ localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
   cloudSave(k, v);
 };
 
-// Load all data from cloud on startup
 const SYNC_KEYS = [
   "currentDay","weekInsights","lotesA","lotesB","audiencias",
   "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
@@ -265,38 +247,40 @@ const SYNC_KEYS = [
 async function initCloud(){
   showSync("⏳ Conectando...");
   
-  // Load saved bin IDs
-  const savedBinIds = localStorage.getItem("binIds");
-  if(savedBinIds) binIds = JSON.parse(savedBinIds);
-
-  // If no bins yet, create them from localStorage data
-  let hasBins = Object.keys(binIds).length > 0;
+  // Try to load from cloud first
+  const testVal = await cloudLoad("currentDay");
   
-  if(hasBins){
-    // Load from cloud
+  if(testVal !== null){
+    // Cloud has data - load everything from cloud
     showSync("⏳ Carregando dados...");
     for(const key of SYNC_KEYS){
       const val = await cloudLoad(key);
-      if(val !== null){
-        localStorage.setItem(key, JSON.stringify(val));
-      }
+      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
     }
     showSync("☁️ Nuvem ativa", "#2e7d32");
   } else {
-    // First time - migrate localStorage to cloud
-    showSync("⏳ Salvando na nuvem...");
+    // First time - migrate from localStorage to cloud
+    showSync("⏳ Salvando dados na nuvem...");
     for(const key of SYNC_KEYS){
       const local = localStorage.getItem(key);
       if(local){
         await cloudSave(key, JSON.parse(local));
+        await new Promise(r => setTimeout(r, 300)); // small delay between saves
       }
     }
-    showSync("✅ Dados salvos na nuvem!", "#2e7d32");
+    showSync("✅ Dados salvos!", "#2e7d32");
     setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"), 3000);
   }
   
-  // Re-init app with fresh data
-  if(typeof initApp === "function") initApp();
+  initApp();
+}
+
+function initApp(){
+  ensureSeqNums();
+  buildDaySelector();
+  rebuildTimeline();
+  buildWeekGrid();
+  updateCat();
 }
 
 window.addEventListener("load", initCloud);
@@ -1362,14 +1346,11 @@ function delAud(idx){
   });
 }
 
-function initApp(){{
-  ensureSeqNums();
-  buildDaySelector();
-  rebuildTimeline();
-  buildWeekGrid();
-  updateCat();
-}}
-initApp();
+ensureSeqNums();
+buildDaySelector();
+rebuildTimeline();
+buildWeekGrid();
+updateCat();
 </script>
 </body>
 </html>
