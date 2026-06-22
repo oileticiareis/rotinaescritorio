@@ -317,6 +317,83 @@ input[type=file]{display:none}
 }
 
 </style>
+<script>
+// ── GOOGLE SHEETS CLOUD SYNC ──
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
+let syncEl = null;
+
+function showSync(msg, color){
+  if(!syncEl) syncEl = document.getElementById("sync-status");
+  if(syncEl){ syncEl.textContent = msg; if(color) syncEl.style.background = color; }
+}
+
+async function cloudSave(key, value){
+  try{
+    await fetch(SHEETS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({key, value: JSON.stringify(value)})
+    });
+  } catch(e){ console.error("cloudSave:", e); }
+}
+
+async function cloudLoad(key){
+  try{
+    const res = await fetch(SHEETS_URL + "?key=" + encodeURIComponent(key));
+    const json = await res.json();
+    if(json.value && json.value !== "null") return JSON.parse(json.value);
+    return null;
+  } catch(e){ return null; }
+}
+
+const _sv = window.sv;
+window.sv = function(k, v){
+  try{ localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+  cloudSave(k, v);
+};
+
+const SYNC_KEYS = [
+  "currentDay","weekInsights","lotesA","lotesB","audiencias",
+  "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex",
+  "ultrassom_clientes"
+];
+
+async function initCloud(){
+  showSync("⏳ Conectando...");
+  const testVal = await cloudLoad("currentDay");
+  if(testVal !== null){
+    showSync("⏳ Carregando dados...");
+    for(const key of SYNC_KEYS){
+      const val = await cloudLoad(key);
+      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
+    }
+    showSync("☁️ Nuvem ativa", "#2e7d32");
+  } else {
+    showSync("⏳ Salvando dados na nuvem...");
+    for(const key of SYNC_KEYS){
+      const local = localStorage.getItem(key);
+      if(local){
+        await cloudSave(key, JSON.parse(local));
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
+    showSync("✅ Dados salvos!", "#2e7d32");
+    setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"), 3000);
+  }
+  initApp();
+}
+
+function initApp(){
+  ensureSeqNums();
+  buildDaySelector();
+  rebuildTimeline();
+  buildWeekGrid();
+  updateCat();
+}
+
+window.addEventListener("load", initCloud);
+</script>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
@@ -416,7 +493,8 @@ input[type=file]{display:none}
 </div>
 
 <div class="container">
-  <div class="topbar">
+  <div id="sync-status" style="position:fixed;top:10px;right:16px;background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
+<div class="topbar">
     <h1>🌸 Minha Rotina</h1>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
       <div class="day-selector" id="day-selector"></div>
@@ -557,6 +635,7 @@ input[type=file]{display:none}
       </select>
       <button class="add-btn" onclick="openModal()">+ Adicionar</button>
       <button class="reset-checks-btn" onclick="resetChecks()">↺ Reset checks</button>
+      <button class="btn-sec" style="padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c" onclick="openLotesChart()">📊 Gráfico</button>
     </div>
     <div class="lotes-count" id="lotes-count"></div>
     <div class="lotes-table-wrap">
@@ -609,8 +688,8 @@ input[type=file]{display:none}
     <button class="btn-sec" onclick="ultOpenChart()">📊 Gráfico</button>
     <button class="btn-sec" onclick="ultGerarPDF()">📄 Gerar PDF</button>
   </div>
-  <div class="count" id="ult-count"></div>
-  <div class="cards" id="ult-cards"></div>
+  <div class="ult-count" id="ult-count"></div>
+  <div class="ult-cards" id="ult-cards"></div>
   </div>
 
   <!-- AUDIENCIAS -->
@@ -1239,6 +1318,68 @@ function resetChecks(){
     renderLotes();
   });
 }
+let lotesChartInstance = null;
+function openLotesChart(){
+  document.getElementById("lotes-chart-modal").classList.add("open");
+  setTimeout(()=>{
+    const jTotal = lotesA.length;
+    const jFeitos = lotesA.filter(c=>c.checked).length;
+    const jFaltam = jTotal - jFeitos;
+
+    const vTotal = lotesB.length;
+    const vFeitos = lotesB.filter(c=>c.checked).length;
+    const vFaltam = vTotal - vFeitos;
+
+    const ctx = document.getElementById("lotes-chart-canvas");
+    if(lotesChartInstance) lotesChartInstance.destroy();
+    lotesChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Dra. Janaína", "Dra. Vitória"],
+        datasets: [
+          {
+            label: "Contatadas",
+            data: [jFeitos, vFeitos],
+            backgroundColor: ["#e91e8c","#9c27b0"],
+            borderRadius: 8
+          },
+          {
+            label: "Faltam",
+            data: [jFaltam, vFaltam],
+            backgroundColor: ["#fce4ec","#ede7f6"],
+            borderRadius: 8
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position:"top", labels:{ color:"#c2185b", font:{size:12} } },
+          tooltip: { callbacks: { label: c => c.dataset.label+": "+c.raw+" clientes" } }
+        },
+        scales: {
+          x: { ticks:{ color:"#c2185b", font:{size:13,weight:"bold"} }, grid:{ color:"#fce4ec" } },
+          y: { beginAtZero:true, ticks:{ stepSize:10, color:"#e991b8" }, grid:{ color:"#fce4ec" } }
+        }
+      }
+    });
+
+    // Stats cards
+    const stats = document.getElementById("lotes-chart-stats");
+    stats.innerHTML = [
+      {label:"Janaína — Total", val:jTotal, color:"#e91e8c"},
+      {label:"Janaína — Contatadas", val:jFeitos, color:"#2e7d32"},
+      {label:"Janaína — Faltam", val:jFaltam, color:"#c62828"},
+      {label:"Vitória — Total", val:vTotal, color:"#9c27b0"},
+      {label:"Vitória — Contatadas", val:vFeitos, color:"#2e7d32"},
+      {label:"Vitória — Faltam", val:vFaltam, color:"#c62828"},
+    ].map(s=>
+      '<div style="background:#fff0f5;border-radius:10px;padding:10px;text-align:center;border:1.5px solid #f8bbd0">'+
+      '<div style="font-size:11px;color:'+s.color+';font-weight:700">'+s.label+'</div>'+
+      '<div style="font-size:22px;font-weight:700;color:'+s.color+'">'+s.val+'</div></div>'
+    ).join("");
+  }, 100);
+}
 function switchCartela(c){
   activeCartela=c;
   document.getElementById("ctab-A").classList.toggle("active",c==="A");
@@ -1285,7 +1426,7 @@ function show(view,btn){
   if(view==="insights")buildInsights();
   if(view==="lotes")renderLotes();
   if(view==="audiencias")renderAud();
-  if(view==="ultrassom"){ultRender();}
+  if(view==="ultrassom") ultRender();
 }
 
 // ─── INIT ──────────────────────────────────────────────────
@@ -1415,13 +1556,23 @@ function delAud(idx){
   });
 }
 
-ensureSeqNums();
-buildDaySelector();
-rebuildTimeline();
-buildWeekGrid();
-updateCat();
+initApp();
 </script>
-<div class="confirm-overlay" id="ult-confirm-overlay">
+
+<div class="modal-overlay" id="lotes-chart-modal">
+  <div class="modal" style="max-width:580px">
+    <h3>📊 Atendimentos — Lotes</h3>
+    <div style="margin-bottom:14px">
+      <canvas id="lotes-chart-canvas" height="200"></canvas>
+    </div>
+    <div id="lotes-chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"></div>
+    <div class="modal-btns" style="margin-top:14px">
+      <button class="modal-cancel" onclick="document.getElementById('lotes-chart-modal').classList.remove('open')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ult-confirm-overlay" id="ult-confirm-overlay">
   <div class="confirm-box">
     <p id="ult-confirm-msg"></p>
     <div class="confirm-box-btns">
@@ -1466,26 +1617,26 @@ updateCat();
 <div class="modal-overlay" id="ult-edit-modal">
   <div class="modal">
     <h3>✏️ Editar cliente</h3>
-    <input type="hidden" id="ult-em-idx"/>
+    <input type="hidden" id="eult-m-idx"/>
     <label>Nome da cliente</label>
-    <input type="text" id="ult-em-nome" placeholder="Nome completo"/>
+    <input type="text" id="eult-m-nome" placeholder="Nome completo"/>
     <label>Advogada responsável</label>
-    <select id="ult-em-resp">
+    <select id="eult-m-resp">
       <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
       <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
     </select>
     <div class="modal-2col">
       <div>
         <label>ID Huggy</label>
-        <input type="text" id="ult-em-id" placeholder="Ex: 441143889"/>
+        <input type="text" id="eult-m-id" placeholder="Ex: 441143889"/>
       </div>
       <div>
         <label>Telefone</label>
-        <input type="text" id="ult-em-tel" placeholder="Ex: 55 11 99999-9999"/>
+        <input type="text" id="eult-m-tel" placeholder="Ex: 55 11 99999-9999"/>
       </div>
     </div>
     <label>Data de entrada no pendente</label>
-    <input type="date" id="ult-em-entrada"/>
+    <input type="date" id="eult-m-entrada"/>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="ultCloseEditModal()">Cancelar</button>
       <button class="modal-save" onclick="ultSaveEdit()">Salvar</button>
@@ -1513,7 +1664,7 @@ updateCat();
     </div>
     <div id="ult-chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
     <div class="modal-btns" style="margin-top:14px">
-      <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
+      <button class="modal-cancel" onclick="document.getElementById('ult-chart-modal').classList.remove('open')">Fechar</button>
     </div>
   </div>
 </div>
