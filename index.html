@@ -119,6 +119,8 @@ body{font-family:Arial,sans-serif;background:#fff0f5;color:#1a1a1a}
 .lotes-toolbar input,.lotes-toolbar select{padding:8px 14px;border-radius:20px;border:1.5px solid #f8bbd0;font-size:13px;color:#1a1a1a;background:#fff;outline:none}
 .lotes-toolbar input:focus,.lotes-toolbar select:focus{border-color:#e91e8c}
 .add-btn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:#e91e8c;color:#fff}
+.reset-checks-btn{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c}
+.reset-checks-btn:hover{background:#fce4ec}
 .add-btn:hover{background:#c2185b}
 .lotes-table-wrap{border-radius:14px;border:1.5px solid #f8bbd0;background:#fff;overflow:hidden;max-height:600px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -200,6 +202,95 @@ table thead th{position:sticky;top:0}
   .cat-section{flex-direction:column;text-align:center}
 }
 </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAn4-1CF-67vcB5hgjXHzahm5VOKgd9KDc",
+    authDomain: "rotina-9f9cc.firebaseapp.com",
+    projectId: "rotina-9f9cc",
+    storageBucket: "rotina-9f9cc.firebasestorage.app",
+    messagingSenderId: "211988352818",
+    appId: "1:211988352818:web:1ba838485e13198243112b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Save to Firestore
+  window.fbSave = async function(key, value) {
+    try {
+      await setDoc(doc(db, "rotina", key), { data: JSON.stringify(value) });
+    } catch(e) { console.error("fbSave error:", e); }
+  };
+
+  // Load from Firestore
+  window.fbLoad = async function(key) {
+    try {
+      const snap = await getDoc(doc(db, "rotina", key));
+      if(snap.exists()) return JSON.parse(snap.data().data);
+      return null;
+    } catch(e) { console.error("fbLoad error:", e); return null; }
+  };
+
+  // Migrate from localStorage to Firestore (runs once)
+  window.fbMigrate = async function() {
+    const keys = [
+      "currentDay","weekInsights","lotes","lotesA","lotesB","audiencias",
+      "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
+    ];
+    let migrated = false;
+    for(const key of keys) {
+      const local = localStorage.getItem(key);
+      if(local) {
+        const cloudVal = await window.fbLoad(key);
+        if(!cloudVal) { // only migrate if not already in cloud
+          await window.fbSave(key, JSON.parse(local));
+          migrated = true;
+          console.log("Migrated:", key);
+        }
+      }
+    }
+    if(migrated) {
+      console.log("Migração concluída!");
+      document.getElementById("sync-status").textContent = "✅ Dados migrados para a nuvem!";
+      setTimeout(()=>document.getElementById("sync-status").textContent="☁️ Nuvem ativa",3000);
+    }
+    return true;
+  };
+
+  // Load all data from cloud on startup
+  window.fbLoadAll = async function() {
+    document.getElementById("sync-status").textContent = "⏳ Carregando dados...";
+    const keys = [
+      "currentDay","weekInsights","lotesA","lotesB","audiencias",
+      "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex"
+    ];
+    for(const key of keys) {
+      const val = await window.fbLoad(key);
+      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
+    }
+    await window.fbMigrate();
+    document.getElementById("sync-status").textContent = "☁️ Nuvem ativa";
+    // Re-init the app after loading
+    if(typeof initApp === "function") initApp();
+  };
+
+  // Override sv() to also save to Firebase
+  const _origSv = window.sv;
+  window.sv = function(k, v) {
+    // Save to localStorage as backup
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {}
+    // Save to Firebase
+    window.fbSave(k, v);
+  };
+
+  // Start loading from cloud
+  window.addEventListener("load", () => {
+    window.fbLoadAll();
+  });
+</script>
 </head>
 <body>
 <canvas id="confetti-canvas"></canvas>
@@ -299,7 +390,8 @@ table thead th{position:sticky;top:0}
 </div>
 
 <div class="container">
-  <div class="topbar">
+  <div id="sync-status" style="position:fixed;top:10px;right:16px;background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
+<div class="topbar">
     <h1>🌸 Minha Rotina</h1>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
       <div class="day-selector" id="day-selector"></div>
@@ -438,6 +530,7 @@ table thead th{position:sticky;top:0}
         <option value="10">10 por dia</option>
       </select>
       <button class="add-btn" onclick="openModal()">+ Adicionar</button>
+      <button class="reset-checks-btn" onclick="resetChecks()">↺ Reset checks</button>
     </div>
     <div class="lotes-count" id="lotes-count"></div>
     <div class="lotes-table-wrap">
@@ -929,7 +1022,20 @@ function renderLotes(){
   if(sortCol==="trt") data.sort((a,b)=>a.trt.localeCompare(b.trt));
   else if(sortCol==="next") data.sort((a,b)=>{if(!a.nextContact)return 1;if(!b.nextContact)return -1;return a.nextContact.localeCompare(b.nextContact);});
   else if(sortCol==="seq") data.sort((a,b)=>(a.seq||0)-(b.seq||0));
-  else data.sort((a,b)=>a.lote-b.lote);
+  else {
+    // Default: checked today first (by checkOrder), then unchecked by original order
+    const today=todayStr();
+    data.sort((a,b)=>{
+      const aToday=a.checked&&a.checkDate===today;
+      const bToday=b.checked&&b.checkDate===today;
+      if(aToday&&bToday) return (a.checkOrder||0)-(b.checkOrder||0);
+      if(aToday) return -1;
+      if(bToday) return 1;
+      // both unchecked: sort by lote then seq
+      if(a.lote!==b.lote) return a.lote-b.lote;
+      return (a.seq||0)-(b.seq||0);
+    });
+  }
 
   const cName=activeCartela==="A"?"Dra. Janaína":"Dra. Vitória";
   document.getElementById("lotes-count").textContent=cName+" — "+data.length+" cliente(s)";
@@ -993,11 +1099,22 @@ function toggleRowChk(idx){
   const lotes=getLotes();
   lotes[idx].checked=!lotes[idx].checked;
   if(lotes[idx].checked){
-    lotes[idx].contactDate=todayStr();
-    lotes[idx].nextContact=addBusinessDays(todayStr(),20);
+    const today=todayStr();
+    lotes[idx].contactDate=today;
+    lotes[idx].nextContact=addBusinessDays(today,20);
+    lotes[idx].checkDate=today;
+    // assign order: count how many already checked today + 1
+    const todayChecked=lotes.filter(c=>c.checked&&c.checkDate===today&&c.id!==lotes[idx].id).length;
+    lotes[idx].checkOrder=todayChecked+1;
   } else {
     lotes[idx].contactDate=null;
     lotes[idx].nextContact=null;
+    lotes[idx].checkOrder=null;
+    lotes[idx].checkDate=null;
+    // re-number remaining checked today
+    const today=todayStr();
+    const todayChecked=lotes.filter(c=>c.checked&&c.checkDate===today).sort((a,b)=>(a.checkOrder||0)-(b.checkOrder||0));
+    todayChecked.forEach((c,i)=>c.checkOrder=i+1);
   }
   saveLotes(); renderLotes();
 }
@@ -1045,6 +1162,20 @@ function saveObsModal(){
   sv("audiencias",audiencias);
   closeObsModal();
   renderAud();
+}
+function resetChecks(){
+  showConfirm("Zerar todos os checks de " + (activeCartela==="A"?"Dra. Janaína":"Dra. Vitória") + "?", ()=>{
+    const lotes=getLotes();
+    lotes.forEach(c=>{
+      c.checked=false;
+      c.contactDate=null;
+      c.nextContact=null;
+      c.checkOrder=null;
+      c.checkDate=null;
+    });
+    saveLotes();
+    renderLotes();
+  });
 }
 function switchCartela(c){
   activeCartela=c;
@@ -1221,11 +1352,14 @@ function delAud(idx){
   });
 }
 
-ensureSeqNums();
-buildDaySelector();
-rebuildTimeline();
-buildWeekGrid();
-updateCat();
+function initApp() {
+  ensureSeqNums();
+  buildDaySelector();
+  rebuildTimeline();
+  buildWeekGrid();
+  updateCat();
+}
+initApp();
 </script>
 </body>
 </html>
