@@ -1111,57 +1111,93 @@ function renderLotes(){
   document.getElementById("lotes-count").textContent=cName+" — "+data.length+" cliente(s)";
   const tbody=document.getElementById("lotes-body"); tbody.innerHTML="";
 
-  // Group by lote number for display
-  const loteNums=[...new Set(data.map(r=>r.lote))].sort((a,b)=>a-b);
-  
-  loteNums.forEach(loteNum=>{
-    let loteData=data.filter(r=>r.lote===loteNum);
-    // Split by viewMode chunks (10 or 20)
-    const chunks=[];
-    for(let i=0;i<loteData.length;i+=viewMode) chunks.push(loteData.slice(i,i+viewMode));
-    
-    chunks.forEach((chunk,ci)=>{
-      // Lote header row
-      const headerTr=document.createElement("tr");
-      headerTr.innerHTML=`<td colspan="8" style="background:#e91e8c;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;text-align:left;letter-spacing:.3px;">
-        📋 Lote ${loteNum}${chunks.length>1?" — Parte "+(ci+1):""}
-        <span style="font-weight:400;opacity:.85;margin-left:8px">${chunk.filter(r=>r.checked).length}/${chunk.length} contatadas</span>
-      </td>`;
-      // spacing row before each lote group (except first)
-      tbody.appendChild(headerTr);
+  // POSITIONAL LOTES: group by position in filtered list, 10 per lote
+  // Separate checked-today from rest
+  const today3=todayStr();
+  const checkedToday=data.filter(r=>r.checked&&r.checkDate===today3);
+  const notChecked=data.filter(r=>!(r.checked&&r.checkDate===today3));
 
-      chunk.forEach((row,rowIdx)=>{
-        const idx=lotes.findIndex(l=>l.id===row.id);
-        const du=daysUntil(row.nextContact);
-        const ncClass=row.checked?(du!==null&&du<=3?"soon":du!==null&&du<=7?"ok":"pending"):"pending";
-        const ncText=row.nextContact?fmtDate(row.nextContact):"—";
-        const tr=document.createElement("tr");
-        if(row.checked) tr.className="checked-row";
-        const posNum=ci*viewMode+rowIdx+1;
-        tr.innerHTML=`
-          <td style="padding:10px 8px;text-align:center">
-            <span class="lote-num">${posNum}</span>
-            <div style="font-size:9px;color:#e8c4d0;margin-top:2px;line-height:1">lote ${loteNum}</div>
-          </td>
-          <td style="text-align:left;padding:12px 14px">
-            <div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">
-              <span class="trt-badge" style="flex-shrink:0">${row.trt}</span>
-              <span style="font-size:11px;color:#e8b4c8;font-weight:700;flex-shrink:0">#${row.seq||"—"}</span>
-              <span style="font-size:13px;font-weight:600;color:#1a1a1a;word-break:break-word">${row.nome}</span>
-            </div>
-          </td>
-          <td style="font-size:12px;color:#777;word-break:break-all;padding:12px 10px">${row.processo||"—"}</td>
-          <td style="font-size:12px;color:#888;padding:12px 10px">${row.idHuggy||"—"}</td>
-          <td class="date-cell">${row.contactDate?fmtDate(row.contactDate):"—"}</td>
-          <td><div class="row-chk${row.checked?" checked":""}" onclick="toggleRowChk(${idx})">${row.checked?"✓":""}</div></td>
-          <td><span class="next-contact ${ncClass}">${ncText}</span></td>
-          <td style="display:flex;gap:4px;justify-content:center;padding:10px 6px">
-            <button class="edit-btn" onclick="openEditModal(${idx})" title="Editar">✏️</button>
-            <button class="del-btn" onclick="deleteRow(${idx})">✕</button>
-          </td>`;
-        tbody.appendChild(tr);
-      });
+  // Show checked today section
+  if(checkedToday.length>0){
+    const hdr=document.createElement("tr");
+    hdr.innerHTML=`<td colspan="8" style="background:#c2185b;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;text-align:left;">
+      ✅ Contatadas hoje — ${checkedToday.length} cliente(s)
+    </td>`;
+    tbody.appendChild(hdr);
+    checkedToday.forEach((row,ri)=>{
+      const idx=lotes.findIndex(l=>l.id===row.id);
+      const du=daysUntil(row.nextContact);
+      const ncClass=du!==null&&du<=3?"soon":du!==null&&du<=7?"ok":"pending";
+      const ncText=row.nextContact?fmtDate(row.nextContact):"—";
+      const posNum=row.checkOrder||ri+1;
+      const tr=document.createElement("tr");
+      tr.className="checked-row";
+      tr.innerHTML=`
+        <td style="padding:10px 8px;text-align:center">
+          <span class="lote-num">${posNum}</span>
+          <div style="font-size:9px;color:#e8c4d0;margin-top:2px;line-height:1">#${row.seq||"—"}</div>
+        </td>
+        <td style="text-align:left;padding:12px 14px">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">
+            <span class="trt-badge" style="flex-shrink:0">${row.trt}</span>
+            <span style="font-size:13px;font-weight:600;color:#c2185b;word-break:break-word">${row.nome}</span>
+          </div>
+        </td>
+        <td style="font-size:12px;word-break:break-all;padding:12px 10px">${row.processo||"—"}</td>
+        <td style="font-size:12px;padding:12px 10px">${row.idHuggy||"—"}</td>
+        <td class="date-cell">${row.contactDate?fmtDate(row.contactDate):"—"}</td>
+        <td><div class="row-chk checked" onclick="toggleRowChk(${idx})">✓</div></td>
+        <td><span class="next-contact ${ncClass}">${ncText}</span></td>
+        <td style="display:flex;gap:4px;justify-content:center;padding:10px 6px">
+          <button class="edit-btn" onclick="openEditModal(${idx})" title="Editar">✏️</button>
+          <button class="del-btn" onclick="deleteRow(${idx})">✕</button>
+        </td>`;
+      tbody.appendChild(tr);
     });
+  }
+
+  // Render unchecked in automatic lotes of 10
+  notChecked.forEach((row,ri)=>{
+    const idx=lotes.findIndex(l=>l.id===row.id);
+    const posInLote=(ri%10)+1;
+    const loteNum=Math.floor(ri/10)+1;
+
+    // Add lote header at start of each group of 10
+    if(posInLote===1){
+      const remaining=notChecked.length-ri;
+      const loteSize=Math.min(10,remaining);
+      const hdr=document.createElement("tr");
+      hdr.innerHTML=`<td colspan="8" style="background:#e91e8c;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;text-align:left;letter-spacing:.3px;">
+        Lote ${loteNum} <span style="font-weight:400;opacity:.85;margin-left:8px">${loteSize} cliente(s)</span>
+      </td>`;
+      tbody.appendChild(hdr);
+    }
+
+    const du=daysUntil(row.nextContact);
+    const ncClass=row.checked?(du!==null&&du<=3?"soon":du!==null&&du<=7?"ok":"pending"):"pending";
+    const ncText=row.nextContact?fmtDate(row.nextContact):"—";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td style="padding:10px 8px;text-align:center">
+        <span class="lote-num">${posInLote}</span>
+        <div style="font-size:9px;color:#e8c4d0;margin-top:2px;line-height:1">#${row.seq||"—"}</div>
+      </td>
+      <td style="text-align:left;padding:12px 14px">
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:nowrap">
+          <span class="trt-badge" style="flex-shrink:0">${row.trt}</span>
+          <span style="font-size:13px;font-weight:600;color:#1a1a1a;word-break:break-word">${row.nome}</span>
+        </div>
+      </td>
+      <td style="font-size:12px;word-break:break-all;padding:12px 10px">${row.processo||"—"}</td>
+      <td style="font-size:12px;padding:12px 10px">${row.idHuggy||"—"}</td>
+      <td class="date-cell">${row.contactDate?fmtDate(row.contactDate):"—"}</td>
+      <td><div class="row-chk${row.checked?" checked":""}" onclick="toggleRowChk(${idx})">${row.checked?"✓":""}</div></td>
+      <td><span class="next-contact ${ncClass}">${ncText}</span></td>
+      <td style="display:flex;gap:4px;justify-content:center;padding:10px 6px">
+        <button class="edit-btn" onclick="openEditModal(${idx})" title="Editar">✏️</button>
+        <button class="del-btn" onclick="deleteRow(${idx})">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
   });
 }
 
