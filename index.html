@@ -379,42 +379,42 @@ async function applySheetData(allData){
 }
 
 async function initCloud(){
-  showSync("⏳ Carregando da nuvem...");
+  // Load app immediately from localStorage (fast)
+  // Sheets is only used for backup/restore via manual sync button
+  initApp();
+  showSync("☁️ Nuvem ativa","#2e7d32");
+  // Save current state to sheets in background
+  setTimeout(async()=>{
+    for(const key of SYNC_KEYS){
+      const local=localStorage.getItem(key);
+      if(local) await cloudSave(key,JSON.parse(local));
+    }
+  },3000);
+}
+
+window.forceSync=async function(){
+  if(!confirm("Isso vai restaurar dados do Google Sheets. Só use se perdeu dados. Continuar?")) return;
+  showSync("⏳ Restaurando...");
   try{
     const allData=await loadFromSheetCSV();
     if(allData&&Object.keys(allData).length>0){
-      const loaded=await applySheetData(allData);
-      if(loaded){
-        showSync("☁️ Nuvem ativa","#2e7d32");
-        initApp();
-        return;
-      }
+      await applySheetData(allData);
+      showSync("✅ Restaurado!","#2e7d32");
+      setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");location.reload();},1500);
+      return;
     }
-  }catch(e){console.error("initCloud CSV error:",e);}
-  
-  // Fallback: migrate from localStorage to cloud
-  showSync("⏳ Primeiro acesso — salvando...");
+  }catch(e){console.error("forceSync error:",e);}
+  showSync("❌ Erro","#c62828");
+}
+
+window.saveToCloud=async function(){
+  showSync("⏳ Salvando na nuvem...");
   for(const key of SYNC_KEYS){
     const local=localStorage.getItem(key);
     if(local){await cloudSave(key,JSON.parse(local));await new Promise(r=>setTimeout(r,200));}
   }
   showSync("✅ Salvo!","#2e7d32");
-  setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"),3000);
-  initApp();
-}
-
-window.forceSync=async function(){
-  showSync("⏳ Sincronizando...");
-  try{
-    const allData=await loadFromSheetCSV();
-    if(allData&&Object.keys(allData).length>0){
-      await applySheetData(allData);
-      showSync("✅ Dados recuperados!","#2e7d32");
-      setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");location.reload();},1500);
-      return;
-    }
-  }catch(e){console.error("forceSync error:",e);}
-  showSync("❌ Erro ao sincronizar","#c62828");
+  setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"),2000);
 }
 function initApp(){ensureSeqNums();buildDaySelector();rebuildTimeline();buildWeekGrid();updateCat();}
 window.addEventListener("load",initCloud);
@@ -516,7 +516,8 @@ window.addEventListener("load",initCloud);
 
 <div class="container">
   <div style="position:fixed;top:10px;right:16px;z-index:9999;display:flex;gap:6px;align-items:center">
-  <button onclick="forceSync()" style="background:#fff;color:#e91e8c;border:2px solid #e91e8c;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer">↺ Sincronizar</button>
+  <button onclick="saveToCloud()" style="background:#fff;color:#2e7d32;border:2px solid #2e7d32;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer">☁️ Salvar</button>
+  <button onclick="forceSync()" style="background:#fff;color:#e91e8c;border:2px solid #e91e8c;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer">↺ Restaurar</button>
   <div id="sync-status" style="background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
 </div>
 <div class="topbar">
