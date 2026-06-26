@@ -1351,8 +1351,7 @@ function switchCartela(c){
   document.getElementById("ctab-B").classList.toggle("active",c==="B");
   // reset filters
   document.getElementById("filter-trt").value="";
-  document.getElementById("filter-lote").value="";
-  document.getElementById("sort-col").value="lote";
+  document.getElementById("sort-col").value="seq";
   renderLotes();
 }
 function openEditModal(idx){
