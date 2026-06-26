@@ -318,81 +318,30 @@ input[type=file]{display:none}
 
 </style>
 <script>
-// ── GOOGLE SHEETS CLOUD SYNC ──
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
-let syncEl = null;
-
-function showSync(msg, color){
-  if(!syncEl) syncEl = document.getElementById("sync-status");
-  if(syncEl){ syncEl.textContent = msg; if(color) syncEl.style.background = color; }
-}
-
-async function cloudSave(key, value){
-  try{
-    await fetch(SHEETS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({key, value: JSON.stringify(value)})
-    });
-  } catch(e){ console.error("cloudSave:", e); }
-}
-
-async function cloudLoad(key){
-  try{
-    const res = await fetch(SHEETS_URL + "?key=" + encodeURIComponent(key));
-    const json = await res.json();
-    if(json.value && json.value !== "null") return JSON.parse(json.value);
-    return null;
-  } catch(e){ return null; }
-}
-
-const _sv = window.sv;
-window.sv = function(k, v){
-  try{ localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
-  cloudSave(k, v);
-};
-
-const SYNC_KEYS = [
-  "currentDay","weekInsights","lotesA","lotesB","audiencias",
-  "checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex",
-  "ultrassom_clientes"
-];
-
+const SHEETS_URL="https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
+let syncEl=null;
+function showSync(msg,color){if(!syncEl)syncEl=document.getElementById("sync-status");if(syncEl){syncEl.textContent=msg;if(color)syncEl.style.background=color;}}
+async function cloudSave(key,value){try{await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({key,value:JSON.stringify(value)})});}catch(e){}}
+async function cloudLoad(key){try{const res=await fetch(SHEETS_URL+"?key="+encodeURIComponent(key));const json=await res.json();if(json.value&&json.value!=="null")return JSON.parse(json.value);return null;}catch(e){return null;}}
+window.sv=function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}cloudSave(k,v);};
+const SYNC_KEYS=["currentDay","weekInsights","lotesA","lotesB","audiencias","checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex","ultrassom_clientes"];
 async function initCloud(){
   showSync("⏳ Conectando...");
-  const testVal = await cloudLoad("currentDay");
-  if(testVal !== null){
+  const testVal=await cloudLoad("currentDay");
+  if(testVal!==null){
     showSync("⏳ Carregando dados...");
-    for(const key of SYNC_KEYS){
-      const val = await cloudLoad(key);
-      if(val !== null) localStorage.setItem(key, JSON.stringify(val));
-    }
-    showSync("☁️ Nuvem ativa", "#2e7d32");
-  } else {
-    showSync("⏳ Salvando dados na nuvem...");
-    for(const key of SYNC_KEYS){
-      const local = localStorage.getItem(key);
-      if(local){
-        await cloudSave(key, JSON.parse(local));
-        await new Promise(r => setTimeout(r, 300));
-      }
-    }
-    showSync("✅ Dados salvos!", "#2e7d32");
-    setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"), 3000);
+    for(const key of SYNC_KEYS){const val=await cloudLoad(key);if(val!==null)localStorage.setItem(key,JSON.stringify(val));}
+    showSync("☁️ Nuvem ativa","#2e7d32");
+  }else{
+    showSync("⏳ Salvando...");
+    for(const key of SYNC_KEYS){const local=localStorage.getItem(key);if(local){await cloudSave(key,JSON.parse(local));await new Promise(r=>setTimeout(r,300));}}
+    showSync("✅ Salvo!","#2e7d32");
+    setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"),3000);
   }
   initApp();
 }
-
-function initApp(){
-  ensureSeqNums();
-  buildDaySelector();
-  rebuildTimeline();
-  buildWeekGrid();
-  updateCat();
-}
-
-window.addEventListener("load", initCloud);
+function initApp(){ensureSeqNums();buildDaySelector();rebuildTimeline();buildWeekGrid();updateCat();}
+window.addEventListener("load",initCloud);
 </script>
 </head>
 <body>
@@ -437,10 +386,7 @@ window.addEventListener("load", initCloud);
         <label>ID Huggy</label>
         <input type="text" id="m-id" placeholder="Ex: 441143889"/>
       </div>
-      <div>
-        <label>Lote</label>
-        <input type="number" id="m-lote" min="1" placeholder="Ex: 1"/>
-      </div>
+
     </div>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal()">Cancelar</button>
@@ -620,19 +566,13 @@ window.addEventListener("load", initCloud);
       <select id="filter-trt" onchange="renderLotes()">
         <option value="">Todos os TRTs</option>
       </select>
-      <select id="filter-lote" onchange="renderLotes()">
-        <option value="">Todos os lotes</option>
-      </select>
+
       <select id="sort-col" onchange="renderLotes()">
-        <option value="lote">Ordenar: Lote</option>
+        <option value="seq">Ordenar: Cadastro</option>
         <option value="trt">Ordenar: TRT</option>
         <option value="next">Ordenar: Próx. contato</option>
-        <option value="seq">Ordenar: Nº cadastro</option>
       </select>
-      <select id="view-mode" onchange="renderLotes()">
-        <option value="20">20 por dia</option>
-        <option value="10">10 por dia</option>
-      </select>
+
       <button class="add-btn" onclick="openModal()">+ Adicionar</button>
       <button class="reset-checks-btn" onclick="resetChecks()">↺ Reset checks</button>
       <button class="btn-sec" style="padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c" onclick="openLotesChart()">📊 Gráfico</button>
@@ -688,8 +628,8 @@ window.addEventListener("load", initCloud);
     <button class="btn-sec" onclick="ultOpenChart()">📊 Gráfico</button>
     <button class="btn-sec" onclick="ultGerarPDF()">📄 Gerar PDF</button>
   </div>
-  <div class="ult-count" id="ult-count"></div>
-  <div class="ult-cards" id="ult-cards"></div>
+  <div class="count" id="ult-count"></div>
+  <div class="cards" id="ult-cards"></div>
   </div>
 
   <!-- AUDIENCIAS -->
@@ -1132,39 +1072,30 @@ function ensureSeqNums(){
     if(changed){ if(ai===0) sv("lotesA",lotesA); else sv("lotesB",lotesB); }
   });
 }
-function buildLoteFilters(curTrt, curLote){
+function buildLoteFilters(curTrt){
   const lotes=getLotes();
   const trts=[...new Set(lotes.map(l=>l.trt).filter(Boolean))].sort();
-  const lotNums=[...new Set(lotes.map(l=>String(l.lote)))].sort((a,b)=>Number(a)-Number(b));
   const trtSel=document.getElementById("filter-trt");
   const _curTrt = curTrt !== undefined ? curTrt : trtSel.value;
   trtSel.innerHTML=`<option value="">Todos os TRTs</option>`+trts.map(t=>`<option value="${t}"${_curTrt===t?" selected":""}>${t}</option>`).join("");
   trtSel.value=_curTrt;
-  const loteSel=document.getElementById("filter-lote");
-  const _curLote = curLote !== undefined ? curLote : loteSel.value;
-  loteSel.innerHTML=`<option value="">Todos os lotes</option>`+lotNums.map(n=>`<option value="${n}"${_curLote==n?" selected":""}>${n}</option>`).join("");
-  loteSel.value=_curLote;
 }
 
 function renderLotes(){
-  // Read values BEFORE rebuilding filters
   const filterTrt=document.getElementById("filter-trt").value;
-  const filterLote=document.getElementById("filter-lote").value;
   const sortCol=document.getElementById("sort-col").value;
-  const viewMode=parseInt(document.getElementById("view-mode").value)||20;
-  buildLoteFilters(filterTrt, filterLote);
+  const viewMode=10;
+  buildLoteFilters(filterTrt);
   const lotes=getLotes();
 
   let data=[...lotes];
   const searchQ=(document.getElementById("search-lote")?.value||"").toLowerCase().trim();
   if(filterTrt) data=data.filter(l=>l.trt===filterTrt);
-  if(filterLote) data=data.filter(l=>String(l.lote)===filterLote);
   if(searchQ) data=data.filter(l=>l.nome.toLowerCase().includes(searchQ)||(l.processo||"").includes(searchQ)||(l.idHuggy||"").includes(searchQ));
   if(sortCol==="trt") data.sort((a,b)=>a.trt.localeCompare(b.trt));
   else if(sortCol==="next") data.sort((a,b)=>{if(!a.nextContact)return 1;if(!b.nextContact)return -1;return a.nextContact.localeCompare(b.nextContact);});
-  else if(sortCol==="seq") data.sort((a,b)=>(a.seq||0)-(b.seq||0));
   else {
-    // Default: checked today first (by checkOrder), then unchecked by original order
+    // Default: checked today first, then by seq
     const today=todayStr();
     data.sort((a,b)=>{
       const aToday=a.checked&&a.checkDate===today;
@@ -1172,8 +1103,6 @@ function renderLotes(){
       if(aToday&&bToday) return (a.checkOrder||0)-(b.checkOrder||0);
       if(aToday) return -1;
       if(bToday) return 1;
-      // both unchecked: sort by lote then seq
-      if(a.lote!==b.lote) return a.lote-b.lote;
       return (a.seq||0)-(b.seq||0);
     });
   }
@@ -1268,9 +1197,9 @@ function deleteRow(idx){
 }
 
 function openModal(){document.getElementById("add-modal").classList.add("open");}
-function closeModal(){document.getElementById("add-modal").classList.remove("open");["m-lote","m-nome","m-proc","m-id"].forEach(id=>document.getElementById(id).value="");document.getElementById("m-trt").value="";}
+function closeModal(){document.getElementById("add-modal").classList.remove("open");["m-nome","m-proc","m-id"].forEach(id=>document.getElementById(id).value="");document.getElementById("m-trt").value="";}
 function saveModal(){
-  const lote=parseInt(document.getElementById("m-lote").value);
+  const lote=1; // auto-calculated
   const nome=document.getElementById("m-nome").value.trim();
   const trt=document.getElementById("m-trt").value;
   const processo=document.getElementById("m-proc").value.trim();
@@ -1279,7 +1208,7 @@ function saveModal(){
   const lotes=getLotes();
   const allLotes=[...lotesA,...lotesB];
   const maxSeq = allLotes.length > 0 ? Math.max(...allLotes.map(c=>c.seq||0)) : 0;
-  lotes.push({id:Date.now(),lote:lote||1,nome,trt,processo,idHuggy,seq:maxSeq+1,checked:false,contactDate:null,nextContact:null});
+  lotes.push({id:Date.now(),lote:1,nome,trt,processo,idHuggy,seq:maxSeq+1,checked:false,contactDate:null,nextContact:null});
   saveLotes(); closeModal(); renderLotes();
 }
 
@@ -1572,7 +1501,7 @@ initApp();
   </div>
 </div>
 
-<div class="ult-confirm-overlay" id="ult-confirm-overlay">
+<div class="confirm-overlay" id="ult-confirm-overlay">
   <div class="confirm-box">
     <p id="ult-confirm-msg"></p>
     <div class="confirm-box-btns">
@@ -1617,26 +1546,26 @@ initApp();
 <div class="modal-overlay" id="ult-edit-modal">
   <div class="modal">
     <h3>✏️ Editar cliente</h3>
-    <input type="hidden" id="eult-m-idx"/>
+    <input type="hidden" id="ult-em-idx"/>
     <label>Nome da cliente</label>
-    <input type="text" id="eult-m-nome" placeholder="Nome completo"/>
+    <input type="text" id="ult-em-nome" placeholder="Nome completo"/>
     <label>Advogada responsável</label>
-    <select id="eult-m-resp">
+    <select id="ult-em-resp">
       <option value="DRA. JANAINA">🌸 Dra. Janaína</option>
       <option value="DRA. VITÓRIA">💜 Dra. Vitória</option>
     </select>
     <div class="modal-2col">
       <div>
         <label>ID Huggy</label>
-        <input type="text" id="eult-m-id" placeholder="Ex: 441143889"/>
+        <input type="text" id="ult-em-id" placeholder="Ex: 441143889"/>
       </div>
       <div>
         <label>Telefone</label>
-        <input type="text" id="eult-m-tel" placeholder="Ex: 55 11 99999-9999"/>
+        <input type="text" id="ult-em-tel" placeholder="Ex: 55 11 99999-9999"/>
       </div>
     </div>
     <label>Data de entrada no pendente</label>
-    <input type="date" id="eult-m-entrada"/>
+    <input type="date" id="ult-em-entrada"/>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="ultCloseEditModal()">Cancelar</button>
       <button class="modal-save" onclick="ultSaveEdit()">Salvar</button>
@@ -1664,7 +1593,7 @@ initApp();
     </div>
     <div id="ult-chart-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px"></div>
     <div class="modal-btns" style="margin-top:14px">
-      <button class="modal-cancel" onclick="document.getElementById('ult-chart-modal').classList.remove('open')">Fechar</button>
+      <button class="modal-cancel" onclick="document.getElementById('chart-modal').classList.remove('open')">Fechar</button>
     </div>
   </div>
 </div>
