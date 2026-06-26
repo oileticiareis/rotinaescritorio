@@ -326,19 +326,40 @@ async function cloudLoad(key){try{const res=await fetch(SHEETS_URL+"?key="+encod
 window.sv=function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}cloudSave(k,v);};
 const SYNC_KEYS=["currentDay","weekInsights","lotesA","lotesB","audiencias","checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex","ultrassom_clientes"];
 async function initCloud(){
-  showSync("⏳ Conectando...");
-  const testVal=await cloudLoad("currentDay");
-  if(testVal!==null){
-    showSync("⏳ Carregando dados...");
-    for(const key of SYNC_KEYS){const val=await cloudLoad(key);if(val!==null)localStorage.setItem(key,JSON.stringify(val));}
-    showSync("☁️ Nuvem ativa","#2e7d32");
-  }else{
-    showSync("⏳ Salvando...");
-    for(const key of SYNC_KEYS){const local=localStorage.getItem(key);if(local){await cloudSave(key,JSON.parse(local));await new Promise(r=>setTimeout(r,300));}}
+  showSync("⏳ Carregando da nuvem...");
+  // ALWAYS load from cloud first to get latest data
+  let loaded=false;
+  for(const key of SYNC_KEYS){
+    const val=await cloudLoad(key);
+    if(val!==null){
+      localStorage.setItem(key,JSON.stringify(val));
+      loaded=true;
+    }
+  }
+  if(!loaded){
+    // Nothing in cloud yet - migrate from localStorage
+    showSync("⏳ Salvando na nuvem...");
+    for(const key of SYNC_KEYS){
+      const local=localStorage.getItem(key);
+      if(local){await cloudSave(key,JSON.parse(local));await new Promise(r=>setTimeout(r,300));}
+    }
     showSync("✅ Salvo!","#2e7d32");
     setTimeout(()=>showSync("☁️ Nuvem ativa","#2e7d32"),3000);
+  } else {
+    showSync("☁️ Nuvem ativa","#2e7d32");
   }
   initApp();
+}
+
+// Force sync from cloud - call this to recover data
+window.forceSync=async function(){
+  showSync("⏳ Sincronizando...");
+  for(const key of SYNC_KEYS){
+    const val=await cloudLoad(key);
+    if(val!==null) localStorage.setItem(key,JSON.stringify(val));
+  }
+  showSync("✅ Sincronizado!","#2e7d32");
+  setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");initApp();renderLotes&&renderLotes();},1000);
 }
 function initApp(){ensureSeqNums();buildDaySelector();rebuildTimeline();buildWeekGrid();updateCat();}
 window.addEventListener("load",initCloud);
@@ -439,7 +460,10 @@ window.addEventListener("load",initCloud);
 </div>
 
 <div class="container">
-  <div id="sync-status" style="position:fixed;top:10px;right:16px;background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
+  <div style="position:fixed;top:10px;right:16px;z-index:9999;display:flex;gap:6px;align-items:center">
+  <button onclick="forceSync()" style="background:#fff;color:#e91e8c;border:2px solid #e91e8c;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer">↺ Sincronizar</button>
+  <div id="sync-status" style="background:#e91e8c;color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.2)">⏳ Conectando...</div>
+</div>
 <div class="topbar">
     <h1>🌸 Minha Rotina</h1>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
