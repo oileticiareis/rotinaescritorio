@@ -321,23 +321,58 @@ input[type=file]{display:none}
 const SHEETS_URL="https://script.google.com/macros/s/AKfycbyASZsA7cYhpgpsoqmLmBDxmyaKkLAYacnyzR4f-xJgCQOEUh9gWyq3YTmxdPbByEw/exec";
 let syncEl=null;
 function showSync(msg,color){if(!syncEl)syncEl=document.getElementById("sync-status");if(syncEl){syncEl.textContent=msg;if(color)syncEl.style.background=color;}}
-async function cloudSave(key,value){try{await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({key,value:JSON.stringify(value)})});}catch(e){}}
-async function cloudLoad(key){try{const res=await fetch(SHEETS_URL+"?key="+encodeURIComponent(key));const json=await res.json();if(json.value&&json.value!=="null")return JSON.parse(json.value);return null;}catch(e){return null;}}
+async function cloudSave(key,value){
+  try{
+    await fetch(SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({key,value:JSON.stringify(value)})});
+  }catch(e){console.error("cloudSave:",e);}
+}
+async function cloudLoadAll(){
+  try{
+    const res=await fetch(SHEETS_URL+"?all=1");
+    const json=await res.json();
+    return json; // returns {key: value, key2: value2, ...}
+  }catch(e){console.error("cloudLoadAll:",e);return null;}
+}
+async function cloudLoad(key){
+  try{
+    const res=await fetch(SHEETS_URL+"?key="+encodeURIComponent(key));
+    const json=await res.json();
+    if(json.value&&json.value!=="null")return JSON.parse(json.value);
+    return null;
+  }catch(e){return null;}
+}
 window.sv=function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}cloudSave(k,v);};
 const SYNC_KEYS=["currentDay","weekInsights","lotesA","lotesB","audiencias","checked_Seg","checked_Ter","checked_Qua","checked_Qui","checked_Sex","ultrassom_clientes"];
 async function initCloud(){
   showSync("⏳ Carregando da nuvem...");
-  // ALWAYS load from cloud first to get latest data
+  try{
+    // Load ALL data in one request
+    const allData = await cloudLoadAll();
+    if(allData && Object.keys(allData).length>0){
+      let loaded=false;
+      for(const key of SYNC_KEYS){
+        if(allData[key]!==undefined && allData[key]!==null && allData[key]!=="null"){
+          try{
+            localStorage.setItem(key, JSON.stringify(JSON.parse(allData[key])));
+            loaded=true;
+          }catch(e){}
+        }
+      }
+      if(loaded){
+        showSync("☁️ Nuvem ativa","#2e7d32");
+        initApp();
+        return;
+      }
+    }
+  }catch(e){console.error("initCloud error:",e);}
+  
+  // Fallback: try key by key
   let loaded=false;
   for(const key of SYNC_KEYS){
     const val=await cloudLoad(key);
-    if(val!==null){
-      localStorage.setItem(key,JSON.stringify(val));
-      loaded=true;
-    }
+    if(val!==null){localStorage.setItem(key,JSON.stringify(val));loaded=true;}
   }
   if(!loaded){
-    // Nothing in cloud yet - migrate from localStorage
     showSync("⏳ Salvando na nuvem...");
     for(const key of SYNC_KEYS){
       const local=localStorage.getItem(key);
@@ -351,15 +386,28 @@ async function initCloud(){
   initApp();
 }
 
-// Force sync from cloud - call this to recover data
 window.forceSync=async function(){
   showSync("⏳ Sincronizando...");
+  try{
+    const allData=await cloudLoadAll();
+    if(allData&&Object.keys(allData).length>0){
+      for(const key of SYNC_KEYS){
+        if(allData[key]!==undefined&&allData[key]!==null&&allData[key]!=="null"){
+          try{localStorage.setItem(key,JSON.stringify(JSON.parse(allData[key])));}catch(e){}
+        }
+      }
+      showSync("✅ Sincronizado!","#2e7d32");
+      setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");location.reload();},1000);
+      return;
+    }
+  }catch(e){}
+  // Fallback key by key
   for(const key of SYNC_KEYS){
     const val=await cloudLoad(key);
-    if(val!==null) localStorage.setItem(key,JSON.stringify(val));
+    if(val!==null)localStorage.setItem(key,JSON.stringify(val));
   }
   showSync("✅ Sincronizado!","#2e7d32");
-  setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");initApp();renderLotes&&renderLotes();},1000);
+  setTimeout(()=>{showSync("☁️ Nuvem ativa","#2e7d32");location.reload();},1000);
 }
 function initApp(){ensureSeqNums();buildDaySelector();rebuildTimeline();buildWeekGrid();updateCat();}
 window.addEventListener("load",initCloud);
