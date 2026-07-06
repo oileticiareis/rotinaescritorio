@@ -1491,16 +1491,27 @@ const AUD_VERSION="v77_julho2026";
 let audiencias=(()=>{
   try{
     const ver=localStorage.getItem("audiencias_version");
-    if(ver!==AUD_VERSION){
-      localStorage.removeItem("audiencias");
-      localStorage.setItem("audiencias_version",AUD_VERSION);
-      return AUD_DEFAULT.map(a=>({...a}));
-    }
     const stored=localStorage.getItem("audiencias");
+    
+    if(ver!==AUD_VERSION){
+      // New version - merge: keep user edits, add new records
+      if(stored){
+        const parsed=JSON.parse(stored);
+        // Add any new records from default that user doesn't have
+        const existingIds=new Set(parsed.map(a=>a.processo));
+        const newRecords=AUD_DEFAULT.filter(a=>!existingIds.has(a.processo));
+        const merged=[...parsed,...newRecords];
+        localStorage.setItem("audiencias_version",AUD_VERSION);
+        localStorage.setItem("audiencias",JSON.stringify(merged));
+        return merged;
+      } else {
+        localStorage.setItem("audiencias_version",AUD_VERSION);
+        return AUD_DEFAULT.map(a=>({...a}));
+      }
+    }
+    // Same version - always use localStorage (user edits preserved)
     if(!stored) return AUD_DEFAULT.map(a=>({...a}));
-    const parsed=JSON.parse(stored);
-    if(parsed.length < AUD_DEFAULT.length) return AUD_DEFAULT.map(a=>({...a}));
-    return parsed;
+    return JSON.parse(stored);
   }catch(e){return AUD_DEFAULT.map(a=>({...a}));}
 })();
 
