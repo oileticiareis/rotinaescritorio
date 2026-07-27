@@ -524,7 +524,7 @@ window.addEventListener("load",initCloud);
     <h1>🌸 Minha Rotina</h1>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
       <div class="day-selector" id="day-selector"></div>
-      <button class="reset-btn" onclick="resetDay()">↺ Novo dia</button>
+      <button class="reset-btn" onclick="resetSemana()">↺ Zerar semana</button>
     </div>
   </div>
 
@@ -631,6 +631,14 @@ window.addEventListener("load",initCloud);
         <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px" id="chart-legend"></div>
       </div>
       <div class="insight-note" id="insight-note">Registre os dias da semana para ver o gráfico aparecer aqui! 🌸</div>
+    </div>
+    <div class="insight-section">
+      <h3>Como foi meu mês? 📅</h3>
+      <div class="week-tabs" id="month-week-tabs" style="margin-bottom:10px"></div>
+      <div class="chart-wrap">
+        <div class="chart-canvas-wrap"><canvas id="month-chart"></canvas></div>
+      </div>
+      <div class="insight-note" id="month-note">Registre os dias das semanas para ver o gráfico mensal! 🌸</div>
     </div>
   </div>
 
@@ -959,6 +967,16 @@ function resetDay(){
     rebuildTimeline(); updateCat();
   });
 }
+function resetSemana(){
+  showConfirm("Zerar todas as tarefas da semana inteira?", ()=>{
+    ["Seg","Ter","Qua","Qui","Sex"].forEach(d=>{
+      sv("checked_"+d,{}); 
+      localStorage.removeItem("checked_"+d);
+    });
+    checked={}; timers={};
+    rebuildTimeline(); updateCat();
+  });
+}
 
 // ─── CAT ───────────────────────────────────────────────────
 function updateCat(){
@@ -1077,7 +1095,82 @@ function buildWeekGrid(){
 }
 
 // ─── INSIGHTS ──────────────────────────────────────────────
-function buildInsights(){buildWeekTabs();buildMoodGrid();renderLineChart();}
+function buildInsights(){buildWeekTabs();buildMoodGrid();renderLineChart();buildMonthChart();}
+
+let monthChart=null;
+function buildMonthChart(){
+  // Build month week selector tabs
+  const tabEl=document.getElementById("month-week-tabs");
+  if(tabEl){
+    tabEl.innerHTML=["Semana 1","Semana 2","Semana 3","Semana 4"].map((lb,i)=>
+      `<button class="week-tab active" style="opacity:1" onclick="">${lb}</button>`
+    ).join("");
+  }
+
+  const ctx=document.getElementById("month-chart");
+  if(!ctx) return;
+
+  // Collect all 4 weeks data
+  const WEEK_KEYS=["w0","w1","w2","w3"];
+  const WEEK_LABELS=["Semana 1","Semana 2","Semana 3","Semana 4"];
+  const DAYS=["Seg","Ter","Qua","Qui","Sex"];
+  const WEEK_COLORS=["#e91e8c","#f48fb1","#c2185b","#ff80ab"];
+
+  // For month chart: show average score per week as a line
+  const weekAvgs=WEEK_KEYS.map(k=>{
+    const wdata=weekInsights[k]||{};
+    const vals=DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.score:null;}).filter(v=>v!==null);
+    return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+  });
+
+  // Also build per-day per-week dataset
+  const datasets=WEEK_KEYS.map((k,wi)=>({
+    label:WEEK_LABELS[wi],
+    data:DAYS.map(d=>{const m=MOODS.find(x=>x.val===(weekInsights[k]||{})[d]);return m?m.score:null;}),
+    borderColor:WEEK_COLORS[wi],
+    backgroundColor:WEEK_COLORS[wi]+"33",
+    pointBackgroundColor:WEEK_COLORS[wi],
+    pointRadius:5,pointHoverRadius:7,
+    fill:false,tension:.4,spanGaps:true
+  })).filter((_,wi)=>Object.values(weekInsights["w"+wi]||{}).some(v=>v));
+
+  if(monthChart){monthChart.destroy();monthChart=null;}
+
+  if(!datasets.length){
+    document.getElementById("month-note").textContent="Registre os dias das semanas para ver o gráfico mensal! 🌸";
+    return;
+  }
+
+  monthChart=new Chart(ctx,{
+    type:"line",
+    data:{
+      labels:DAYS,
+      datasets:datasets
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:"top",labels:{color:"#c2185b",font:{size:11},boxWidth:12}},
+        tooltip:{callbacks:{label:c=>{const m=MOODS.find(x=>x.score===c.raw);return c.dataset.label+": "+(m?m.emoji+" "+m.label:"—");}}}
+      },
+      scales:{
+        y:{min:0,max:4.5,ticks:{stepSize:1,color:"#e991b8",font:{size:10},callback:(v)=>{const m=MOODS.find(x=>x.score===v);return m?m.emoji+" "+m.label:"";}},grid:{color:"#fce4ec"}},
+        x:{ticks:{color:"#c2185b",font:{size:11,weight:"bold"}},grid:{color:"#fce4ec"}}
+      }
+    }
+  });
+
+  // Month summary note
+  const allScores=WEEK_KEYS.flatMap(k=>
+    DAYS.map(d=>{const m=MOODS.find(x=>x.val===(weekInsights[k]||{})[d]);return m?m.score:null;})
+  ).filter(v=>v!==null);
+  
+  const avg=allScores.length?allScores.reduce((a,b)=>a+b,0)/allScores.length:0;
+  const note=document.getElementById("month-note");
+  if(avg>=3.5) note.textContent="Mês bem intenso! Considere redistribuir as demandas. 💪";
+  else if(avg>=2.5) note.textContent="Mês movimentado, dentro do esperado. 🌸";
+  else if(avg>0) note.textContent="Mês tranquilo — ótimo ritmo! 😊";
+}
 function buildWeekTabs(){
   const el=document.getElementById("week-tabs"); el.innerHTML="";
   ["Semana 1","Semana 2","Semana 3","Semana 4"].forEach((lb,i)=>{
