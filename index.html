@@ -634,7 +634,10 @@ window.addEventListener("load",initCloud);
       <div class="insight-note" id="insight-note">Registre os dias da semana para ver o gráfico aparecer aqui! 🌸</div>
     </div>
     <div class="insight-section">
-      <h3>Como foi meu mês? 📅</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <h3 style="margin-bottom:0">Como foi meu mês? 📅</h3>
+        <button class="btn-sec" onclick="gerarRelatorioInsights()" style="font-size:12px;padding:6px 14px;border-radius:20px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#e91e8c">📄 Gerar relatório</button>
+      </div>
       <div class="week-tabs" id="month-week-tabs" style="margin-bottom:10px"></div>
       <div class="chart-wrap">
         <div class="chart-canvas-wrap"><canvas id="month-chart"></canvas></div>
@@ -1139,11 +1142,10 @@ function buildMonthChart(){
         backgroundColor:WEEK_COLORS[wi]+"33",
         pointBackgroundColor:DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.color:"#f8bbd0";}),
         pointRadius:6,pointHoverRadius:8,
-        fill:false,tension:.4,spanGaps:true
+        borderRadius:8,spanGaps:true
       };
     }).filter(Boolean);
   } else {
-    // Show single week, X axis = days, Y = mood
     const k=monthFilter;
     const wi=WEEK_KEYS.indexOf(k);
     const wdata=weekInsights[k]||{};
@@ -1152,10 +1154,8 @@ function buildMonthChart(){
       label:WEEK_LABELS[wi],
       data:DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.score:null;}),
       borderColor:WEEK_COLORS[wi],
-      backgroundColor:WEEK_COLORS[wi]+"44",
-      pointBackgroundColor:DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.color:"#f8bbd0";}),
-      pointRadius:8,pointHoverRadius:10,
-      fill:true,tension:.4,spanGaps:true
+      backgroundColor:DAYS.map(d=>{const m=MOODS.find(x=>x.val===wdata[d]);return m?m.color:WEEK_COLORS[wi]+"44";}),
+      borderRadius:8,spanGaps:true
     }];
   }
 
@@ -1165,7 +1165,7 @@ function buildMonthChart(){
   }
 
   monthChart=new Chart(ctx,{
-    type:"line",
+    type:"bar",
     data:{labels,datasets},
     options:{
       responsive:true,maintainAspectRatio:false,
@@ -1186,7 +1186,7 @@ function buildMonthChart(){
           },
           grid:{color:"#fce4ec"}
         },
-        x:{ticks:{color:"#c2185b",font:{size:12,weight:"bold"}},grid:{color:"#fce4ec"}}
+        x:{ticks:{color:"#c2185b",font:{size:12,weight:"bold"}},grid:{display:false}}
       }
     }
   });
@@ -1603,6 +1603,107 @@ function saveEdit(){
   }
   saveLotes(); closeEditModal(); renderLotes();
 }
+function gerarRelatorioInsights(){
+  const WEEK_KEYS=["w0","w1","w2","w3"];
+  const WEEK_LABELS=["Semana 1","Semana 2","Semana 3","Semana 4"];
+  const DAYS=["Seg","Ter","Qua","Qui","Sex"];
+  const hoje=fmtDate(todayStr());
+
+  function moodLabel(val){
+    const m=MOODS.find(x=>x.val===val);
+    return m?m.emoji+" "+m.label:"—";
+  }
+  function moodColor(val){
+    const m=MOODS.find(x=>x.val===val);
+    return m?m.color:"#f5f5f5";
+  }
+  function moodScore(val){
+    const m=MOODS.find(x=>x.val===val);
+    return m?m.score:0;
+  }
+
+  // Build weekly tables
+  const weekTables=WEEK_KEYS.map((k,wi)=>{
+    const wdata=weekInsights[k]||{};
+    const hasData=Object.values(wdata).some(v=>v);
+    if(!hasData) return '';
+    const scores=DAYS.map(d=>moodScore(wdata[d])).filter(v=>v>0);
+    const avg=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0;
+    let resumo="";
+    if(avg>=3.5) resumo="Semana intensa";
+    else if(avg>=2.5) resumo="Semana movimentada";
+    else if(avg>0) resumo="Semana tranquila";
+    
+    const cells=DAYS.map(d=>{
+      const val=wdata[d]||"";
+      const color=moodColor(val);
+      const label=moodLabel(val);
+      return `<td style="padding:8px 10px;border:1px solid #ddd;text-align:center;background:${color};font-size:12px;font-weight:600">${label}</td>`;
+    }).join("");
+
+    return `<div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <h3 style="font-size:13px;font-weight:700;color:#1a1a2e;margin:0">${WEEK_LABELS[wi]}</h3>
+        <span style="font-size:11px;color:#666;background:#f5f5f5;padding:3px 10px;border-radius:20px">${resumo}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="background:#1a1a2e">
+          ${DAYS.map(d=>`<th style="padding:8px;color:#fff;font-size:12px;text-align:center;border:1px solid #444">${d}</th>`).join("")}
+        </tr></thead>
+        <tbody><tr>${cells}</tr></tbody>
+      </table>
+    </div>`;
+  }).join("");
+
+  // Overall summary
+  const allScores=WEEK_KEYS.flatMap(k=>DAYS.map(d=>moodScore((weekInsights[k]||{})[d]))).filter(v=>v>0);
+  const avgGeral=allScores.length?allScores.reduce((a,b)=>a+b,0)/allScores.length:0;
+  let resumoGeral="";
+  if(avgGeral>=3.5) resumoGeral="Mês bem intenso — considere redistribuir as demandas.";
+  else if(avgGeral>=2.5) resumoGeral="Mês movimentado, dentro do esperado.";
+  else if(avgGeral>0) resumoGeral="Mês tranquilo — ótimo ritmo!";
+  else resumoGeral="Sem dados suficientes para análise.";
+
+  // Count moods
+  const moodCounts={};
+  MOODS.forEach(m=>moodCounts[m.val]=0);
+  WEEK_KEYS.forEach(k=>DAYS.forEach(d=>{const v=(weekInsights[k]||{})[d];if(v)moodCounts[v]=(moodCounts[v]||0)+1;}));
+
+  const content=
+    '<div style="font-family:Arial,sans-serif;color:#1a1a1a;padding:24px">'+
+    '<div style="border-bottom:3px solid #1a1a2e;padding-bottom:12px;margin-bottom:20px">'+
+      '<h1 style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:4px">RELATÓRIO DE HUMOR SEMANAL</h1>'+
+      '<div style="font-size:12px;color:#555">Emitido em: '+hoje+'</div>'+
+    '</div>'+
+    '<h2 style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">1. Resumo do Mês</h2>'+
+    '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'+
+      '<tr>'+
+        '<td style="padding:10px 14px;border:1px solid #ddd;font-size:13px;font-weight:700;background:#1a1a2e;color:#fff">Avaliação Geral</td>'+
+        '<td style="padding:10px 14px;border:1px solid #ddd;font-size:13px">'+resumoGeral+'</td>'+
+      '</tr>'+
+      MOODS.map(m=>`<tr><td style="padding:8px 14px;border:1px solid #ddd;font-size:12px;background:${m.color}">${m.emoji} ${m.label}</td><td style="padding:8px 14px;border:1px solid #ddd;font-size:12px;text-align:center;font-weight:700">${moodCounts[m.val]||0} dia(s)</td></tr>`).join("")+
+    '</table>'+
+    '<h2 style="font-size:14px;font-weight:700;color:#1a1a2e;margin:20px 0 12px;text-transform:uppercase;letter-spacing:1px">2. Detalhamento por Semana</h2>'+
+    weekTables+
+    '<div style="border-top:2px solid #1a1a2e;margin-top:20px;padding-top:10px;font-size:10px;color:#888;text-align:center">'+
+      'Relatório gerado pelo sistema de gestao interno — '+hoje+
+    '</div>'+
+    '</div>';
+
+  let printDiv=document.getElementById("insights-print-area");
+  if(!printDiv){printDiv=document.createElement("div");printDiv.id="insights-print-area";document.body.appendChild(printDiv);}
+  printDiv.innerHTML=content;
+
+  let printStyle=document.getElementById("insights-print-style");
+  if(!printStyle){printStyle=document.createElement("style");printStyle.id="insights-print-style";document.head.appendChild(printStyle);}
+  printStyle.textContent=
+    "@page{size:A4 portrait;margin:15mm}"+
+    "@media print{body > *:not(#insights-print-area){display:none!important}#insights-print-area{display:block!important}-webkit-print-color-adjust:exact;color-adjust:exact}"+
+    "@media screen{#insights-print-area{display:none}}";
+
+  setTimeout(()=>window.print(),300);
+}
+
 // ─── TABS ──────────────────────────────────────────────────
 function show(view,btn){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
