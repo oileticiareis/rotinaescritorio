@@ -857,10 +857,16 @@ function fmtDate(d){
   return pad(parseInt(parts[2]))+"/"+pad(parseInt(parts[1]))+"/"+parts[0];
 }
 function addBusinessDays(dateStr,days){
-  const d=new Date(dateStr);
+  // Parse date as local to avoid UTC offset issues
+  const parts=dateStr.split("-");
+  const d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
   let added=0;
-  while(added<days){d.setDate(d.getDate()+1);const dw=d.getDay();if(dw!==0&&dw!==6)added++;}
-  return d.toISOString().split("T")[0];
+  while(added<days){
+    d.setDate(d.getDate()+1);
+    const dw=d.getDay();
+    if(dw!==0&&dw!==6) added++; // skip sat(6) and sun(0)
+  }
+  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 }
 function todayStr(){
   const d=new Date();
