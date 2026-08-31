@@ -891,38 +891,30 @@ let confDone=false;
 
 // ─── BLOCKS ────────────────────────────────────────────────
 const blocks=[
-  {time:"08h00–08h15",title:"Montagem de pasta",dur:"~15min",durMin:15,icon:"📂",badge:"todo dia",badgeCls:"badge-green",
-   items:["Montar as pastas pendentes do dia (~15 min cada)","Não deixar acumular mais de 3 pastas"]},
-  {time:"08h15–09h15",title:"Audiências — avisos",dur:"~1h",durMin:60,icon:"⚖️",badge:"todo dia",badgeCls:"badge-green",
+  {time:"08h00–08h30",title:"Retorno de clientes — manhã",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
+   items:["Responder mensagens recebidas desde o dia anterior","Não deixar nenhuma mensagem sem resposta antes dos andamentos"]},
+  {time:"08h30–09h30",title:"Audiências e avisos",dur:"~1h",durMin:60,icon:"⚖️",badge:"todo dia",badgeCls:"badge-green",
    subs:[
      {title:"Filtro 1 — próximos 7 dias",items:["Filtrar audiências dos próximos 7 dias","Identificar clientes ainda não avisadas","Enviar aviso no WhatsApp e registrar"]},
-     {title:"Filtro 2 — exatamente 1 mês à frente",items:["Ex: hoje 09/06 → filtrar audiências do dia 09/07","Avisar com 1 mês de antecedência","Registrar o aviso no sistema"]}
-   ],note:"Fazer sempre primeiro — audiência esquecida é urgência que quebra o dia."},
-  {time:"09h15–09h45",title:"Retorno de clientes — manhã",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
-   items:["Responder mensagens recebidas desde o dia anterior","Não deixar mensagem sem resposta antes dos andamentos"]},
-  {time:"09h45–11h15",title:"Andamentos — Dra. Janaína",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
-   items:["Entrar no tribunal de cada processo","Verificar andamento e anotar movimentações","Elaborar textinho de atualização (via ChatGPT)","Enviar mensagem no WhatsApp","Meta: 10 clientes — Dra. Janaína"],
-   note:"Mensagens urgentes nesse bloco: anotar e resolver no retorno das 13h45."},
-  {time:"11h15–12h45",title:"Andamentos — Dra. Vitória",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
-   items:["Mesma dinâmica — Dra. Janaína","Meta: 10 clientes — Dra. Vitória","Ritmo bom: avance para 15–20 clientes"],
-   note:"Sextas: feche as duas listas completas (20+20) se a pauta de réplicas for menor."},
-  {time:"12h45–13h45",title:"Almoço e pausa",dur:"1h",durMin:60,icon:"🍽️",badge:null,
+     {title:"Filtro 2 — exatamente 1 mês à frente",items:["Ex: hoje 01/08 → filtrar audiências do dia 01/09","Avisar com 1 mês de antecedência","Registrar o aviso no sistema"]}
+   ],note:"Audiência esquecida é urgência — fazer sempre no início do dia."},
+  {time:"09h30–11h00",title:"Andamentos — Dra. Janaína",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
+   items:["Entrar no tribunal de cada processo","Verificar andamento e anotar movimentações","Elaborar textinho de atualização (via ChatGPT)","Enviar mensagem no WhatsApp","Meta: 10 clientes — Dra. Janaína"]},
+  {time:"11h00–12h30",title:"Andamentos — Dra. Vitória",dur:"1h30min",durMin:90,icon:"📋",badge:"todo dia",badgeCls:"badge-green",
+   items:["Mesma dinâmica da Dra. Janaína","Meta: 10 clientes — Dra. Vitória"]},
+  {time:"12h30–13h30",title:"Almoço e pausa",dur:"1h",durMin:60,icon:"🍽️",badge:null,
    items:["Pausa obrigatória — sem processos","Pode checar mensagens, mas sem resolver nada"]},
-  {time:"13h45–14h15",title:"Retorno de clientes — tarde",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
+  {time:"13h30–14h30",title:"Clientes de êxito",dur:"~1h",durMin:60,icon:"🏆",badge:"todo dia",badgeCls:"badge-green",
+   items:["Entrar em contato com clientes de êxito (acordos e sentenças)","Informar sobre o andamento e próximos passos","Registrar contato realizado"]},
+  {time:"14h30–15h00",title:"Retorno de clientes — tarde",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
    items:["Responder mensagens dos andamentos e do almoço","Resolver pendências simples da manhã"]},
-  {time:"14h15–18h00",title:"Prazos processuais",dur:"~3h45",durMin:225,icon:"⏰",badge:"todo dia",badgeCls:"badge-green",
-   items:["Priorizar prazos mais próximos primeiro","Réplicas: 1h30–2h cada → máximo 2 por tarde","Manifestações: ~30–40min cada → 4–5 por tarde","5 réplicas no dia: dividir (3 hoje, 2 amanhã)"],
-   note:"Nunca tente 3 réplicas num único dia — a qualidade cai e o prazo fica em risco."},
-  {time:"17h45–18h00",title:"Cobrança de ultrassom",dur:"~15min",durMin:15,icon:"🤰",badge:"dias alternados",badgeCls:"badge-pink",
-   items:["Abrir lista de mães com ultrassom pendente","Enviar mensagem no WhatsApp cobrando o ultrassom","Registrar: data + nº da cobrança (1ª, 2ª ou 3ª)","Na 3ª cobrança sem retorno → elaborar confissão de dívida e encaminhar ao cancelamento"],
-   highlight:"📅 Fazer apenas em: SEGUNDA · QUARTA · SEXTA",
-   note:"Terça e quinta: pula essa tarefa."},
+  {time:"15h00–18h00",title:"Prazos processuais",dur:"~3h",durMin:180,icon:"⏰",badge:"todo dia",badgeCls:"badge-green",
+   items:["Verificar prazos do dia no DataJuri","Manifestações e substabelecimentos cadastrados no DataJuri","Priorizar pelos prazos mais próximos"]},
   {time:"18h00–18h30",title:"Retorno de clientes — fim do dia",dur:"30min",durMin:30,icon:"💬",badge:"todo dia",badgeCls:"badge-green",
    items:["Responder mensagens que chegaram durante os prazos","Último retorno do dia — nenhuma cliente sem resposta"]},
-  {time:"18h30–19h00",title:"Fechamento do dia",dur:"30min",durMin:30,icon:"✅",badge:"todo dia",badgeCls:"badge-green",
-   items:["Verificar audiências do dia (máx. 5)","Confirmar subestabelecimento de cada audiência","Lançar prazos da ata no sistema","Abrir AASP e pegar publicações para a Dra. Gabrielly","Anotar pendências para amanhã"],
-   note:"Esse bloco encerra o expediente. Não abrir nova réplica depois das 18h30."}
-];
+  {time:"18h30–19h00",title:"Publicações no AASP",dur:"30min",durMin:30,icon:"📰",badge:"todo dia",badgeCls:"badge-green",
+   items:["Abrir o AASP e pegar publicações"]}
+]
 
 const weekData=[
   {day:"Seg",badge:"Padrão",items:["10 and. Janaína + 10 and. Vitória","~3 réplicas","Cobrança ultrassom ✓","Audiências"]},
