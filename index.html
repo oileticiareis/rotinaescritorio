@@ -186,6 +186,16 @@ table thead th{position:sticky;top:0}
 .obs-cell{font-size:11px;color:#666;text-align:left}
 .obs-input{width:100%;border:1px solid #f8bbd0;border-radius:6px;padding:3px 6px;font-size:11px;background:#fff0f5;outline:none;color:#1a1a1a}
 .obs-input:focus{border-color:#e91e8c}
+.timer-global{background:#fff;border:1.5px solid #f8bbd0;border-radius:16px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.timer-global-display{font-size:32px;font-weight:700;color:#c2185b;font-family:monospace;letter-spacing:3px;min-width:120px}
+.timer-global-display.paused{color:#e991b8}
+.timer-global-btns{display:flex;gap:8px}
+.timer-gbtn{padding:8px 18px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid #f8bbd0;background:#fff;color:#c2185b;transition:all .15s}
+.timer-gbtn:hover{background:#fce4ec}
+.timer-gbtn.play{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.timer-gbtn.pause{background:#e65100;color:#fff;border-color:#e65100}
+.timer-gbtn.stop{background:#c62828;color:#fff;border-color:#c62828}
+.timer-global-label{font-size:12px;color:#e991b8;margin-top:2px}
 #confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none}
 .confirm-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);z-index:2000;align-items:center;justify-content:center}
 .confirm-overlay.open{display:flex}
@@ -578,14 +588,26 @@ window.addEventListener("load",initCloud);
     </div>
   </div>
 
+  <!-- CRONÔMETRO GLOBAL -->
+  <div class="timer-global" id="global-timer-box">
+    <div>
+      <div class="timer-global-display" id="gtimer-display">00:00:00</div>
+      <div class="timer-global-label" id="gtimer-label">Pronto para começar</div>
+    </div>
+    <div class="timer-global-btns">
+      <button class="timer-gbtn play" id="gbtn-play" onclick="gtimerPlay()">▶ Iniciar</button>
+      <button class="timer-gbtn pause" id="gbtn-pause" onclick="gtimerPause()" style="display:none">⏸ Pausar</button>
+      <button class="timer-gbtn" id="gbtn-resume" onclick="gtimerPlay()" style="display:none">▶ Continuar</button>
+      <button class="timer-gbtn stop" id="gbtn-stop" onclick="gtimerStop()" style="display:none">⏹ Finalizar dia</button>
+    </div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" onclick="show('dia',this)">Meu dia</button>
     <button class="tab" onclick="show('semana',this)">Visão semanal</button>
-    <button class="tab" onclick="show('admin',this)">Administrativo</button>
     <button class="tab" onclick="show('insights',this)">Insights 📊</button>
     <button class="tab" onclick="show('lotes',this)">Lotes 📋</button>
     <button class="tab" onclick="show('audiencias',this)">Audiências ⚖️</button>
-    <button class="tab" onclick="show('ultrassom',this)">🤰 Ultrassom</button>
   </div>
 
   <!-- DIA -->
@@ -604,15 +626,6 @@ window.addEventListener("load",initCloud);
     <p style="font-size:12px;color:#e991b8;margin-bottom:12px">Distribuição de cartelas, réplicas e tarefas ao longo da semana</p>
     <div class="week-grid" id="week-grid"></div>
     <div class="note" style="margin-top:12px"><strong>Cartelas:</strong> meta diária é 10+10. Dias com menos réplicas → avance para 20+20.<br><br><strong>Cobrança de ultrassom:</strong> segunda, quarta e sexta apenas.</div>
-  </div>
-
-  <!-- ADMIN -->
-  <div class="view" id="view-admin">
-    <div class="admin-note">⚠️ Cobrança de ultrassom: segunda, quarta e sexta. Registre sempre quantas cobranças já foram feitas por mãe.</div>
-    <div class="flow-step"><div class="step-num">1</div><div class="step-body"><h3>Verificação da lista</h3><p>Abrir lista de mães com ultrassom pendente. Checar quem ainda não enviou e quantas cobranças já recebeu.</p></div></div>
-    <div class="flow-step"><div class="step-num">2</div><div class="step-body"><h3>1ª e 2ª cobrança</h3><p>Enviar mensagem no WhatsApp cobrando o ultrassom. Registrar na lista: data + nº da cobrança. Aguardar retorno.</p><span class="step-trigger">~5 min por mãe</span></div></div>
-    <div class="flow-step"><div class="step-num alt">3</div><div class="step-body"><h3>3ª cobrança sem retorno → cancelamento</h3><p>Elaborar confissão de dívida. Enviar para assinar. Encaminhar para cancelamento. Registrar saída.</p><span class="step-trigger">~20 min por mãe</span></div></div>
-    <div class="flow-step"><div class="step-num">4</div><div class="step-body"><h3>Montagem de pasta</h3><p>Fazer pela manhã. ~15 minutos por pasta. Não acumular mais de 3.</p><span class="step-trigger">todo dia — manhã</span></div></div>
   </div>
 
   <!-- INSIGHTS -->
@@ -688,42 +701,6 @@ window.addEventListener("load",initCloud);
       </table>
     </div>
   </div>
-  <!-- ULTRASSOM -->
-  <div class="view" id="view-ultrassom">
-    <h2 style="font-size:18px;font-weight:700;color:#c2185b;margin-bottom:4px">🤰 Pendentes de Ultrassom</h2>
-    <p style="font-size:13px;color:#e991b8;margin-bottom:16px">Controle de contatos e entrega de ultrassom</p>
-    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
-    <span style="font-size:13px;font-weight:700;color:#c2185b">Cartela:</span>
-    <button class="cartela-tab active" id="ult-ctab-J" onclick="ultSwitchCartela('J')">🌸 Dra. Janaína</button>
-    <button class="cartela-tab" id="ult-ctab-V" onclick="ultSwitchCartela('V')">💜 Dra. Vitória</button>
-    <button class="cartela-tab" id="ult-ctab-all" onclick="ultSwitchCartela('all')">👥 Todas</button>
-  </div>
-  <div class="toolbar">
-    <input type="text" id="ult-search" placeholder="🔍 Buscar cliente..." oninput="ultRender()">
-    <select id="ult-filter-status" onchange="ultRender()">
-      <option value="">Todos os status</option>
-      <option value="promessa">Promessa de entrega</option>
-      <option value="nao">Não responde</option>
-      <option value="entregue">Entregue</option>
-      <option value="cancelamento">Providência tomada</option>
-    </select>
-    <select id="ult-filter-contatos" onchange="ultRender()">
-      <option value="">Todos os contatos</option>
-      <option value="0">Sem contato ainda</option>
-      <option value="1">1 contato</option>
-      <option value="2">2 contatos</option>
-      <option value="3">3 contatos</option>
-      <option value="4">4 contatos</option>
-      <option value="5">5 contatos (finalizado)</option>
-    </select>
-    <button class="btn-primary" onclick="ultOpenAddModal()">+ Adicionar</button>
-    <button class="btn-sec" onclick="ultOpenChart()">📊 Gráfico</button>
-    <button class="btn-sec" onclick="ultGerarPDF()">📄 Gerar PDF</button>
-  </div>
-  <div class="count" id="ult-count"></div>
-  <div class="cards" id="ult-cards"></div>
-  </div>
-
   <!-- AUDIENCIAS -->
   <div class="view" id="view-audiencias">
     <div class="aud-toolbar">
@@ -1229,13 +1206,16 @@ function buildMoodGrid(){
   DAYS.forEach(d=>{
     const saved=(weekInsights[currentWeek]||{})[d]||"";
     const mObj=MOODS.find(m=>m.val===saved);
+    const horas=(weekInsights[currentWeek]||{})[d+"_horas"]||0;
+    const h=horas?Math.floor(horas/3600000)+"h"+Math.floor((horas%3600000)/60000)+"min":"—";
     const div=document.createElement("div"); div.className="mood-day";
     div.innerHTML=`<div class="mood-day-name">${d}</div>
       <div class="mood-emoji" id="me-${d}">${mObj?mObj.emoji:"—"}</div>
       <select class="mood-select" onchange="saveMood('${d}',this.value)">
         <option value="">—</option>
         ${MOODS.map(m=>`<option value="${m.val}"${saved===m.val?" selected":""}>${m.emoji} ${m.label}</option>`).join("")}
-      </select>`;
+      </select>
+      <div style="font-size:10px;color:#e991b8;margin-top:4px;font-weight:700">⏱ ${h}</div>`;
     el.appendChild(div);
   });
 }
@@ -1573,6 +1553,70 @@ function openLotesChart(){
     ).join("");
   }, 100);
 }
+// ── CRONÔMETRO GLOBAL ──
+let gtimerStart=null, gtimerElapsed=0, gtimerInterval=null, gtimerRunning=false;
+
+function gtimerPlay(){
+  if(gtimerRunning) return;
+  gtimerRunning=true;
+  gtimerStart=Date.now()-gtimerElapsed;
+  gtimerInterval=setInterval(gtimerTick,1000);
+  document.getElementById("gbtn-play").style.display="none";
+  document.getElementById("gbtn-resume").style.display="none";
+  document.getElementById("gbtn-pause").style.display="inline-block";
+  document.getElementById("gbtn-stop").style.display="inline-block";
+  document.getElementById("gtimer-label").textContent="Trabalhando...";
+  document.getElementById("gtimer-display").classList.remove("paused");
+}
+
+function gtimerPause(){
+  if(!gtimerRunning) return;
+  clearInterval(gtimerInterval);
+  gtimerRunning=false;
+  gtimerElapsed=Date.now()-gtimerStart;
+  document.getElementById("gbtn-pause").style.display="none";
+  document.getElementById("gbtn-resume").style.display="inline-block";
+  document.getElementById("gtimer-label").textContent="Pausado (almoço?)";
+  document.getElementById("gtimer-display").classList.add("paused");
+}
+
+function gtimerStop(){
+  if(!gtimerRunning&&gtimerElapsed===0) return;
+  clearInterval(gtimerInterval);
+  gtimerRunning=false;
+  const totalMs=gtimerRunning?Date.now()-gtimerStart:gtimerElapsed;
+  const totalSec=Math.floor((Date.now()-gtimerStart+(gtimerRunning?0:0))/1000);
+  const hrs=Math.floor(gtimerElapsed/3600000);
+  const mins=Math.floor((gtimerElapsed%3600000)/60000);
+  const hrsStr=hrs+"h"+(mins>0?mins+"min":"");
+  
+  // Save to insights for current day
+  if(!weekInsights[currentWeek]) weekInsights[currentWeek]={};
+  weekInsights[currentWeek][currentDay+"_horas"]=gtimerElapsed;
+  sv("weekInsights",weekInsights);
+  
+  // Reset timer
+  gtimerElapsed=0; gtimerStart=null;
+  document.getElementById("gtimer-display").textContent="00:00:00";
+  document.getElementById("gtimer-display").classList.remove("paused");
+  document.getElementById("gbtn-play").style.display="inline-block";
+  document.getElementById("gbtn-pause").style.display="none";
+  document.getElementById("gbtn-resume").style.display="none";
+  document.getElementById("gbtn-stop").style.display="none";
+  document.getElementById("gtimer-label").textContent="Dia finalizado: "+hrsStr+" trabalhadas 🌸";
+  
+  // Update insights if visible
+  if(document.getElementById("view-insights").classList.contains("active")) buildInsights();
+}
+
+function gtimerTick(){
+  gtimerElapsed=Date.now()-gtimerStart;
+  const h=Math.floor(gtimerElapsed/3600000);
+  const m=Math.floor((gtimerElapsed%3600000)/60000);
+  const s=Math.floor((gtimerElapsed%60000)/1000);
+  document.getElementById("gtimer-display").textContent=pad(h)+":"+pad(m)+":"+pad(s);
+}
+
 function switchCartela(c){
   activeCartela=c;
   document.getElementById("ctab-A").classList.toggle("active",c==="A");
