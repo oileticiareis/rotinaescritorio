@@ -1795,6 +1795,8 @@ function buildAvisosForDate(dateStr){
 }
 
 
+let gtimerStart=null,gtimerElapsed=0,gtimerInterval=null,gtimerRunning=false;
+
 function gtimerPlay(){
   if(gtimerRunning) return;
   gtimerRunning=true;
