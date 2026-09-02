@@ -213,6 +213,24 @@ table thead th{position:sticky;top:0}
   .cat-section{flex-direction:column;text-align:center}
 }
 
+
+/* ── AVISOS ── */
+.aviso-ck{width:22px;height:22px;border-radius:50%;border:2px solid #f48fb1;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;transition:all .15s;background:#fff}
+.aviso-ck.on{background:#e91e8c;border-color:#e91e8c}
+.aviso-card{background:#fff;border-radius:16px;border:1.5px solid #f8bbd0;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(233,30,140,.06)}
+.aviso-card h3{font-size:15px;font-weight:700;color:#c2185b;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.aviso-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #fce4ec}
+.aviso-row:last-child{border-bottom:none}
+.aviso-check{width:22px;height:22px;border-radius:50%;border:2px solid #f48fb1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.aviso-check.done{background:#e91e8c;border-color:#e91e8c;color:#fff}
+.aviso-date{font-size:14px;font-weight:700;color:#1a1a1a}
+.aviso-date.destaque{color:#e91e8c;background:#fce4ec;padding:3px 10px;border-radius:20px;font-weight:800}
+.aviso-date.nenhuma{color:#aaa;font-weight:400;font-style:italic}
+.aviso-tag{font-size:11px;background:#f8bbd0;color:#c2185b;padding:2px 8px;border-radius:20px;font-weight:700}
+.aviso-tag.conf{background:#fff3e0;color:#e65100}
+.aviso-dia-label{font-size:11px;color:#888;min-width:60px}
+.avisos-hoje{background:#fce4ec;border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:#c2185b;font-weight:700}
+
 /* ── ULTRASSOM ── */
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -600,6 +618,10 @@ window.addEventListener("load",initCloud);
       <button class="timer-gbtn" id="gbtn-resume" onclick="gtimerPlay()" style="display:none">▶ Continuar</button>
       <button class="timer-gbtn stop" id="gbtn-stop" onclick="gtimerStop()" style="display:none">⏹ Finalizar dia</button>
     </div>
+    <div id="gtimer-result" style="display:none;align-items:center;gap:10px;background:#e8f5e9;border-radius:12px;padding:8px 14px">
+      <span style="font-size:13px;color:#2e7d32;font-weight:700">⏱ Hoje: <span id="gtimer-result-text"></span></span>
+      <button id="gtimer-copy-btn" onclick="gtimerCopy()" style="background:#2e7d32;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer">📋 Copiar</button>
+    </div>
   </div>
 
   <div class="tabs">
@@ -608,6 +630,7 @@ window.addEventListener("load",initCloud);
     <button class="tab" onclick="show('insights',this)">Insights 📊</button>
     <button class="tab" onclick="show('lotes',this)">Lotes 📋</button>
     <button class="tab" onclick="show('audiencias',this)">Audiências ⚖️</button>
+    <button class="tab" onclick="show('avisos',this);buildAvisos()">📣 Avisos</button>
   </div>
 
   <!-- DIA -->
@@ -701,6 +724,27 @@ window.addEventListener("load",initCloud);
       </table>
     </div>
   </div>
+
+  <!-- AVISOS -->
+  <div class="view" id="view-avisos">
+    <h2 style="font-size:18px;font-weight:700;color:#c2185b;margin-bottom:4px">📣 Avisos de Audiência</h2>
+    <p style="font-size:13px;color:#e991b8;margin-bottom:16px">Clique em um dia do calendário para ver os avisos</p>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:300px;max-width:380px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <button onclick="calPrevMonth()" style="background:#fff;border:1.5px solid #f8bbd0;color:#c2185b;border-radius:20px;padding:6px 16px;font-weight:700;cursor:pointer;font-size:16px">‹</button>
+          <div id="cal-title" style="font-size:15px;font-weight:700;color:#c2185b"></div>
+          <button onclick="calNextMonth()" style="background:#fff;border:1.5px solid #f8bbd0;color:#c2185b;border-radius:20px;padding:6px 16px;font-weight:700;cursor:pointer;font-size:16px">›</button>
+        </div>
+        <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center"></div>
+        <div style="margin-top:8px;font-size:10px;color:#aaa">* feriado nacional</div>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <div id="avisos-content"><div style="color:#e991b8;font-size:13px;padding:20px 0">👈 Selecione um dia no calendário</div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- AUDIENCIAS -->
   <div class="view" id="view-audiencias">
     <div class="aud-toolbar">
@@ -1198,8 +1242,7 @@ function buildMoodGrid(){
   DAYS.forEach(d=>{
     const saved=(weekInsights[currentWeek]||{})[d]||"";
     const mObj=MOODS.find(m=>m.val===saved);
-    const horas=(weekInsights[currentWeek]||{})[d+"_horas"]||0;
-    const h=horas?Math.floor(horas/3600000)+"h"+Math.floor((horas%3600000)/60000)+"min":"—";
+    const horas=(weekInsights[currentWeek]||{})[d+"_horas"]||"";
     const div=document.createElement("div"); div.className="mood-day";
     div.innerHTML=`<div class="mood-day-name">${d}</div>
       <div class="mood-emoji" id="me-${d}">${mObj?mObj.emoji:"—"}</div>
@@ -1207,9 +1250,20 @@ function buildMoodGrid(){
         <option value="">—</option>
         ${MOODS.map(m=>`<option value="${m.val}"${saved===m.val?" selected":""}>${m.emoji} ${m.label}</option>`).join("")}
       </select>
-      <div style="font-size:10px;color:#e991b8;margin-top:4px;font-weight:700">⏱ ${h}</div>`;
+      <input type="text" placeholder="Ex: 8h30min"
+        value="${horas}"
+        style="width:100%;margin-top:6px;padding:4px 8px;border:1.5px solid #f8bbd0;border-radius:10px;font-size:11px;text-align:center;color:#c2185b;font-weight:700"
+        onchange="saveHoras('${d}',this.value)"
+        title="Cole ou digite as horas trabalhadas"/>
+      <div style="font-size:9px;color:#e991b8;margin-top:2px">⏱ horas</div>`;
     el.appendChild(div);
   });
+}
+
+function saveHoras(day, val){
+  if(!weekInsights[currentWeek]) weekInsights[currentWeek]={};
+  weekInsights[currentWeek][day+"_horas"]=val;
+  sv("weekInsights",weekInsights);
 }
 function saveMood(day,val){
   if(!weekInsights[currentWeek])weekInsights[currentWeek]={};
@@ -1545,8 +1599,201 @@ function openLotesChart(){
     ).join("");
   }, 100);
 }
-// ── CRONÔMETRO GLOBAL ──
-let gtimerStart=null, gtimerElapsed=0, gtimerInterval=null, gtimerRunning=false;
+
+// ── AVISOS DE AUDIÊNCIA ──
+const FERIADOS_2026 = [
+  "2026-01-01","2026-02-16","2026-02-17","2026-04-03","2026-04-21",
+  "2026-05-01","2026-06-11","2026-09-07","2026-10-12","2026-11-02",
+  "2026-11-15","2026-11-20","2026-12-25"
+];
+
+function isDiaUtil(dateStr){
+  const d = new Date(dateStr + "T12:00:00");
+  const dw = d.getDay();
+  if(dw===0||dw===6) return false;
+  if(FERIADOS_2026.includes(dateStr)) return false;
+  return true;
+}
+
+function addDays(dateStr, n){
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
+
+function fmtBR(dateStr){
+  if(!dateStr) return "—";
+  const [y,m,d] = dateStr.split("-");
+  return d+"/"+m+"/"+y;
+}
+
+function diaSemana(dateStr){
+  const dias = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  const d = new Date(dateStr + "T12:00:00");
+  return dias[d.getDay()];
+}
+
+function getDow(dateStr){
+  return new Date(dateStr + "T12:00:00").getDay();
+}
+
+function nextDiaUtil(dateStr){
+  let d = addDays(dateStr, 1);
+  while(!isDiaUtil(d)) d = addDays(d, 1);
+  return d;
+}
+
+function buildAvisos(){
+  const today=todayStr();
+  const parts=today.split("-");
+  calYear=parseInt(parts[0]);
+  calMonth=parseInt(parts[1])-1;
+  calSelectedDate=today;
+  buildCalendar();
+  buildAvisosForDate(today);
+}
+
+let calYear=2026, calMonth=new Date().getMonth(), calSelectedDate=todayStr();
+const MESES_BR=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const DIAS_HEADER=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+
+function calPrevMonth(){
+  calMonth--; if(calMonth<0){calMonth=11;calYear--;} buildCalendar();
+}
+function calNextMonth(){
+  calMonth++; if(calMonth>11){calMonth=0;calYear++;} buildCalendar();
+}
+
+function buildCalendar(){
+  const grid=document.getElementById("cal-grid");
+  const title=document.getElementById("cal-title");
+  if(!grid||!title) return;
+  title.textContent=MESES_BR[calMonth]+" "+calYear;
+  const today=todayStr();
+  let out="";
+  DIAS_HEADER.forEach(d=>{
+    out+=`<div style="font-size:10px;font-weight:700;color:#e991b8;padding:4px 0">${d}</div>`;
+  });
+  const firstDow=new Date(calYear,calMonth,1).getDay();
+  for(let i=0;i<firstDow;i++) out+=`<div></div>`;
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=calYear+"-"+pad(calMonth+1)+"-"+pad(d);
+    const dow=new Date(ds+"T12:00:00").getDay();
+    const isWE=dow===0||dow===6;
+    const isFer=FERIADOS_2026.includes(ds);
+    const isToday=ds===today;
+    const isSel=ds===calSelectedDate;
+    const isUtil=!isWE&&!isFer;
+    let bg="#fff",color="#333",border="1.5px solid #fce4ec",fw="400",opacity="1";
+    if(isSel){bg="#e91e8c";color="#fff";border="2px solid #c2185b";fw="700";}
+    else if(isToday){bg="#fce4ec";color="#c2185b";border="2px solid #e91e8c";fw="700";}
+    else if(isWE||isFer){bg="#fafafa";color="#ccc";border="1.5px solid #f5f5f5";}
+    out+=`<div onclick="${isUtil?`calSelect('${ds}')`:'void(0)'}" `+
+      `style="padding:5px 2px;border-radius:8px;font-size:12px;font-weight:${fw};`+
+      `background:${bg};color:${color};border:${border};cursor:${isUtil?'pointer':'default'};`+
+      `min-height:30px;display:flex;align-items:center;justify-content:center;transition:all .1s">`+
+      `${d}${isFer?"*":""}</div>`;
+  }
+  grid.innerHTML=out;
+}
+
+function calSelect(ds){
+  calSelectedDate=ds; buildCalendar(); buildAvisosForDate(ds);
+}
+
+function checkAvisosDone(){
+  const checks=document.querySelectorAll("#avisos-content .aviso-ck");
+  if(!checks.length) return;
+  const allDone=[...checks].every(c=>c.classList.contains("on"));
+  if(allDone) showAvisosCelebration();
+}
+
+function showAvisosCelebration(){
+  // Confete
+  if(typeof confetti==="function"){
+    confetti({particleCount:120,spread:80,origin:{y:0.6},colors:["#e91e8c","#f48fb1","#fff","#c2185b","#ff80ab"]});
+    setTimeout(()=>confetti({particleCount:80,spread:60,origin:{y:0.5},angle:60}),400);
+    setTimeout(()=>confetti({particleCount:80,spread:60,origin:{y:0.5},angle:120}),700);
+  }
+  // Modal de comemoração
+  let modal=document.getElementById("avisos-celebration");
+  if(!modal){
+    modal=document.createElement("div");
+    modal.id="avisos-celebration";
+    modal.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center";
+    modal.innerHTML=`<div style="background:#fff;border-radius:24px;padding:40px 36px;text-align:center;max-width:360px;box-shadow:0 8px 40px rgba(233,30,140,.25);animation:popIn .3s cubic-bezier(.34,1.56,.64,1)">
+      <div style="font-size:56px;margin-bottom:12px">🎉</div>
+      <h2 style="font-size:22px;font-weight:800;color:#c2185b;margin-bottom:8px">Avisos concluídos!</h2>
+      <p style="font-size:14px;color:#888;margin-bottom:24px">Todas as clientes foram avisadas hoje. Arrasou! 🌸</p>
+      <button onclick="document.getElementById('avisos-celebration').remove()" 
+        style="background:#e91e8c;color:#fff;border:none;border-radius:20px;padding:12px 32px;font-size:14px;font-weight:700;cursor:pointer">
+        ✨ Fechar
+      </button>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click",function(e){if(e.target===modal)modal.remove();});
+  }
+}
+
+function buildAvisosForDate(dateStr){
+  const el=document.getElementById("avisos-content");
+  if(!el) return;
+  const dow=new Date(dateStr+"T12:00:00").getDay();
+  const isUtil=isDiaUtil(dateStr);
+  const DIAS=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+
+  let out=`<div class="avisos-hoje">📅 ${DIAS[dow]}, ${fmtBR(dateStr)}</div>`;
+
+  if(!isUtil){
+    out+=`<div class="aviso-card"><p style="color:#aaa;font-size:13px;margin:0">Final de semana ou feriado — sem avisos.</p></div>`;
+    el.innerHTML=out; return;
+  }
+
+  // 2 DIAS
+  const dia1=nextDiaUtil(dateStr);
+  const dia2=nextDiaUtil(dia1);
+  out+=`<div class="aviso-card"><h3>📌 Aviso de 2 dias</h3>`;
+  out+=`<div class="aviso-row"><span class="aviso-ck" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':''"></span>`;
+  out+=`<div class="aviso-dia-label">${DIAS[new Date(dia1+"T12:00:00").getDay()]}</div>`;
+  out+=`<div class="aviso-date">${fmtBR(dia1)}</div></div>`;
+  out+=`<div class="aviso-row"><span class="aviso-ck" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':''"></span>`;
+  out+=`<div class="aviso-dia-label">${DIAS[new Date(dia2+"T12:00:00").getDay()]}</div>`;
+  out+=`<div class="aviso-date destaque">${fmtBR(dia2)} ★</div><div class="aviso-tag">atenção</div></div></div>`;
+
+  // 7 DIAS
+  out+=`<div class="aviso-card"><h3>📌 Aviso de 7 dias</h3>`;
+  if(dow===1||dow===2){
+    let cur=addDays(dateStr,1);
+    while(new Date(cur+"T12:00:00").getDay()!==1) cur=addDays(cur,1);
+    const sem=[];let c=cur;
+    while(sem.length<5){if(isDiaUtil(c))sem.push(c);c=addDays(c,1);}
+    sem.forEach(d=>{
+      out+=`<div class="aviso-row"><span class="aviso-ck" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':''"></span>`;
+      out+=`<div class="aviso-dia-label">${DIAS[new Date(d+"T12:00:00").getDay()]}</div>`;
+      out+=`<div class="aviso-date">${fmtBR(d)}</div>`;
+      if(dow===2) out+=`<div class="aviso-tag conf">conferência</div>`;
+      out+=`</div>`;
+    });
+  } else {
+    out+=`<div class="aviso-row"><div class="aviso-date nenhuma">Nenhuma — só Seg e Ter</div></div>`;
+  }
+  out+=`</div>`;
+
+  // 30 DIAS
+  const d30=addDays(dateStr,30);
+  out+=`<div class="aviso-card"><h3>📌 Aviso de 30 dias</h3><div class="aviso-row">`;
+  out+=`<span class="aviso-ck" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':'';checkAvisosDone()"></span>`;
+  if(isDiaUtil(d30)){
+    out+=`<div class="aviso-dia-label">${DIAS[new Date(d30+"T12:00:00").getDay()]}</div>`;
+    out+=`<div class="aviso-date">${fmtBR(d30)}</div>`;
+  } else {
+    out+=`<div class="aviso-date nenhuma">Nenhuma — ${fmtBR(d30)} é fim de semana/feriado</div>`;
+  }
+  out+=`</div></div>`;
+  el.innerHTML=out;
+}
+
 
 function gtimerPlay(){
   if(gtimerRunning) return;
@@ -1559,6 +1806,7 @@ function gtimerPlay(){
   document.getElementById("gbtn-stop").style.display="inline-block";
   document.getElementById("gtimer-label").textContent="Trabalhando...";
   document.getElementById("gtimer-display").classList.remove("paused");
+  document.getElementById("gtimer-result").style.display="none";
 }
 
 function gtimerPause(){
@@ -1576,18 +1824,18 @@ function gtimerStop(){
   if(!gtimerRunning&&gtimerElapsed===0) return;
   clearInterval(gtimerInterval);
   gtimerRunning=false;
-  const totalMs=gtimerRunning?Date.now()-gtimerStart:gtimerElapsed;
-  const totalSec=Math.floor((Date.now()-gtimerStart+(gtimerRunning?0:0))/1000);
+  if(gtimerRunning) gtimerElapsed=Date.now()-gtimerStart;
   const hrs=Math.floor(gtimerElapsed/3600000);
   const mins=Math.floor((gtimerElapsed%3600000)/60000);
-  const hrsStr=hrs+"h"+(mins>0?mins+"min":"");
-  
-  // Save to insights for current day
-  if(!weekInsights[currentWeek]) weekInsights[currentWeek]={};
-  weekInsights[currentWeek][currentDay+"_horas"]=gtimerElapsed;
-  sv("weekInsights",weekInsights);
-  
-  // Reset timer
+  const hrsStr=hrs+"h"+(mins>0?" "+pad(mins)+"min":"");
+
+  // Show result with copy button
+  const resultEl=document.getElementById("gtimer-result");
+  const resultText=document.getElementById("gtimer-result-text");
+  resultText.textContent=hrsStr;
+  resultEl.style.display="flex";
+
+  // Reset timer display
   gtimerElapsed=0; gtimerStart=null;
   document.getElementById("gtimer-display").textContent="00:00:00";
   document.getElementById("gtimer-display").classList.remove("paused");
@@ -1595,10 +1843,17 @@ function gtimerStop(){
   document.getElementById("gbtn-pause").style.display="none";
   document.getElementById("gbtn-resume").style.display="none";
   document.getElementById("gbtn-stop").style.display="none";
-  document.getElementById("gtimer-label").textContent="Dia finalizado: "+hrsStr+" trabalhadas 🌸";
-  
-  // Update insights if visible
-  if(document.getElementById("view-insights").classList.contains("active")) buildInsights();
+  document.getElementById("gtimer-label").textContent="Pronto para começar";
+}
+
+function gtimerCopy(){
+  const txt=document.getElementById("gtimer-result-text").textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById("gtimer-copy-btn");
+    btn.textContent="✓ Copiado!";
+    btn.style.background="#2e7d32";
+    setTimeout(()=>{btn.textContent="📋 Copiar";btn.style.background="";},2000);
+  });
 }
 
 function gtimerTick(){
