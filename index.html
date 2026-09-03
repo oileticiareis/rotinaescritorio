@@ -1822,6 +1822,8 @@ function buildAvisosForDate(dateStr){
   }
   out+=`</div></div>`;
   el.innerHTML=out;
+  // Load saved checks after rendering
+  setTimeout(()=>loadAvisosChecks(dateStr),10);
 }
 
 
