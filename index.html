@@ -1651,6 +1651,7 @@ function buildAvisos(){
   calSelectedDate=today;
   buildCalendar();
   buildAvisosForDate(today);
+  loadAvisosChecks(today);
 }
 
 let calYear=2026, calMonth=new Date().getMonth(), calSelectedDate=todayStr();
@@ -1700,6 +1701,35 @@ function buildCalendar(){
 
 function calSelect(ds){
   calSelectedDate=ds; buildCalendar(); buildAvisosForDate(ds);
+  loadAvisosChecks(ds);
+}
+
+function toggleAvisoCheck(el){
+  el.classList.toggle("on");
+  el.textContent=el.classList.contains("on")?"✓":"";
+  saveAvisosChecks(calSelectedDate);
+}
+
+function saveAvisosChecks(dateStr){
+  const checks=[...document.querySelectorAll("#avisos-content .aviso-ck")];
+  const state=checks.map(c=>c.classList.contains("on")?1:0);
+  localStorage.setItem("avisos_checks_"+dateStr, JSON.stringify(state));
+  sv("avisos_checks_"+dateStr, state);
+}
+
+function loadAvisosChecks(dateStr){
+  const raw=localStorage.getItem("avisos_checks_"+dateStr);
+  if(!raw) return;
+  try{
+    const state=JSON.parse(raw);
+    const checks=[...document.querySelectorAll("#avisos-content .aviso-ck")];
+    checks.forEach((c,i)=>{
+      if(state[i]){
+        c.classList.add("on");
+        c.textContent="✓";
+      }
+    });
+  }catch(e){}
 }
 
 function checkAvisosDone(){
@@ -1783,7 +1813,7 @@ function buildAvisosForDate(dateStr){
   // 30 DIAS
   const d30=addDays(dateStr,30);
   out+=`<div class="aviso-card"><h3>📌 Aviso de 30 dias</h3><div class="aviso-row">`;
-  out+=`<span class="aviso-ck" onclick="this.classList.toggle('on');this.textContent=this.classList.contains('on')?'✓':'';checkAvisosDone()"></span>`;
+  out+=`<span class="aviso-ck" data-key="${dateStr}-${out.length}" onclick="toggleAvisoCheck(this);checkAvisosDone()"></span>`;
   if(isDiaUtil(d30)){
     out+=`<div class="aviso-dia-label">${DIAS[new Date(d30+"T12:00:00").getDay()]}</div>`;
     out+=`<div class="aviso-date">${fmtBR(d30)}</div>`;
